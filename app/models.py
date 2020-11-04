@@ -9,7 +9,7 @@ class User(models.Model):
     birthdate = models.DateField()
     email = models.EmailField()
     password = models.CharField(max_length=15)
-    money = models.ImageField()
+    money = models.FloatField()
 
     def __str__(self):
         return self.first_name
@@ -59,7 +59,7 @@ class Comment(models.Model):
     stars = models.IntegerField()
 
     def __str__(self):
-        return self.item
+        return self.item.name
 
 
 class Purchase(models.Model):
@@ -69,7 +69,7 @@ class Purchase(models.Model):
     discountedP = models.BooleanField()
 
     def __str__(self):
-        return self.item
+        return self.item.name
 
 
 class Sell(models.Model):
@@ -79,4 +79,4 @@ class Sell(models.Model):
     pendingSell = models.BooleanField()
 
     def __str__(self):
-        return self.item
+        return self.item.name
