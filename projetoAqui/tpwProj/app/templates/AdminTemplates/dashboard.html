@@ -1,0 +1,315 @@
+{% extends "AdminTemplates/sidebar.html" %}
+
+{% block main %}
+    <br>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 col-sm-12">
+                <div class="container">
+                    <div class="card bg-light">
+                        <div class="card-header">
+                            <div class="container">
+                                <div class="row d-flex justify-content-between">
+                                    Recently Added items
+                                    <a href="item/add/" class="btn btn-success btn-sm">Add item</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body" style="overflow: auto;">
+                            <table class="table table-sm table-striped">
+                                <div class="table-body">
+                                    {% for it in items|slice:":11" %}
+                                        <tr>
+                                            <td style="width: 90%">
+                                                <div class="container">
+                                                    <a href="/admin/item/{{ it.id }}/edit">{{ it.name }}</a>
+                                                    <p style="font-size: small">{{ it.insertDate }}</p>
+                                                </div>
+                                            </td>
+                                            <td style="width: 10%">
+                                                <a href="/admin/item/{{ it.id }}/delete">
+                                                    <i class="material-icons" style="margin-top: 20%">delete</i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor%}
+                                </div>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            <br>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12">
+                <div class="container">
+                    <div class="card bg-light">
+                        <div class="card-header">
+                            <div class="container">
+                                <div class="row d-flex justify-content-between">
+                                    Categories
+                                    <a href="category/" class="btn btn-success btn-sm">See all</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body" style="overflow: auto">
+                            <table class="table table-sm table-striped">
+                                <div class="table-body">
+                                    {% for cat, subcat in category.items|slice:":5" %}
+                                        <tr>
+                                            <td style="width: 90%">
+                                                <div class="container">
+                                                    <a href="/admin/category/{{ cat.id }}/edit">{{ cat }}</a><br>
+                                                    <span style="font-size: small">Subcategories: {{ subcat|length }}</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor%}
+                                </div>
+                            </table>
+                        </div>
+                    </div>
+                <br>
+                </div>
+                <div class="container">
+                    <div class="card bg-light">
+                        <div class="card-header">
+                            <div class="container">
+                                <div class="row d-flex justify-content-between">
+                                    Pending Purchases
+                                    <a href="purchases/" class="btn btn-success btn-sm">See all</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body" style="overflow: auto">
+                            <table class="table table-sm table-striped">
+                                <div class="table-body">
+                                    {% for sell in pending|slice:":5" %}
+                                        <tr>
+                                            <td style="width: 100%">
+                                                <div class="container">
+                                                    <div class="row">
+                                                        <div class="col-md-9">
+                                                            <a href="/admin/purchases/{{ sell.id }}/">{{ sell }}</a><br>
+                                                            <span style="font-size: small">Money Received: {{ sell.moneyReceived }}€</span>
+                                                        </div>
+                                                        <div class="col-md-1">
+                                                            <a href="purchases/{{ sell.id }}/accept">
+                                                                <i class="material-icons" >done</i>
+                                                            </a>
+                                                          </div>
+                                                        <div class="col-md-1">
+                                                            <a href="purchases/{{ sell.id }}/decline">
+                                                                <i class="material-icons">clear</i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor%}
+                                </div>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            <br>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-12">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="container">
+                            <div class="card bg-light" >
+                                <div class="card-header">
+                                    <div class="container">
+                                        <div class="row d-flex justify-content-between">
+                                            Full-Price vs. Discounted
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body" style="overflow: auto">
+                                    <canvas id="pieChart" style="width: 120vh;"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    <br>
+                </div>
+
+                    <div class="col-md-12 col-sm-12">
+                        <div class="container">
+                            <div class="card bg-light">
+                                <div class="card-header">
+                                    <div class="container">
+                                        <div class="row d-flex justify-content-between">
+                                            Best Buyers
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body" style="overflow: auto">
+                                    <table class="table table-sm table-striped">
+                                        <div class="table-body">
+                                            {% for user in best_buyers %}
+                                                <tr>
+                                                    <td>{{ user.index }}</td>
+                                                    <td>{{ user }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </div>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    <br>
+                </div>
+
+                    <div class="col-md-12 col-sm-12">
+                        <div class="container">
+                            <div class="card bg-light">
+                                <div class="card-header">
+                                    <div class="container">
+                                        <div class="row d-flex justify-content-between">
+                                            Best Sellerts
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body" style="overflow: auto">
+                                    <table class="table table-sm table-striped">
+                                        <div class="table-body">
+                                            {% for user in best_buyers %}
+                                                <tr>
+                                                    <td>{{ user.index }}</td>
+                                                    <td>{{ user }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </div>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    <br>
+                </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-8">
+                <div class="row">
+
+                    <div class="col-md-12 col-sm-12">
+                        <div class="container">
+                            <div class="card bg-light">
+                                <div class="card-header">
+                                    <div class="container">
+                                        <div class="row d-flex justify-content-between">
+                                            Purchases per Age Group
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body" style="overflow: auto">
+                                    <canvas id="barChart" style="width: 100%;"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+
+                    <div class="col-md-12 col-sm-12" >
+                            <div class="container">
+                                <div class="card bg-light" >
+                                    <div class="card-header">
+                                        <div class="container">
+                                            <div class="row d-flex justify-content-between">
+                                                Sells per category
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body" style="overflow: auto">
+                                        <canvas id="catChart" style="width: 100%;"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        <br>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+
+    let category_stats = JSON.parse("{{purchased_cat|escapejs}}");
+    console.log((category_stats))
+    let data = [];
+    let labels = [];
+    let bg = []
+    for (let i=0; i < category_stats.length; i++) {
+        bg.push("#"+((1<<24)*Math.random()|0).toString(16))
+    }
+
+    for (let pair in category_stats) {
+        if (category_stats[pair]['parent'] !== undefined) {
+            data.push(category_stats[pair]['purchases']);
+            labels.push(category_stats[pair]['name']);
+        }
+    }
+    console.log(data, labels)
+    renderPie(data, labels, "catChart", false);
+
+    labels = ["under 18", "18-40", "41-65", "over 65"]
+    data = []
+    let ages = JSON.parse("{{purchase_age|escapejs}}");
+    for (let line in ages) {
+        let l = ages[line]['AgeGroup']
+        let index = labels.indexOf(l)
+        data[index] = ages[line]['purchases']
+    }
+    renderChart(data, labels);
+
+    let discount_stats = JSON.parse("{{discount_stats|escapejs}}");
+    data = [discount_stats['Discounted'], discount_stats['FullPrice']]
+    labels = ["Discounted", "FullPrice"]
+    renderPie(data, labels, "pieChart", false);
+
+    function renderChart(data, labels) {
+        let ctx = document.getElementById("barChart").getContext('2d');
+        let myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "data",
+                    data: data,
+                    backgroundColor: bg.slice(0, data.length)
+                }]
+            },
+            options: {
+                legend: {
+                    display: false
+                }
+            }
+        });
+    }
+
+    function renderPie(data, labels, id, display) {
+        let ctx = document.getElementById(id).getContext('2d');
+        let myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "data",
+                    data: data,
+                    backgroundColor: bg.slice(0, data.length)
+                }]
+            },
+                options: {
+                    legend: {
+                        display: display
+                    }
+                }
+        });
+    }
+
+</script>
+{% endblock %}
+

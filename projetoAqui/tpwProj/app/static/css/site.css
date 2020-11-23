@@ -88,3 +88,12 @@ input[type="checkbox"].input-validation-error {
 }
 
 /* ----------------------------------------- */
+#imgCard {
+
+    object-fit: contain;
+}
+
+.card-img-top {
+    height: 75px;
+    width: 75px;
+}

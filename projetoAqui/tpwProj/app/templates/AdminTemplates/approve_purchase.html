@@ -1,0 +1,49 @@
+{% extends "AdminTemplates/sidebar.html" %}
+
+{% block main %}
+    <br>
+   <div class="container-fluid">
+        <div class="row d-flex justify-content-between col-md-12">
+            <h3>Purchase History</h3>
+        </div>
+        <br>
+            <table class="table table-striped">
+                <thead>
+                    <tr class="thead-dark">
+                        <th style="width: 60%" >Item</th>
+                        <th style="width: 15%" >User</th>
+                        <th style="width: 25%" colspan="4">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for row in purchases %}
+                    {% if row.pendingSell %}
+                        <tr class="table-warning">
+                    {% else %}
+                        <tr>
+                    {% endif %}
+
+                    <td style="width: 69%" ><a href="{{ row.id }}/">{{ row.item.name }}</a></td>
+                    <td style="width: 15%" > {{ row.user }}</td>
+                    <td style="width: 10%" >
+                        {% if row.pendingSell %}
+                            Pending
+                            </td>
+                            <td style="width: 3%" colspan="2"><a href="{{ row.id }}/accept"><i class="material-icons md-18">done</i></a></td>
+                            <td style="width: 3%" colspan="2"><a href="{{ row.id }}/decline"><i class="material-icons md-18">clear</i></a></td>
+                        {% else %}
+                            Accepted
+                            </td>
+                            <td style="width: 3%" colspan="4"></td>
+                        {% endif %}
+
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        <div class="col-md-12">
+            <p>Total: {{ purchases|length }}</p>
+        </div>
+    </div>
+{% endblock %}

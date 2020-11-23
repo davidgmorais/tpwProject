@@ -1,19 +1,174 @@
-
 {% extends "layout.html" %}
 {% load mptt_tags %}
+{% load mathfilters %}
 {% block content %}
 
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <h1 class="display-4">Store</h1>
+            <p class="lead">Where you can buy and sell items!!</p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="container-fluid">
+            <h4>Check out our items with discount up to {{ biggestDiscount }}% <a
+                    href="{% url 'ItemsPagePromos' %}">Here</a></h4>
+            <section class="text-center mb-4">
+                <div class="row wow fadeIn ">
+
+                    {% for item in discountedItems %}
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <div class="card">
+                                <a href="{% url 'item' item.id %}">
+                                    <div class="view overlay">
+                                        <img class="card-img-top" src="{{ item.picture.url }}" class="card-img-top">
+                                        <a>
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                </a>
+                                <div class="card-body text-center">
+                                    <h5>
+                                        <strong>
+                                            <a class="dark-grey-text" href="{% url 'item' item.id %}">{{ item.name }}
+                                                <span class="badge text-danger">NEW</span>
+                                            </a>
+                                        </strong>
+                                    </h5>
+                                    <h4 class="blue-text">
+                                        {% if item.discount != 0 %}
+                                            {% with perc=item.discount|div:100 %}
+                                                {% with op=1|sub:perc %}
+                                                    <del>{{ item.price }}€</del>
+                                                    <strong>{{ item.price|mul:op }}€</strong>
+                                                    <strong class="text-secondary">({{ item.discount }}% off)</strong>
+                                                {% endwith %}
+                                            {% endwith %}
+                                        {% else %}
+                                            <strong>{{ item.price }}€</strong>
+                                        {% endif %}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+        {% comment %}<div>
+            <h4>Check out our bestsellers <a href="{% url 'ItemsPage' %}">here</a></h4>
+            <section class="text-center mb-4">
+                <div class="row wow fadeIn ">
+
+                    {% for item in bestsellerItems %}
+                        <div class="col-lg-3 col-md-6 mb-4">
+
+                            <div class="card">
+
+                                <a href="{% url 'item' item.id %}">
+                                    <div class="view overlay">
+                                        <img class="card-img-top" src="{{ item. }}" class="card-img-top">
+                                        <a>
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                </a>
+                                <div class="card-body text-center">
+
+                                    <h5>
+                                        <strong>
+                                            <a class="dark-grey-text"
+                                               href="{% url 'item' item.id %}">{{ item.name }}
+                                                <span class="badge text-danger">NEW</span>
+                                            </a>
+                                        </strong>
+                                    </h5>
+
+                                    <h4 class="blue-text">
+                                        {% if item.discount != 0 %}
+                                            {% with perc=item.discount|div:100 %}
+                                                {% with op=1|sub:perc %}
+                                                    <del>{{ item.price }}€</del>
+                                                    <strong>{{ item.price|mul:op }}€</strong>
+                                                    <strong class="text-secondary">({{ item.discount }}%
+                                                        off)</strong>
+                                                {% endwith %}
+                                            {% endwith %}
+                                        {% else %}
+                                            <strong>{{ item.price }}€</strong>
+                                        {% endif %}
+                                    </h4>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+        </div>{% endcomment %}
+        <div class="col-lg">
+            <h4>Check out our newest items <a href="{% url 'ItemsPageNew' %}">here</a></h4>
+            <section class="text-center mb-4">
+                <div class="row wow fadeIn ">
+                    {% for item in newestItems %}
+                        <div class="col-lg-3 col-md-6 mb-4">
+                            <div class="card">
+                                <a href="{% url 'item' item.id %}">
+                                    <div class="view overlay">
+                                        <img class="card-img-top" src="{{ item.picture.url }}" class="card-img-top">
+                                        <a>
+                                            <div class="mask rgba-white-slight"></div>
+                                        </a>
+                                    </div>
+                                </a>
+                                <div class="card-body text-center">
+                                    <h5>
+                                        <strong>
+                                            <a class="dark-grey-text"
+                                               href="{% url 'item' item.id %}">{{ item.name }}
+                                                <span class="badge text-danger">NEW</span>
+                                            </a>
+                                        </strong>
+                                    </h5>
+
+                                    <h4 class="blue-text">
+                                        {% if item.discount != 0 %}
+                                            {% with perc=item.discount|div:100 %}
+                                                {% with op=1|sub:perc %}
+                                                    <del>{{ item.price }}€</del>
+                                                    <strong>{{ item.price|mul:op }}€</strong>
+                                                    <strong class="text-secondary">({{ item.discount }}%
+                                                        off)</strong>
+                                                {% endwith %}
+                                            {% endwith %}
+                                        {% else %}
+                                            <strong>{{ item.price }}€</strong>
+                                        {% endif %}
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </div>
+
     <ul class="root">
-    {% recursetree categories %}
-        <li>
-            <a href="{% url 'ItemsPageCat' node.slug %}">{{ node.name }}</a>
-            {% if not node.is_leaf_node %}
-                <ul class="children">
-                    {{ children }}
-                </ul>
-            {% endif %}
-        </li>
-    {% endrecursetree %}
-</ul>
+        {% recursetree categories %}
+            <li>
+                <a href="{% url 'ItemsPageCat' node.slug %}">{{ node.name }}</a>
+                {% if not node.is_leaf_node %}
+                    <ul class="children">
+                        {{ children }}
+                    </ul>
+                {% endif %}
+            </li>
+        {% endrecursetree %}
+    </ul>
+
 
 {% endblock %}

@@ -1,0 +1,194 @@
+{% extends "layout.html" %}
+{% load custom_filters %}
+
+{% block content %}
+
+    <style>
+        .cart_item {
+            padding: 1%;
+        }
+
+        .cart_item s  {
+            color: red;
+        }
+
+        .cart_item a {
+            color: black;
+        }
+
+        .cart_item .container {
+            background-color: white;
+            padding: 20px;
+            box-shadow: 5px 5px 8px 1px #d4d4d4;
+        }
+
+    </style>
+
+
+    <br>
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <h3>My cart</h3>
+            </div>
+
+            <div class="col-6" style="text-align: right">
+                <p>{{ cart|length }} items</p>
+            </div>
+        </div>
+        <hr>
+    </div>
+
+    {% if cart|length != 0 %}
+        <div class="container" id="cart_list">
+            {% for i in cart %}
+
+                <div class="cart_item">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-2 d-none d-lg-block">
+                                    <div>
+                                        <a href="items/{{ i.item.id }}">
+                                            <img src="https://www.worten.pt/i/9702519c22f92859e1cb25905285295438d5e36b.jpg" style="width:70%;">
+                                        </a>
+                                    </div>
+                                    <br>
+                                </div>
+
+                                <div class="col-lg-6 col-md-12" style="height: inherit;">
+                                     <a href="items/{{ i.item.id }}">
+                                         <h5>{{ i.item }}</h5>
+                                     </a>
+                                </div>
+
+                                <div class="col-lg-4 col-md-12 col-10">
+                                    <div class="row">
+                                        <div class="col-lg-8 col-md-7 col-10" style="margin-top: 5%;">
+                                            <div class="row">
+                                                <div class="col-lg-1 col-md-2 col-1">
+                                                    <a href="{{ i.id }}/remove">
+                                                        <i class="material-icons">delete</i>
+                                                    </a>
+                                                </div>
+
+                                                <div class="offset-lg-1 col-lg-8 col-md-8 col-9">
+
+                                                    <div class="input-group">
+                                                        <span class="input-group-btn">
+                                                            <a href="{{ i.id }}/decrease">
+                                                                <button type="button" class="btn btn-dark" {% if i.qty == 1 %} disabled = "disabled" {% endif %}>
+                                                                  <span class="material-icons" style="font-size: small">remove</span>
+                                                                </button>
+                                                            </a>
+                                                        </span>
+                                                        <input type="text" readonly class="form-control input-number" value="{{ i.qty }}" min="1" max="{{ i.item.qty }}">
+                                                        <span class="input-group-btn">
+                                                            <a href="{{ i.id }}/increase">
+                                                                <button type="button" class="btn btn-dark" {% if i.qty >= i.item.quantity %} disabled = "disabled" {% endif %} >
+                                                                    <span class="material-icons" style="font-size: small">add</span>
+                                                                </button>
+                                                            </a>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-3 col-md-5 col-2" style="text-align: right; margin-top: 3%">
+                                            {% if i.item.discount == 0 %}
+                                                <h4> {{ i.item.price }}€</h4>
+                                            {% else %}
+                                                <p style="margin-bottom: 5px; margin-left: 6px; font-size: medium"><s>{{ i.item.price }}€</s></p>
+                                                <h4> {{ i.item.price|discount:i.item.discount }}€</h4>
+                                            {% endif %}
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                </div>
+                <br>
+
+            {% endfor %}
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="offset-md-1 col-4">
+                    <label for="discount">Discount Money</label>
+                    {% if money %}
+                        <input type="checkbox" id="DiscountFlag" value="discount" name="discount">
+                    {% endif %}
+                </div>
+
+                <div class="col-6" style="text-align: right">
+                    {% if money %}
+                        <h5 id="profileMoney">{{ money }}€</h5>
+                    {% else %}
+                        <h5 id="profileMoney">0.00€</h5>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="offset-md-1 col-4">
+                    <h5>Subtotal</h5>
+                </div>
+
+                <div class="col-6" style="text-align: right">
+                    <h4 id="Subtotal">{{ total_cart }}€</h4>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="offset-md-1 col-4">
+                    <h2>Total</h2>
+                </div>
+
+                <div class="col-6" style="text-align: right">
+                    <h3 id="Total"></h3>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="container" id="cart_list">
+            <p>Your shopping cart is empty at the moment.</p>
+        </div>
+    {% endif %}
+
+    <br>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-6">
+                <a href="/" class="btn btn-outline-dark">Keep shopping</a>
+            </div>
+
+            {% if cart|length != 0 %}
+                <div class="col-md-6 col-6" style="text-align: right">
+                    <a href="/cart/finalize" class="btn btn-outline-dark ">Finalize shopping</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <br>
+
+    <script>
+        let subtotal = {{ total_cart|escapejs }};
+        let money = {{ money|escapejs }};
+        $("#Total").text((subtotal).toFixed(2) + "€")
+
+        $("#DiscountFlag").click(function() {
+              if($(this).prop("checked") === true) {
+                  $("#Total").text((subtotal-money).toFixed(2) + "€")
+              }
+              else if($(this).prop("checked") === false) {
+                  $("#Total").text((subtotal).toFixed(2) + "€")
+              }
+        });
+
+    </script>
+
+
+
+{% endblock %}

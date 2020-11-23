@@ -12,8 +12,7 @@
 
         <a href="{% url 'item' item.id %}">
               <div class="view overlay">
-                {% comment %} <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg" class="card-img-top" {% endcomment %}
-                <img class="card-img-top" src="{{ item.picture.url }}" >
+                <img class="card-img-top"  src="{{ item.picture.url }}" class="card-img-top">
                 <a>
                   <div class="mask rgba-white-slight"></div>
                 </a>
@@ -24,9 +23,7 @@
                 <h5>
                   <strong>
                     <a class="dark-grey-text" href="{% url 'item' item.id %}">{{ item.name }}
-                        {% if item.insertDate|is_new %}
                       <span class="badge text-danger">NEW</span>
-                        {% endif %}
                     </a>
                   </strong>
                 </h5>
@@ -53,5 +50,3 @@
         </div>
  </section>
 {% endblock %}
-
-

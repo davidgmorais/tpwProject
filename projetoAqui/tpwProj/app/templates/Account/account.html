@@ -1,0 +1,118 @@
+{% extends "layout.html" %}
+{% load custom_filters %}
+
+{% block content %}
+    <section><br>
+        <div class="container">
+            <h2>Profile</h2>
+            <div class="row">
+                <div class="col-2">
+                    <p>Username:</p>
+                </div>
+                <div class="col-6">
+                    <p>{{ profile.user.username }}</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-2">
+                    <p>Name:</p>
+                </div>
+                <div class="col-6">
+                    <p>{{ profile.first_name }} {{ profile.last_name }}</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-2">
+                    <p>Email:</p>
+                </div>
+                <div class="col-6">
+                    <p>{{ profile.user.email }}</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-2">
+                    <p>Birthday:</p>
+                </div>
+                <div class="col-6">
+                    <p>{{ profile.birthdate }}</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-2">
+                    <p>Available Money:</p>
+                </div>
+                <div class="col-6">
+                    <p>{% if profile.money %}{{ profile.money }}{% else %}0.00{% endif %}€</p>
+                </div>
+            </div>
+
+            <div class="col-2">
+                <a class="btn btn-outline-dark" href="/account/changepassword" >Change Password</a>
+            </div>
+            <br>
+            <div class="col-2">
+                <a class="btn btn-outline-dark" href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
+            </div>
+
+        </div>
+    </section>
+
+    <section><br>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            Sells History
+                        </div>
+                        <div class="card-body" style="overflow:auto;max-height: 40vh">
+                            <table class="table table-striped">
+                                <tr>
+                                    <th>Item Name</th>
+                                    <th>Money offer</th>
+                                    <th>Status</th>
+                                </tr>
+                                {% for row in sells %}
+                                    <tr>
+                                        <td>{{ row.item.name }}</td>
+                                        <td>{{ row.moneyReceived }}€</td>
+                                        <td> {% if row.pendingSell %}Pending{% else %}Accepted{% endif %}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-lg-6 col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            Purchases History
+                        </div>
+                        <div class="card-body" style="overflow:auto;max-height: 40vh">
+                            <table class="table table-striped">
+                                <tr>
+                                    <th>Item Name</th>
+                                    <th>Price</th>
+                                    <th>Discounted?</th>
+                                </tr>
+                                {% for row in purchases %}
+                                    <tr>
+                                        <td>{{ row.item.name }}</td>
+                                        <td>{{ row.price }}€</td>
+                                        <td> {% if row.discountedP %}Yes{% else %}No{% endif %}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{%  endblock %}#}
