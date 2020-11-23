@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import EmptyResultSet
 from django.shortcuts import render, redirect
-from app.models import Category, Item, Comment, Profile, Purchase, Sell, Cart
+from app.models import Category, Item, Comment, Profile, Purchase, Sell, Cart, OrderItem
 from app.forms import Search, SignUpForm, Filters, ItemForm, CategoryForm, SubcategoryForm
 from django.db.models import Q
 from django.contrib.auth import login, authenticate
@@ -16,10 +17,10 @@ def home(request):
         'discountedItems': Item.objects.filter(discount__gt=0).order_by('-discount')[:4],
         'biggestDiscount': Item.objects.filter(discount__gt=0).order_by('-discount')[0].discount,
         'newestItems': Item.objects.filter(insertDate__range=[datetime.today() - timedelta(days=14),
-                                                                datetime.today()]).order_by("-insertDate")[:4],
+                                                              datetime.today()]).order_by("-insertDate")[:4],
         'categories': Category.objects.all(),
     }
-    #'bestsellerItems': Item.objects.all().annotate(comment_avg=Avg('comment__stars'))[:4],
+    # 'bestsellerItems': Item.objects.all().annotate(comment_avg=Avg('comment__stars'))[:4],
 
     return render(request, 'homePage.html', tparams)
 
@@ -50,7 +51,6 @@ def registration(request):
 
 
 def itemList(request):
-
     tparams = {
         'items': Item.objects.all(),
     }
@@ -65,7 +65,6 @@ def itemListCat(request, slug):
 
 
 def itemListNew(request):
-
     tparams = {
         'items': Item.objects.filter(insertDate__range=[
             datetime.today() - timedelta(days=14), datetime.today()]).order_by("-insertDate")
@@ -96,11 +95,11 @@ def search(request):
             query = form.cleaned_data['query']
 
             results = Item.objects.filter(
-                    Q(name__icontains=query) |
-                    Q(description__icontains=query) |
-                    Q(category__name=query)
-                    # Q(category__parent=query) ID
-                ).distinct()
+                Q(name__icontains=query) |
+                Q(description__icontains=query) |
+                Q(category__name=query)
+                # Q(category__parent=query) ID
+            ).distinct()
 
             return render(request, 'searchResults.html', {'items': results, 'query': query})
     else:
@@ -110,67 +109,28 @@ def search(request):
 
 @login_required
 def add_to_cart(request, id):
-    item = Item.objects.get(id)
-    if Cart.objects.get(user=request.user):
-        cart = Cart.objects.get(user=request.user)
-        cartItems = cart.item | item
-        cart = Cart(item=cartItems, user=request.user)
-        print(cartItems)
-#         cart =
-#     order_item, created = Cart.objects.get_or_create(
-#         item=item,
-#         user=request.user,
-#         qty=1,
-#     )
-#     order_qs = Order.objects.filter(user=request.user, ordered=False)
-#     if order_qs.exists():
-#         order = order_qs[0]
-#         # check if the order item is in the order
-#         if order.items.filter(item__slug=item.slug).exists():
-#             order_item.quantity += 1
-#             order_item.save()
-#             messages.info(request, "This item quantity was updated.")
-#             return redirect("core:order-summary")
-#         else:
-#             order.items.add(order_item)
-#             messages.info(request, "This item was added to your cart.")
-#             return redirect("core:order-summary")
-#     else:
-#         ordered_date = timezone.now()
-#         order = Order.objects.create(
-#             user=request.user, ordered_date=ordered_date)
-#         order.items.add(order_item)
-#         messages.info(request, "This item was added to your cart.")
-#         return redirect("core:order-summary")
-#
-#
-# @login_required
-# def remove_from_cart(request, slug):
-#     item = get_object_or_404(Item, slug=slug)
-#     order_qs = Order.objects.filter(
-#         user=request.user,
-#         ordered=False
-#     )
-#     if order_qs.exists():
-#         order = order_qs[0]
-#         # check if the order item is in the order
-#         if order.items.filter(item__slug=item.slug).exists():
-#             order_item = OrderItem.objects.filter(
-#                 item=item,
-#                 user=request.user,
-#                 ordered=False
-#             )[0]
-#             order.items.remove(order_item)
-#             order_item.delete()
-#             messages.info(request, "This item was removed from your cart.")
-#             return redirect("core:order-summary")
-#         else:
-#             messages.info(request, "This item was not in your cart")
-#             return redirect("core:product", slug=slug)
-#     else:
-#         messages.info(request, "You do not have an active order")
-#         return redirect("core:product", slug=slug)
-#
+    try:
+        item = Item.objects.get(id=id)
+    except Item.DoesNotExist:
+        return redirect("/")
+
+    try:
+        c = Cart.objects.get(user=request.user)
+    except Cart.DoesNotExist:
+        c = Cart(user=request.user)
+        c.save()
+
+    try:
+        order_item = OrderItem.objects.get(item__id=id)
+        if order_item.qty < order_item.item.quantity:
+            order_item.qty += 1
+            order_item.save()
+    except OrderItem.DoesNotExist:
+        order_item = OrderItem(item=item, qty=1, cart_id=c.id)
+        order_item.save()
+
+    return redirect("/cart")
+
 
 def get_items():
     return Item.objects.all()
@@ -219,13 +179,13 @@ def get_pending():
 
 
 def get_cart(email):
-    c = Cart.objects.filter(user__email=email)
-    return c
+    return OrderItem.objects.filter(cart__user__email=email)
 
 
 def get_cart_total(cart_items):
     return cart_items.aggregate(price=Sum((F('item__price') * (100 - F('item__discount')) / 100) * F('qty'),
                                           output_field=FloatField()))['price']
+
 
 #
 # def filer_by_category(query, category_id, subcategory_id=None):
@@ -413,7 +373,6 @@ def add_item(request):
             item.save()
             item.category.set([int(sc) for sc in form.cleaned_data["category"]])
             item.save()
-            print(item)
             return redirect("/admin/item")
     else:
         form = ItemForm()
@@ -565,7 +524,7 @@ def account(request):
         return redirect("/login")
 
     profile = Profile.objects.get(user__email=request.user.email)
-    item_cart= get_cart(request.user.email)
+    item_cart = get_cart(request.user.email)
     t_params = {
         "profile": profile,
         "purchases": Purchase.objects.filter(user__email=profile.user.email).order_by("-id"),
@@ -579,43 +538,47 @@ def account(request):
 def cart(request):
     if not request.user.is_authenticated:
         return redirect("/login")
-    item_cart = get_cart(request.user.email)
+    try:
+        c = Cart.objects.get(user__email=request.user.email)
+    except Cart.DoesNotExist:
+        c = Cart(user=request.user)
+        c.save()
     t_parent = {
-        "cart": item_cart,
-        "total_cart": get_cart_total(item_cart),
+        "cart": c.orderitem_set.all(),
+        "total_cart": c.total(),
         "money": Profile.objects.get(user__email=request.user.email).money
     }
     return render(request, "Cart/cart.html", t_parent)
 
 
-def increase_cart(request, cart_id):
+def increase_cart(request, order_id):
     if not request.user.is_authenticated:
         return redirect("/login")
 
-    c = Cart.objects.get(id=cart_id)
-    if c.qty < c.item.quantity:
-        c.qty += 1
-        c.save()
+    order_item = OrderItem.objects.get(id=order_id)
+    if order_item.qty < order_item.item.quantity:
+        order_item.qty += 1
+        order_item.save()
     return redirect("/cart")
 
 
-def decrease_cart(request, cart_id):
+def decrease_cart(request, order_id):
     if not request.user.is_authenticated:
         return redirect("/login")
 
-    c = Cart.objects.get(id=cart_id)
-    if c.qty > 1:
-        c.qty -= 1
-        c.save()
+    order_item = OrderItem.objects.get(id=order_id)
+    if order_item.qty > 1:
+        order_item.qty -= 1
+        order_item.save()
     return redirect("/cart")
 
 
-def remove_cart(request, cart_id):
+def remove_cart(request, order_id):
     if not request.user.is_authenticated:
         return redirect("/login")
 
-    c = Cart.objects.get(id=cart_id)
-    c.delete()
+    order_item = OrderItem.objects.get(id=order_id)
+    order_item.delete()
     return redirect("/cart")
 
 
@@ -623,21 +586,29 @@ def finalize_cart(request):
     if not request.user.is_authenticated:
         return redirect("/login")
 
-    c = get_cart(email=request.user.email)
-    for item in c:
+    c = Cart.objects.get(user__email=request.user.email)
+    for item in c.orderitem_set.all():
         if item.item.discount != 0:
-            price = item.item.price * item.item.discount / 100
+            price = item.get_final_price()
             discounted = True
         else:
-            price = item.item.price
+            price = item.get_final_price()
             discounted = False
 
+        # decrease item quantity
+        i = Item.objects.get(id=item.item.id)
+        i.quantity -= item.qty
+
+        # make purchases
         p = Purchase(
             item=item.item,
             user=request.user,
             price=price,
             discountedP=discounted
         )
+
+        # save changes
+        i.save()
         p.save()
-        c.delete()
-        return redirect("/")
+    c.delete()
+    return redirect("/")

@@ -14,7 +14,7 @@ class Profile(models.Model):
     last_name = models.CharField(max_length=100, blank=True)
     birthdate = models.DateField(null=True, blank=True)
 
-    money = models.FloatField(blank=True, null=True, default=None)
+    money = models.FloatField(blank=True, null=True, default=0)
 
     def __str__(self):
         return self.user.username
@@ -61,12 +61,36 @@ class Item(models.Model):
 
 
 class Cart(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    qty = models.PositiveIntegerField(default=0)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.item
+        return self.user.username
+
+    def total(self):
+        total = 0
+        for i in self.orderitem_set.all():
+            total += i.get_final_price()
+        return total
+
+
+class OrderItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    qty = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.item.name} x {self.qty}"
+
+    def get_total_item_price(self):
+        return self.qty * self.item.price
+
+    def get_total_discount_item_price(self):
+        return self.qty * (self.item.price * (1 - self.item.discount / 100))
+
+    def get_final_price(self):
+        if self.item.discount != 0:
+            return self.get_total_discount_item_price()
+        return self.get_total_item_price()
 
 
 class Comment(models.Model):

@@ -15,3 +15,18 @@ def is_new(date):
     if datetime.today().date() >= date > (datetime.today() - timedelta(days=7)).date():
         return True
     return False
+
+
+@register.filter(name="div")
+def div(a, b):
+    return a / b
+
+
+@register.filter(name="sub")
+def sub(a, b):
+    return a - b
+
+
+@register.filter(name="mul")
+def mul(a, b):
+    return a * b

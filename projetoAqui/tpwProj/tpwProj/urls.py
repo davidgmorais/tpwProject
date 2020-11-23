@@ -28,6 +28,7 @@ urlpatterns = [
 
     path('items/', views.itemList, name="ItemsPage"),
     path('items/<int:id>/', views.item, name="item"),
+    path('items/<int:id>/addtocart', views.add_to_cart, name="addToCart"),
     path('items/<slug:slug>/', views.itemListCat, name="ItemsPageCat"),
     path('itemsNew/', views.itemListNew, name="ItemsPageNew"),
     path('itemsPromos/', views.itemListPromos, name="ItemsPagePromos"),
@@ -67,11 +68,10 @@ urlpatterns = [
     # path("account/transactions"),
     # cart manager
     path("cart/", views.cart, name="cart"),
-    path("cart/<int:cart_id>/increase", views.increase_cart, name="increase_cart_qty"),
-    path("cart/<int:cart_id>/decrease", views.decrease_cart, name="decrease_cart_qty"),
-    path("cart/<int:cart_id>/remove", views.remove_cart, name="remove_from_cart"),
+    path("cart/<int:order_id>/increase", views.increase_cart, name="increase_cart_qty"),
+    path("cart/<int:order_id>/decrease", views.decrease_cart, name="decrease_cart_qty"),
+    path("cart/<int:order_id>/remove", views.remove_cart, name="remove_from_cart"),
     path("cart/finalize", views.finalize_cart, name="finalize_cart"),
-
 ]
 
 if settings.DEBUG:
