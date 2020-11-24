@@ -1,0 +1,289 @@
+{% extends "layout.html" %}
+{% load custom_filters %}
+
+{% block content %}
+
+    <style>
+        .new {
+            background-color: #8493ca;
+            display: inline-block;
+            font-size: 11px;
+            color: #fff;
+            right: 20px;
+            top: 20px;
+            padding: 1px 16px;
+            font-weight: 700;
+            text-align: center;
+            position: absolute;
+            text-transform: uppercase;
+            height: 26px;
+            line-height: 24px;
+        }
+
+        .price-dec {
+            background-color: sandybrown;
+            display: inline-block;
+            font-size: 11px;
+            color: #fff;
+            right: 20px;
+            top: 20px;
+            padding: 1px 16px;
+            font-weight: 700;
+            text-align: center;
+            position: absolute;
+            text-transform: uppercase;
+            height: 26px;
+            line-height: 25px;
+        }
+
+        .item {
+            padding: 1%;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .item h5 { font-size: 20px; }
+            .item s {font-size: 10px}
+            .item .discount-flag {font-size: 12px}
+        }
+
+        .item s  {
+            color: red;
+        }
+
+        .item :hover h6{
+            color: darkred;
+        }
+
+        .item  a {
+            text-decoration: None;
+            color: black;
+        }
+
+        .item .container {
+            {#background-color: #f1ffff;#}
+            background-color: white;
+            padding: 20px;
+            box-shadow: 5px 5px 8px 1px #d4d4d4;
+        }
+    </style>
+
+    <section>
+        <div class="jumbotron jumbotron-fluid" style="background-color: sandybrown;">
+            <div class="container">
+                <div class="offset-xl-2 col-xl-4">
+                    <h1 class="display-4">Up to {{ deal_of_day.discount|floatformat }}% off</h1>
+                    <p>Amazing items with huge discounts. Check the top promotions here.</p>
+                    <button class="btn btn-dark">Shop now</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container-fluid">
+            <div class="row">
+               <div class="col-md-4">
+                    <div class="jumbotron" style="background-color: lightsteelblue">
+                        <div class="offset-1">
+                            <h6>New in</h6>
+                            <h4>{{ new_in.first.name}}</h4>
+                            <div class="row container">
+                                <h4>{{ new_in.first.price}}€</h4>
+                            </div>
+                            <a style="text-decoration: underline">Discover more</a>
+                        </div>
+                    </div>
+                </div>
+
+                 <div class="col-md-4">
+                    <div class="jumbotron" style="background-color: lightsteelblue">
+                        <div class="offset-1">
+                            <h6>Deal of the Day</h6>
+                            <h4>{{ deal_of_day.name}}</h4>
+                            <div class="row container">
+                                <h4>{{ deal_of_day.price|discount:deal_of_day.discount }}€</h4>
+                                <h6 style="color: red; margin-left: 15px"><s>{{ deal_of_day.price }}€</s></h6>
+                            </div>
+                            <a style="text-decoration: underline">Shop Now</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="jumbotron" style="background-color: lightsteelblue">
+                        <div class="offset-1">
+                            <h6>Bestseller</h6>
+                                <h4>{{ best_sellers.first.name}}</h4>
+                                <div class="row container">
+                                    <h4>{{ best_sellers.first.price }}€</h4>
+                                </div>
+                                <a style="text-decoration: underline">Discover more</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section style="margin-top: 5vh">
+        <div class="container">
+            <h2 style="text-align: center">New In</h2>
+            <hr style="border: 2px solid sandybrown; width: 5%;">
+            <div class="row">
+                 {% for c in new_in %}
+                    <div class="col-md-3 col-sm-6 col-6 item">
+                        <a href="items/{{ c.id }}">
+                            <div class="container">
+                                <div>
+                                    <img src="https://www.worten.pt/i/9702519c22f92859e1cb25905285295438d5e36b.jpg" style="width:100%;">
+                                    {% if c|is_new %}
+                                        <span class="new">New</span>
+                                    {% endif %}
+
+                                    {% if c.discount != 0 %}
+                                        <span class="price-dec">{{ c.discount }}% Off</span>
+                                    {% endif %}
+
+
+                                </div>
+                                <br>
+
+                                <h6> <span class="d-inline-block text-truncate" style="max-width: 100%">{{ c.name }}</span></h6>
+
+                                <div class="row" style="margin-left: 0px">
+
+                                    {% if c.discount == 0 %}
+                                        <h5> {{ c.price }}€</h5>
+                                    {% else %}
+                                        <h5> {{ c.price|discount:c.discount }}€</h5>
+                                        <p style="margin-bottom: 5px; margin-left: 6px; font-size: small"><s>{{ c.price }}€</s></p>
+                                    {% endif %}
+
+                                </div>
+                                {% if c.comment_avg == None %}
+                                    0.0 {% else %} {{ c.comment_avg }}
+                                {% endif %}
+                                <i class="material-icons" style="font-size: medium">star</i>
+                            </div>
+                        </a>
+                    </div>
+                 {% endfor %}
+            </div>
+        </div>
+    </section>
+
+
+    <section style="margin-top: 5vh">
+        <div class="container">
+            <h2 style="text-align: center">Promos</h2>
+            <hr style="border: 2px solid sandybrown; width: 5%;">
+            <div class="row">
+                 {% for c in promos %}
+                    <div class="col-md-3 col-sm-6 col-6 item">
+                        <a href="items/{{ c.id }}">
+                            <div class="container">
+                                <div>
+                                    <img src="https://www.worten.pt/i/9702519c22f92859e1cb25905285295438d5e36b.jpg" style="width:100%;">
+
+                                    {% if c|is_new %}
+                                        <span class="new">New</span>
+                                    {% endif %}
+
+                                    {% if c.discount != 0 %}
+                                        <span class="price-dec">{{ c.discount }}% Off</span>
+                                    {% endif %}
+                                </div>
+                                <br>
+
+                                <h6> <span class="d-inline-block text-truncate" style="max-width: 100%">{{ c.name }}</span></h6>
+
+                                <div class="row" style="margin-left: 0px">
+
+                                    {% if c.discount == 0 %}
+                                        <h5> {{ c.price }}€</h5>
+                                    {% else %}
+                                        <h5> {{ c.price|discount:c.discount }}€</h5>
+                                        <p style="margin-bottom: 5px; margin-left: 6px; font-size: small"><s>{{ c.price }}€</s></p>
+                                    {% endif %}
+
+                                </div>
+                                {% if c.comment_avg == None %}
+                                    0.0 {% else %} {{ c.comment_avg }}
+                                {% endif %}
+                                <i class="material-icons" style="font-size: medium">star</i>
+                            </div>
+                        </a>
+                    </div>
+                 {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section style="margin-top: 5vh">
+        <div class="container">
+            <h2 style="text-align: center">Trending Items</h2>
+            <hr style="border: 2px solid sandybrown; width: 5%;">
+            <div class="row">
+                 {% for c in best_sellers %}
+                    <div class="col-md-3 col-sm-6 col-6 item">
+                        <a href="items/{{ c.id }}">
+                            <div class="container">
+                                <div>
+                                    <img src="https://www.worten.pt/i/9702519c22f92859e1cb25905285295438d5e36b.jpg" style="width:100%;">
+
+                                    {% if c.discount != 0 %}
+                                        <span class="price-dec">{{ c.discount }}% Off</span>
+                                    {% endif %}
+
+                                    {% if c|is_new %}
+                                        <span class="new" {% if c.discount != 0 %} style="margin-top: 30px" {% endif %}>New</span>
+                                    {% endif %}
+
+                                </div>
+                                <br>
+
+                                <h6> <span class="d-inline-block text-truncate" style="max-width: 100%">{{ c.name }}</span></h6>
+
+                                <div class="row" style="margin-left: 0px">
+
+                                    {% if c.discount == 0 %}
+                                        <h5> {{ c.price }}€</h5>
+                                    {% else %}
+                                        <h5> {{ c.price|discount:c.discount }}€</h5>
+                                        <p style="margin-bottom: 5px; margin-left: 6px; font-size: small"><s>{{ c.price }}€</s></p>
+                                    {% endif %}
+
+                                </div>
+
+                                {% if c.comment_avg == None %}
+                                    0.0 {% else %} {{ c.comment_avg }}
+                                {% endif %}
+                                <i class="material-icons" style="font-size: medium">star</i>
+                            </div>
+                        </a>
+                    </div>
+                 {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    {% comment %}<section>
+        <div class="row">
+            <div class="col-xl-4">
+                <div class="jumbotron" style="background-color: sandybrown">
+                    <h6>Deal of the Day</h6>
+                    <h4>Unisex raincoat</h4>
+                    <p>Suspendisse massa leo, vestibulum cursus nulla sit amet, frungilla placerat lorem. Cars fermentum, sapien.</p>
+                    <div class="row container">
+                        <h3>50€</h3>
+                        <h5><s>100€</s></h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>{% endcomment %}
+
+
+{% endblock %}

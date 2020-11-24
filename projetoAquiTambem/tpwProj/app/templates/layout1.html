@@ -1,0 +1,160 @@
+{% load static %}
+{% load mptt_tags %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>TPW Project</title>
+    <script type="application/x-javascript"> addEventListener("load", function () {
+        setTimeout(hideURLbar, 0);
+    }, false);
+
+    function hideURLbar() {
+        window.scrollTo(0, 1);
+    } </script>
+
+    {% load static %}
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}"/>
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/site.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" media="all"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" media="all"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/fasthover.css' %}" media="all"/>
+    <link rel="stylesheet" href="{% static 'css/font-awesome.css' %}">
+    <!-- js -->
+    <script src="{% static 'scripts/jquery.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/jquery.countdown.css' %}"/> <!-- countdown -->
+    <!-- //js -->
+    <!-- web fonts -->
+    <link href='//fonts.googleapis.com/css?family=Glegoo:400,700' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic'
+          rel='stylesheet' type='text/css'>
+    <!-- //web fonts -->
+    <!-- start-smooth-scrolling -->
+    <script type="text/javascript">
+        jQuery(document).ready(function ($) {
+            $(".scroll").click(function (event) {
+                event.preventDefault();
+                $('html,body').animate({scrollTop: $(this.hash).offset().top}, 1000);
+            });
+        });
+    </script>
+    <!-- //end-smooth-scrolling -->
+
+</head>
+
+<body>
+<script type="text/javascript" src="{% static 'scripts/bootstrap-3.1.1.min.js' %}"></script>
+{% comment %}{% include 'header.html' %}{% endcomment %}
+
+<div>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark h">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarDefault"
+                aria-controls="navbarDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarDefault">
+            <ul class="navbar-nav ml-auto ">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'ItemsPage' %}">Items</a>
+                </li>
+                {% comment %}<li class="nav-item dropdown ">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Items </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        {% recursetree categories %}
+                            <a class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" data-toggle="dropdown"
+                                   role="button" aria-haspopup="true" aria-expanded="false" href="{% url 'ItemsPageCat' node.slug %}" >{{ node.name }}</a>
+                                <ul class="dropdown-menu">
+                                    <a class="nav-link" href="#">{{ children }}</a>
+                                </ul>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                        {% endrecursetree %}
+                    </div>
+                </li>{% endcomment %}
+            </ul>
+        </div>
+        {% include 'loginpartial.html' %}
+        <div class="search">
+            <input class="search_box" type="checkbox" id="search_box">
+            <label class="icon-search" for="search_box"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></label>
+            <div class="search_form">
+                <form class="navbar-form pull-left" method="POST" action='{% url "search" %}'>
+                    <div class="form-group">
+                        <label class="control-label" for="search-field">
+                            <i class="glyphicon glyphicon-search"></i></label>
+                        {% csrf_token %}
+                        <input type="text" value="{{ request.POST.q }}" name="query" class="form-control search-field"
+                               placeholder="Search" id="search-field"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </nav>
+</div>
+
+        {% comment %}
+        <form class="navbar-form pull-left" method="POST" action='{% url "search" %}'>
+          <div class="form-group">
+            <label class="control-label" for="search-field">
+            <i class="glyphicon glyphicon-search"></i></label>
+              {% csrf_token %}
+            <input type="text" value="{{request.POST.q}}" name="query" class="form-control search-field" placeholder="Search" id="search-field" />
+          </div>
+        </form>
+        {% endcomment %}
+        {% comment %}<ul class="navbar-nav ml-auto ">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'ItemsPage' %}">Items</a>
+                </li>
+                <li class="nav-item dropdown ">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Dropdown
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                        <a class="dropdown-submenu">
+                            <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                        Dropdown <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <a class="dropdown-item" href="#">SubMenu1</a>
+                                    <a class="dropdown-item" href="#">SubMenu2</a>
+                                </ul>
+                        </a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                    </div>
+                </li>
+        </ul>{% endcomment %}
+
+
+<main role="main">
+    <div class="container body-content divPadd">
+        <p></p>
+        {% block content %} {% endblock %}
+    </div> <!-- /container -->
+</main>
+
+
+<!-- JQuery and Bootstrap core
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="{% static 'scripts/jquery-3.4.1.min.js' %}"></script>
+<script src="{% static 'scripts/popper.min.js' %}"></script>
+<script src="{% static 'scripts/bootstrap.min.js' %}"></script>
+
+</body>
+</html>

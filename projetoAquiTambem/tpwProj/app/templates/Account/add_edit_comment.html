@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <style>
+        input[type="text"] {
+            width: 100%;
+        }
+
+    </style>
+    <div class="container">
+        <br>
+        <div class="row">
+            <div class="col-md-10">
+                <section id="EditItem">
+                    <form action="." method="POST" class="form-horizontal" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% if action == 'edit' %}
+                            <h4>Edit Item</h4>
+                        {% else %}
+                            <h4>Add Item</h4>
+                        {% endif %}
+                        <hr/>
+                        <div class="form-group">
+                            <div class="row">
+                                {% if action == 'edit' %}
+                                    <div class="col-md-3">
+                                        Item:
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ item }}
+                                    </div>
+                                {% else %}
+                                    <div class="col-md-3">
+                                        {{ form.item.label_tag }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.item }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    {{ form.stars.label_tag }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.stars }}
+                                    {% if form.errors.stars %}
+                                        <p style="color: darkred">Insert a number from 0 to 5</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    {{ form.comment.label_tag }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.comment }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="col-md-offset-2 col-md-10">
+                                {% if action == "edit" %}
+                                    <a class="btn btn-danger" href="{% url 'deleteComments' item.id %}">Delete</a>
+                                    <input type="submit" value="Edit" class="btn btn-success"/>
+                                {% else %}
+                                    <input type="submit" value="Add" class="btn btn-success"/>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </div>
+{% endblock %}
