@@ -66,6 +66,9 @@ class Cart(models.Model):
     def __str__(self):
         return self.user.username
 
+    def items(self):
+        return self.orderitem_set.all()
+
     def total(self):
         total = 0
         for i in self.orderitem_set.all():
@@ -118,6 +121,7 @@ class Sell(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     moneyReceived = models.FloatField(null=True)
     pendingSell = models.BooleanField()
+    accepted = models.BooleanField()
 
     def __str__(self):
         return self.item.name

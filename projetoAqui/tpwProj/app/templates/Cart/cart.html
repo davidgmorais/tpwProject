@@ -33,23 +33,23 @@
             </div>
 
             <div class="col-6" style="text-align: right">
-                <p>{{ cart|length }} items</p>
+                <p>{{ cart.items|length }} items</p>
             </div>
         </div>
         <hr>
     </div>
 
-    {% if cart|length != 0 %}
+    {% if cart.items|length != 0 %}
         <div class="container" id="cart_list">
-            {% for i in cart %}
+            {% for i in cart.items %}
 
                 <div class="cart_item">
                         <div class="container">
                             <div class="row">
                                 <div class="col-lg-2 d-none d-lg-block">
-                                    <div>
+                                    <div style="max-width: 100%;">
                                         <a href="{% url 'item' i.item.id %}">
-                                            <img src="https://www.worten.pt/i/9702519c22f92859e1cb25905285295438d5e36b.jpg" style="width:70%;">
+                                            <img src="https://www.worten.pt/i/9702519c22f92859e1cb25905285295438d5e36b.jpg" style="object-fit: contain; max-height: 100%; max-width: 70%">
                                         </a>
                                     </div>
                                     <br>
@@ -113,44 +113,44 @@
 
             {% endfor %}
         </div>
+        <form method="get" action=".">
+            <div class="container">
+                <div class="row">
+                    <div class="offset-md-1 col-4">
+                        <label for="discountFlag">Discount Money</label>
+                        {% if money %}
+                            <input type="checkbox" id="DiscountFlag" name="discount">
+                        {% endif %}
+                    </div>
 
-        <div class="container">
-            <div class="row">
-                <div class="offset-md-1 col-4">
-                    <label for="discount">Discount Money</label>
-                    {% if money %}
-                        <input type="checkbox" id="DiscountFlag" value="discount" name="discount">
-                    {% endif %}
+                    <div class="col-6" style="text-align: right">
+                        {% if money %}
+                            <h5 id="profileMoney">{{ money }}€</h5>
+                        {% else %}
+                            <h5 id="profileMoney">0.00€</h5>
+                        {% endif %}
+                    </div>
                 </div>
+                <div class="row">
+                    <div class="offset-md-1 col-4">
+                        <h5>Subtotal</h5>
+                    </div>
 
-                <div class="col-6" style="text-align: right">
-                    {% if money %}
-                        <h5 id="profileMoney">{{ money }}€</h5>
-                    {% else %}
-                        <h5 id="profileMoney">0.00€</h5>
-                    {% endif %}
+                    <div class="col-6" style="text-align: right">
+                        <h4 id="Subtotal">{{ cart.total }}€</h4>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="offset-md-1 col-4">
+                        <h2>Total</h2>
+                    </div>
+
+                    <div class="col-6" style="text-align: right">
+                        <h3 id="Total"></h3>
+                    </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="offset-md-1 col-4">
-                    <h5>Subtotal</h5>
-                </div>
-
-                <div class="col-6" style="text-align: right">
-                    <h4 id="Subtotal">{{ total_cart }}€</h4>
-                </div>
-            </div>
-            <hr>
-            <div class="row">
-                <div class="offset-md-1 col-4">
-                    <h2>Total</h2>
-                </div>
-
-                <div class="col-6" style="text-align: right">
-                    <h3 id="Total"></h3>
-                </div>
-            </div>
-        </div>
     {% else %}
         <div class="container" id="cart_list">
             <p>Your shopping cart is empty at the moment.</p>
@@ -160,28 +160,35 @@
     <br>
     <div class="container">
         <div class="row">
-            <div class="col-md-6 col-6">
-                <a href={% url 'HomePage' %} class="btn btn-outline-dark">Keep shopping</a>
-            </div>
-
-            {% if cart|length != 0 %}
-                <div class="col-md-6 col-6" style="text-align: right">
-                    <a href="{% url 'finalize_cart' %}" class="btn btn-outline-dark ">Finalize shopping</a>
+                <div class="col-md-6 col-6">
+                    <a href="{% url 'HomePage' %}" class="btn btn-outline-dark">Keep shopping</a>
                 </div>
-            {% endif %}
+
+                {% if cart.items|length != 0 %}
+                    <div class="col-md-6 col-6" style="text-align: right">
+                        <input type="submit" name="done" value="Finalize" class="btn btn-outline-dark">
+                    </div>
+                {% endif %}
         </div>
     </div>
+    </form>
     <br>
 
     <script>
-        let subtotal = {{ total_cart|escapejs }};
+        let subtotal = {{ cart.total|escapejs }};
         let money = {{ money|escapejs }};
-        console.log(subtotal, money)
+        console.log($("#DiscountFlag").val())
         $("#Total").text((subtotal).toFixed(2) + "€")
 
         $("#DiscountFlag").click(function() {
               if($(this).prop("checked") === true) {
-                  $("#Total").text((subtotal-money).toFixed(2) + "€")
+                  let total = subtotal
+                  if (money > subtotal) {
+                      total = 0
+                  } else {
+                      total = subtotal-money
+                  }
+                  $("#Total").text(total.toFixed(2) + "€")
               }
               else if($(this).prop("checked") === false) {
                   $("#Total").text((subtotal).toFixed(2) + "€")

@@ -29,6 +29,7 @@ urlpatterns = [
     path('items/', views.itemList, name="ItemsPage"),
     path('items/<int:id>/', views.item, name="item"),
     path('items/<int:id>/addtocart', views.add_to_cart, name="addToCart"),
+    path('items/<int:id>/sell', views.sell_item, name="sellItem"),
     path('items/<slug:slug>/', views.itemListCat, name="ItemsPageCat"),
     path('itemsNew/', views.itemListNew, name="ItemsPageNew"),
     path('itemsPromos/', views.itemListPromos, name="ItemsPagePromos"),
@@ -61,7 +62,7 @@ urlpatterns = [
     path("admin/purchases/<int:sell_id>/decline", views.decline, name="DeclinePurchase"),
     path("admin/purchases/<int:sell_id>/", views.purchase_details, name="DetailsPurchase"),
     # account
-    path("account/", views.account, name="ListPurchase"),
+    path("account/", views.account, name="account"),
     path("account/changepassword", auth_views.PasswordChangeView.as_view(template_name='Account/change_password.html',
                                                                          success_url='/account/'),
          name='ChangePassword'),
@@ -71,7 +72,6 @@ urlpatterns = [
     path("cart/<int:order_id>/increase", views.increase_cart, name="increase_cart_qty"),
     path("cart/<int:order_id>/decrease", views.decrease_cart, name="decrease_cart_qty"),
     path("cart/<int:order_id>/remove", views.remove_cart, name="remove_from_cart"),
-    path("cart/finalize", views.finalize_cart, name="finalize_cart"),
 ]
 
 if settings.DEBUG:

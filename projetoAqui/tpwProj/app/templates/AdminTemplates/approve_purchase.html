@@ -17,11 +17,7 @@
                 </thead>
                 <tbody>
                 {% for row in purchases %}
-                    {% if row.pendingSell %}
-                        <tr class="table-warning">
-                    {% else %}
-                        <tr>
-                    {% endif %}
+                    <tr {% if row.pendingSell %} class="table-warning" {% endif %}>
 
                     <td style="width: 69%" ><a href="{{ row.id }}/">{{ row.item.name }}</a></td>
                     <td style="width: 15%" > {{ row.user }}</td>
@@ -31,12 +27,15 @@
                             </td>
                             <td style="width: 3%" colspan="2"><a href="{{ row.id }}/accept"><i class="material-icons md-18">done</i></a></td>
                             <td style="width: 3%" colspan="2"><a href="{{ row.id }}/decline"><i class="material-icons md-18">clear</i></a></td>
-                        {% else %}
+                        {% elif row.accepted %}
                             Accepted
                             </td>
                             <td style="width: 3%" colspan="4"></td>
+                        {% else %}
+                            Denied
+                            </td>
+                            <td style="width: 3%" colspan="4"></td>
                         {% endif %}
-
 
                     </tr>
                 {% endfor %}

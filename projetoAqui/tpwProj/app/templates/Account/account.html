@@ -3,55 +3,55 @@
 
 {% block content %}
     <section><br>
-        <div class="container">
+        <div class="container col-md-8">
             <h2>Profile</h2>
             <div class="row">
-                <div class="col-2">
+                <div class="col-md-2 col-4">
                     <p>Username:</p>
                 </div>
-                <div class="col-6">
+                <div class="col-md-6 col-8">
                     <p>{{ profile.user.username }}</p>
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-2">
+                <div class="col-md-2 col-4">
                     <p>Name:</p>
                 </div>
-                <div class="col-6">
+                <div class="col-md-6 col-8">
                     <p>{{ profile.first_name }} {{ profile.last_name }}</p>
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-2">
+                <div class="col-md-2 col-4">
                     <p>Email:</p>
                 </div>
-                <div class="col-6">
+                <div class="col-md-6 col-8">
                     <p>{{ profile.user.email }}</p>
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-2">
+                <div class="col-md-2 col-4">
                     <p>Birthday:</p>
                 </div>
-                <div class="col-6">
+                <div class="col-md-6 col-8">
                     <p>{{ profile.birthdate }}</p>
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-2">
+                <div class="col-md-2 col-4">
                     <p>Available Money:</p>
                 </div>
-                <div class="col-6">
+                <div class="col-md-6 col-8">
                     <p>{% if profile.money %}{{ profile.money }}{% else %}0.00{% endif %}€</p>
                 </div>
             </div>
 
             <div class="col-2">
-                <a class="btn btn-outline-dark" href="/account/changepassword" >Change Password</a>
+                <a class="btn btn-outline-dark" href="{% url 'ChangePassword' %}" >Change Password</a>
             </div>
             <br>
             <div class="col-2">
@@ -77,15 +77,23 @@
                                     <th>Status</th>
                                 </tr>
                                 {% for row in sells %}
-                                    <tr>
+                                    <tr {% if row.pendingSell %} class="table-warning" {% endif %}>
                                         <td>{{ row.item.name }}</td>
                                         <td>{{ row.moneyReceived }}€</td>
-                                        <td> {% if row.pendingSell %}Pending{% else %}Accepted{% endif %}</td>
+                                        <td>
+                                            {% if row.pendingSell %}
+                                                Pending
+                                            {% elif row.accepted %}
+                                                Accepted
+                                            {% else %}
+                                                Denied
+                                            {% endif %}
+                                        </td>
                                     </tr>
                                 {% endfor %}
                             </table>
                         </div>
-                    </div>
+                    </div><br>
                 </div>
 
 
@@ -99,7 +107,7 @@
                                 <tr>
                                     <th>Item Name</th>
                                     <th>Price</th>
-                                    <th>Discounted?</th>
+                                    <th>On sale</th>
                                 </tr>
                                 {% for row in purchases %}
                                     <tr>
@@ -115,4 +123,4 @@
             </div>
         </div>
     </section>
-{%  endblock %}#}
+{%  endblock %}

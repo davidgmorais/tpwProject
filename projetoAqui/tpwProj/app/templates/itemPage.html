@@ -28,14 +28,30 @@
 
                 <h5>{{ item.brand }}</h5>
                 <h5>{{ item.description }}</h5>
-                <div>
-                    <h2>Add to cart</h2>
-                </div>
-                {# https://www.youtube.com/watch?v=Xjty8q524Jo #}
-                <a href="{% url 'addToCart' item.id %}" class="btn btn-primary btn-md my-0 p">
-                    Add to cart
-                    <i class="fas fa-shopping-cart ml-1"></i>
-                </a>
+                {% if user.is_authenticated %}
+                    <div>
+                        <h2>Add to cart</h2>
+                    </div>
+                    {# https://www.youtube.com/watch?v=Xjty8q524Jo #}
+                    <a href="{% url 'addToCart' item.id %}" class="btn btn-primary btn-md my-0 p">
+                        Add to cart
+                        <i class="fas fa-shopping-cart ml-1"></i>
+                    </a>
+                    <div>
+                        <br>
+                        <h5>Sell this item</h5>
+                    </div>
+                    {# https://www.youtube.com/watch?v=Xjty8q524Jo #}
+                    <a href="{% url 'sellItem' item.id %}" class="btn btn-danger btn-sm my-0 p">
+                        Sell item
+                        <i class="fas fa-shopping-cart ml-1"></i>
+                    </a>
+                {% else %}
+                    <p>To buy and sell items you must be logged in.</p>
+                    <a href="{% url 'login' %}" class="btn btn-primary btn-md my-0 p">
+                        Log in
+                    </a>
+                {% endif %}
             </div>
         </div>
 

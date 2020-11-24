@@ -17,6 +17,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'css/fasthover.css' %}" media="all"/>
@@ -39,8 +40,8 @@
         <div class="col-xl-8 col-lg-8 col-md-12 col-12 order-xl-2 order-lg-2 order-md-3 order-3">
             <form class="form-row" method="POST" action='{% url "search" %}'>
                 <div class="col-md-10 col-8">
-                    <input class="form-control" type="search" placeholder="Search" aria-label="Search"
-                           value="{{ request.POST.q }}">
+                    <input class="form-control" type="search" placeholder="Search" aria-label="Search" name="query"
+                           value="{{ request.POST.query }}">
                     {% csrf_token %}
                 </div>
                 <div class="col-md-2 col-4">
@@ -76,10 +77,10 @@
                                             <a href="/cart/">See cart</a>
                                         </div>
                                     </div>
-                                    {% if cart|length != 0 %}
+                                    {% if cart.items|length != 0 %}
                                         <div style="overflow: auto; max-height: 20vh">
                                             <table class="table table-striped" style="overflow: auto;">
-                                                {% for row in cart %}
+                                                {% for row in cart.items %}
                                                     <tr>
                                                         <td><span>{{ row.item }}</span> <span
                                                                 style="font-size: small; margin-left: 10px"> x{{ row.qty }}</span>
@@ -90,7 +91,7 @@
                                             </table>
 
                                         </div>
-                                        <h5 style="text-align: right; margin-right: 10px"><b>Total:</b> {{ total_cart }}€
+                                        <h5 style="text-align: right; margin-right: 10px"><b>Total:</b> {{ cart.total }}€
                                         </h5>
 
                                     {% else %}

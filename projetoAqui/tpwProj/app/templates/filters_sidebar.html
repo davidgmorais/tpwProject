@@ -1,0 +1,128 @@
+<style>
+    .price-input input {
+        width: 100%;;
+    }
+
+    #filters .form-group ul {
+        width: 100%;
+        margin: 0px -15%  ;
+        list-style: None;
+    }
+</style>
+
+    <section>
+        <div class="container">
+        <form method="get" action="." id="filters" name="filters">
+            <div class="form-group" id="category">
+                {{ form.categories.label_tag }}
+                <div style="max-height: 30vh; overflow: auto">
+                    {{ form.categories }}
+                </div>
+            </div>
+            <div class="form-group" id="prices">
+                {{ form.price.label_tag }}
+                <div style="max-height: 30vh; overflow: auto">
+                    {{ form.price }}
+                </div>
+            </div>
+            <div class="form-group" id="brands">
+                {{ form.brand.label_tag }}
+                <div style="max-height: 30vh; overflow: auto">
+                    {{ form.brand }}
+                </div>
+            </div>
+            <div class="form-group" id="availability">
+                {{ form.availability.label_tag }}
+                <div style="max-height: 30vh; overflow: auto">
+                    {{ form.availability }}
+                </div>
+            </div>
+            <div class="form-group" id="discounted">
+                {{ form.discounted.label_tag }}
+                <div style="max-height: 30vh; overflow: auto">
+                    {{ form.discounted }}
+                </div>
+            </div>
+            <div class="form-group" id="reviews">
+                {{ form.reviews.label_tag }}
+                <div style="max-height: 30vh; overflow: auto">
+                    {{ form.reviews }}
+                </div>
+            </div>
+        </form>
+        </div>
+    </section>
+
+<link href = "https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel = "stylesheet">
+<script src = "https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src = "https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<script>
+    $(document).ready(function () {
+        let $form = $("#filters")
+        let $min =  $("input[name=price]")
+
+
+        $("#filters input").click(function () {
+            $form.submit()
+        })
+
+    });
+
+
+
+{% comment %}
+
+    $min.click(function () {
+       $form.submit()
+    })
+
+
+     $("input[name=brand]").click(function () {
+        $form.submit()
+    })
+
+    $("input[name=availability]").click(function () {
+        $form.submit()
+    })
+
+    $("input[name=discounted]").click(function () {
+        $form.submit()
+    })
+
+    $("input[name=reviews]").click(function () {
+        $form.submit()
+    })
+{% endcomment %}
+
+
+    {% comment %}$min.attr('placeholder', 0);
+    $max.attr('placeholder', {{max}});
+
+    $min.change(function () {
+        if ($(this).val() < 0) $(this).val(0)
+        $form.submit()
+    })
+    $max.change(function () {
+        if ($(this).val() > {{ max }}) $(this).val({{ max }})
+        $form.submit()
+    })
+
+
+    $("#slider-1").slider({
+        min: 0,
+        max: {{ max }},
+        step: 1,
+        values: [($min.val()==="")?0:$min.val(), ($max.val()==="")?{{ max }}:$max.val()],
+        slide: function(event, ui) {
+            for (var i = 0; i < ui.values.length; ++i) {
+                $("input.sliderValue[data-index=" + i + "]").val(ui.values[i]);
+            }
+            $min.val(ui.values[0])
+            $max.val(ui.values[1])
+        },
+        change: function(event, ui) {
+            $form.submit()
+        }
+    });{% endcomment %}
+
+</script>
