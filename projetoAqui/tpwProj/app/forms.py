@@ -13,11 +13,11 @@ class Search(forms.Form):
 
 
 SORT_CHOICES = (
-    ("1", "Price Ascending"),
-    ("2", "Price Descending"),
-    ("3", "Best Sellers"),
-    ("4", "Biggest Discount"),
-    ("5", "New")
+    ("1", "New"),
+    ("2", "Price Ascending"),
+    ("3", "Price Descending"),
+    ("4", "Best Sellers"),
+    ("5", "Biggest Discount")
 )
 
 PRICE_CHOICES = (
@@ -44,6 +44,10 @@ PRICE_CHOICES = (
 
 
 class CategoryFilter(forms.Form):
+    order = forms.ChoiceField(choices=SORT_CHOICES,
+                              label="Sort by:",
+                              widget=forms.widgets.Select())
+
     categories = forms.ChoiceField(choices=[(cat.slug, cat) for cat in Category.objects.all() if cat.parent is None],
                                    widget=forms.widgets.RadioSelect(),
                                    label="Category",
@@ -54,8 +58,7 @@ class CategoryFilter(forms.Form):
                                       label="Price",
                                       widget=forms.widgets.CheckboxSelectMultiple())
 
-    brands_list = [(i['brand'], i['brand']) for i in Item.objects.all().values('brand').distinct()]
-    brand = forms.ChoiceField(choices=brands_list,
+    brand = forms.ChoiceField(choices=[(i['brand'], i['brand']) for i in Item.objects.all().values('brand').distinct()],
                               widget=forms.widgets.RadioSelect(),
                               label="Brand",
                               required=False)
@@ -70,10 +73,12 @@ class CategoryFilter(forms.Form):
                                    label="Discounted",
                                    required=False)
 
-    reviews = forms.MultipleChoiceField(choices=((1, "1 star"), (2, "2 stars"), (3, "3 stars"), (4, "4 stars"), (5, "5 stars")),
-                                        widget=forms.widgets.CheckboxSelectMultiple(),
-                                        label="Reviews",
-                                        required=False)
+    reviews = forms.MultipleChoiceField(
+        choices=((1, "1 star"), (2, "2 stars"), (3, "3 stars"), (4, "4 stars"), (5, "5 stars")),
+        widget=forms.widgets.CheckboxSelectMultiple(),
+        label="Reviews",
+        required=False)
+
 
 class SignUpForm(UserCreationForm):
     birthdate = forms.DateField(help_text='Required. Format: YYYY-MM-DD')
@@ -86,34 +91,6 @@ class SignUpForm(UserCreationForm):
                   'birthdate', 'password1', 'password2',)
 
 
-SORT_CHOICES = (
-    ("1", "Price Ascending"),
-    ("2", "Price Descending"),
-    ("3", "Best Sellers"),
-    ("4", "Biggest Discount"),
-    ("5", "New")
-)
-
-brand_choices = Item.objects.all().values_list('brand')
-brand_choice_list = []
-for brand in brand_choices:
-    brand_choice_list.append(brand)
-
-
-# category_choices = Category.objects.all().values_list
-
-
-class Filters(forms.Form):
-    sort = forms.ChoiceField(choices=SORT_CHOICES),
-
-
-# brand = forms.ChoiceField(choices=brand_choice_list)
-
-
-# cat_choices = Category.objects.filter(parent__isNull=True).values_list('name')
-# class CategoryFilters(forms.Form):
-
-
 class ItemForm(forms.Form):
     name = forms.CharField(label="Name", max_length=50)
     description = forms.CharField(label="Description", max_length=500)
@@ -123,7 +100,7 @@ class ItemForm(forms.Form):
     quantity = forms.IntegerField(validators=[validators.MinValueValidator(0)])
     cat = Category.objects.all()
     category = forms.ChoiceField(choices=[(c.name, [(sc.id, sc.name) for sc in Category.objects.all()
-                                                            if sc.parent is not None and sc.parent.name == c.name])
+                                                    if sc.parent is not None and sc.parent.name == c.name])
                                           for c in Category.objects.all() if c.parent is None])
     discount = forms.IntegerField(label="Discount",
                                   validators=[validators.MinValueValidator(0), validators.MaxValueValidator(100)])

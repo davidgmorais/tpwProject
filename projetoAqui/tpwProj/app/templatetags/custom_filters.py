@@ -16,6 +16,7 @@ def is_new(date):
         return True
     return False
 
+
 @register.filter(name="div")
 def div(a, b):
     return a / b

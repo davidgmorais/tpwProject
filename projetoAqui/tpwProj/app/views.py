@@ -2,7 +2,7 @@ from itertools import chain
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from app.models import Category, Item, Comment, Profile, Purchase, Sell, Cart, OrderItem
-from app.forms import Search, SignUpForm, Filters, ItemForm, CategoryForm, SubcategoryForm, CategoryFilter
+from app.forms import Search, SignUpForm, ItemForm, CategoryForm, SubcategoryForm, CategoryFilter
 from django.db.models import Q, Max
 from django.contrib.auth import login, authenticate
 from datetime import datetime, timedelta
@@ -17,10 +17,19 @@ def home(request):
         'discountedItems': Item.objects.filter(discount__gt=0).order_by('-discount')[:4],
         'biggestDiscount': Item.objects.filter(discount__gt=0).order_by('-discount')[0].discount,
         'newestItems': Item.objects.filter(insertDate__range=[datetime.today() - timedelta(days=14),
-                                                                datetime.today()]).order_by("-insertDate")[:4],
+                                                              datetime.today()]).order_by("-insertDate")[:4],
         'categories': Category.objects.all(),
     }
-    #'bestsellerItems': Item.objects.all().annotate(comment_avg=Avg('comment__stars'))[:4],
+
+    if request.user.is_authenticated:
+        try:
+            c = Cart.objects.get(user=request.user)
+        except Cart.DoesNotExist:
+            c = Cart(user=request.user)
+            c.save()
+        tparams['cart'] = c
+
+    # 'bestsellerItems': Item.objects.all().annotate(comment_avg=Avg('comment__stars'))[:4],
 
     return render(request, 'homePage.html', tparams)
 
@@ -46,6 +55,21 @@ def registration(request):
     return render(request, 'signup.html', {'form': form})
 
 
+def order(items, mode):
+    if mode == "1":
+        items = items.order_by("-insertDate")
+    elif mode == "2":
+        items = items.annotate(true_price=F('price') * (100 - F('discount')) / 100).order_by("true_price")
+    elif mode == "3":
+        items = items.annotate(true_price=F('price') * (100 - F('discount')) / 100).order_by("-true_price")
+    elif mode == "4":
+        items = items.annotate(purchase_qty=Count('purchase')).order_by('-purchase_qty')
+    elif mode == "5":
+        items = items.order_by('-discount')
+
+    return items
+
+
 def itemList(request):
     items = Item.objects.all()
     if request.method == 'GET':
@@ -62,24 +86,28 @@ def itemList(request):
                 items = filter_by_discount(items, form.cleaned_data['discounted'])
             if 'reviews' in request.GET:
                 items = filter_by_reviews(items, form.cleaned_data['reviews'])
-                print(items)
             if 'price' in request.GET:
                 items = filter_by_price(items, form.cleaned_data['price'])
+            if 'order' in request.GET:
+                items = order(items, form.cleaned_data['order'])
     else:
         form = CategoryFilter()
 
-    try:
-        c = Cart.objects.get(user=request.user)
-    except Cart.DoesNotExist:
-        c = Cart(user=request.user)
-        c.save()
 
     tparams = {
         'items': items,
         'categories': [cat for cat in Category.objects.all() if cat.parent is None],
         'form': form,
-        'cart': c
+        'title': "All Items"
     }
+
+    if request.user.is_authenticated:
+        try:
+            c = Cart.objects.get(user=request.user)
+        except Cart.DoesNotExist:
+            c = Cart(user=request.user)
+            c.save()
+        tparams['cart'] = c
 
     return render(request, 'itemList.html', tparams)
 
@@ -92,19 +120,86 @@ def itemListCat(request, slug):
 
 
 def itemListNew(request):
+    items = Item.objects.filter(insertDate__range=[datetime.today() - timedelta(days=14),
+                                                   datetime.today()]).order_by("-insertDate")
+    if request.method == 'GET':
+        form = CategoryFilter(request.GET)
+        print(request.GET)
+        if form.is_valid():
+            if 'categories' in request.GET:
+                items = filer_by_category(items, form.cleaned_data['categories'])
+            if 'brand' in request.GET:
+                items = filter_by_brand(items, form.cleaned_data['brand'])
+            if 'availability' in request.GET:
+                items = filter_by_availability(items, form.cleaned_data['availability'])
+            if 'discounted' in request.GET:
+                items = filter_by_discount(items, form.cleaned_data['discounted'])
+            if 'reviews' in request.GET:
+                items = filter_by_reviews(items, form.cleaned_data['reviews'])
+            if 'price' in request.GET:
+                items = filter_by_price(items, form.cleaned_data['price'])
+            if 'order' in request.GET:
+                items = order(items, form.cleaned_data['order'])
+    else:
+        form = CategoryFilter()
 
     tparams = {
-        'items': Item.objects.filter(insertDate__range=[
-            datetime.today() - timedelta(days=14), datetime.today()]).order_by("-insertDate")
+        'items': items,
+        'categories': [cat for cat in Category.objects.all() if cat.parent is None],
+        'form': form,
+        'title': "New in",
     }
-    return render(request, 'itemListNew.html', tparams)
+
+    if request.user.is_authenticated:
+        try:
+            c = Cart.objects.get(user=request.user)
+        except Cart.DoesNotExist:
+            c = Cart(user=request.user)
+            c.save()
+        tparams['cart'] = c
+
+    return render(request, 'itemList.html', tparams)
 
 
 def itemListPromos(request):
+    items = Item.objects.filter(discount__gt=0).order_by('-discount')
+    if request.method == 'GET':
+        form = CategoryFilter(request.GET)
+        print(request.GET)
+        if form.is_valid():
+            if 'categories' in request.GET:
+                items = filer_by_category(items, form.cleaned_data['categories'])
+            if 'brand' in request.GET:
+                items = filter_by_brand(items, form.cleaned_data['brand'])
+            if 'availability' in request.GET:
+                items = filter_by_availability(items, form.cleaned_data['availability'])
+            if 'discounted' in request.GET:
+                items = filter_by_discount(items, form.cleaned_data['discounted'])
+            if 'reviews' in request.GET:
+                items = filter_by_reviews(items, form.cleaned_data['reviews'])
+            if 'price' in request.GET:
+                items = filter_by_price(items, form.cleaned_data['price'])
+            if 'order' in request.GET:
+                items = order(items, form.cleaned_data['order'])
+    else:
+        form = CategoryFilter()
+
     tparams = {
-        'items': Item.objects.filter(discount__gt=0).order_by('-discount')
+        'items': items,
+        'categories': [cat for cat in Category.objects.all() if cat.parent is None],
+        'form': form,
+        'title': "Promos"
     }
-    return render(request, 'itemListPromos.html', tparams)
+
+    if request.user.is_authenticated:
+        try:
+            c = Cart.objects.get(user=request.user)
+        except Cart.DoesNotExist:
+            c = Cart(user=request.user)
+            c.save()
+        tparams['cart'] = c
+
+    return render(request, 'itemList.html', tparams)
 
 
 def item(request, id):
@@ -123,11 +218,11 @@ def search(request):
             query = form.cleaned_data['query']
 
             results = Item.objects.filter(
-                    Q(name__icontains=query) |
-                    Q(description__icontains=query) |
-                    Q(category__name=query)
-                    # Q(category__parent=query) ID
-                ).distinct()
+                Q(name__icontains=query) |
+                Q(description__icontains=query) |
+                Q(category__name=query)
+                # Q(category__parent=query) ID
+            ).distinct()
 
         return render(request, 'searchResults.html', {'items': results, 'query': query})
 
@@ -204,7 +299,10 @@ def get_top_promo():
 def get_bestsellers(top=10):
     if top < 1:
         return None
-    return Item.objects.all().annotate(comment_avg=Avg('comment__stars')).values().order_by("-quantity")[:top]
+    b_sellers = Item.objects.all().items.annotate(purchase_qty=Count('purchase')).order_by('-purchase_qty')[:top]
+    if top >= len(b_sellers):
+        return b_sellers
+    return b_sellers[:top]
 
 
 def get_categories():
@@ -274,12 +372,6 @@ def filter_by_reviews(query, star_list):
         query.add(Q(comment_avg__lte=int(i), comment_avg__gt=int(i) - 1), Q.OR)
     print(query)
     return Item.objects.annotate(comment_avg=Round(Avg('comment__stars'))).filter(query)
-
-
-
-#
-# def search(search_term):
-#     return Item.objects.filter(name__contains=search_term)
 
 
 def purchased_cat():
