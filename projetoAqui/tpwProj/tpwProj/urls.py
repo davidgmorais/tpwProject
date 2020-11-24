@@ -54,10 +54,11 @@ urlpatterns = [
     path("admin/category/<int:category_id>/edit/<int:subcategory_id>/", views.edit_subcategory, name="EditSC"),
     path("admin/category/<int:category_id>/delete/<int:subcategory_id>/", views.delete_subcategory, name="DeleteSC"),
     path("admin/category/<int:category_id>/add/", views.add_subcategory, name="AddSC"),
+    path("admin/subcategory/add/", views.add_new_subcategory, name='addNewSubcategory'),
     # approve sells
     path("admin/purchases/", views.approve_list, name="ListPurchase"),
-    path("admin/purchases/<int:sell_id>/accept", views.approve, name="ApprovePurchase"),
-    path("admin/purchases/<int:sell_id>/decline", views.decline, name="DeclinePurchase"),
+    path("admin/purchases/<int:sell_id>/accept/", views.approve, name="ApprovePurchase"),
+    path("admin/purchases/<int:sell_id>/decline/", views.decline, name="DeclinePurchase"),
     path("admin/purchases/<int:sell_id>/", views.purchase_details, name="DetailsPurchase"),
     # account
     path("account/", views.account, name="account"),

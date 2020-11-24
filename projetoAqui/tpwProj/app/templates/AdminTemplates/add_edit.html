@@ -6,6 +6,11 @@
             width: 100%;
         }
 
+        .parent select {
+            width: 100%;
+            pointer-events: none;
+        }
+
     </style>
     <div class="container">
         <br>
@@ -165,15 +170,23 @@
                             {% csrf_token %}
                             <h4>Add Subcategory</h4>
                             <hr/>
-                            <div class="form-group">
-                                <div class="row">
+                            <div class="form-row parent">
+                                <div class="col-md-3">
+                                    {{ form.parent.label_tag }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.parent }}
+                                </div>
+                            </div>
+                            <br>
+                            <div class="form-row">
                                     <div class="col-md-3">
                                         {{ form.subcategory.label_tag }}
                                     </div>
                                     <div class="col-md-6">
                                         {{ form.subcategory }}
                                     </div>
-                                </div>
+                                    {{ form.errors }}
                             </div>
                             <div class="form-row">
                                 <div class="col-md-offset-2 col-md-10">

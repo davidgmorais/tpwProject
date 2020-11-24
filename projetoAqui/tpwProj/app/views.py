@@ -559,7 +559,7 @@ def delete_subcategory(request, category_id, subcategory_id):
     if 'delete' in request.POST:
         sc = Category.objects.get(slug=str(category_id) + "-" + str(subcategory_id))
         sc.delete()
-        return redirect("admin/category")
+        return redirect("/admin/category")
     else:
         return render(request, "AdminTemplates/delete.html")
 
@@ -567,10 +567,11 @@ def delete_subcategory(request, category_id, subcategory_id):
 def add_subcategory(request, category_id):
     if not request.user.is_authenticated or request.user.username != 'admin':
         return redirect("/login")
-
+    print(request.method)
     if request.method == "POST":
         form = SubcategoryForm(request.POST)
         if form.is_valid():
+            print("here")
             sc = Category(
                 name=form.cleaned_data["subcategory"],
                 slug=0,
@@ -581,7 +582,7 @@ def add_subcategory(request, category_id):
             sc.save()
             return redirect("/admin/category/" + str(category_id) + "/edit/")
     else:
-        form = SubcategoryForm()
+        form = SubcategoryForm(initial={'parent': category_id})
     return render(request, "AdminTemplates/add_edit.html", {"form": form, "action": "add", "type": "subcategory"})
 
 
@@ -610,7 +611,7 @@ def delete_category(request, category_id):
     if 'delete' in request.POST:
         c = Category.objects.get(id=category_id)
         c.delete()
-        return redirect("admin/category")
+        return redirect("/admin/category")
     else:
         return render(request, "AdminTemplates/delete.html")
 
@@ -652,6 +653,8 @@ def approve(request, sell_id):
     item.save()
 
     profile = Profile.objects.get(user__email=sell.user.email)
+    if profile.money is None:
+        profile.money = 0
     profile.money += sell.moneyReceived
     profile.save()
     return redirect("/admin/purchases")
@@ -771,3 +774,26 @@ def remove_cart(request, order_id):
     order_item = OrderItem.objects.get(id=order_id)
     order_item.delete()
     return redirect("/cart")
+
+
+def add_new_subcategory(request):
+    if not request.user.is_authenticated or request.user.username != 'admin':
+        return redirect("/login")
+
+    print(request.method)
+    if request.method == "POST":
+        form = SubcategoryForm(request.POST)
+        if form.is_valid():
+            parent = Category.objects.get(id=form.cleaned_data['parent'])
+            sc = Category(
+                name=form.cleaned_data["subcategory"],
+                slug=0,
+                parent=parent
+            )
+            sc.save()
+            sc.slug = str(parent.id) + "-" + str(sc.id)
+            sc.save()
+            return redirect("/admin/category/" + str(parent.id) + "/edit/")
+    else:
+        form = SubcategoryForm()
+    return render(request, "AdminTemplates/add_new_subcategory.html", {"form": form})
