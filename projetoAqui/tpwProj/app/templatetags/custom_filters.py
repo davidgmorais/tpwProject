@@ -16,7 +16,6 @@ def is_new(date):
         return True
     return False
 
-
 @register.filter(name="div")
 def div(a, b):
     return a / b
@@ -30,3 +29,4 @@ def sub(a, b):
 @register.filter(name="mul")
 def mul(a, b):
     return a * b
+

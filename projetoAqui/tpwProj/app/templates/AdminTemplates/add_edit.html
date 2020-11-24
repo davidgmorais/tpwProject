@@ -1,6 +1,6 @@
 {% extends "AdminTemplates/sidebar.html" %}
 
-{%  block main %}
+{% block main %}
     <style>
         input[type="text"] {
             width: 100%;
@@ -10,174 +10,212 @@
     <div class="container">
         <br>
         <div class="row">
-        <div class="col-md-10">
-            {% if type == "item" %}
-            <section id="EditItem">
-                <form action="." method="POST" class="form-horizontal">
-                    {% csrf_token %}
-                    <h4>Edit Item</h4>
-                    <hr />
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-md-3">
-                                {{ form.name.label_tag }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form.name }}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                     <div class="row">
-                            <div class="col-md-3">
-                                {{ form.description.label_tag }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form.description }}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-md-3">
-                                {{ form.price.label_tag }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form.price }}
-                                {% if form.errors.price %}
-                                    <p style="color: darkred"> Price must bigger than 0</p>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-md-3">
-                                {{ form.brand.label_tag }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form.brand }}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-md-3">
-                                {{ form.quantity.label_tag }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form.quantity }}
-                                {% if form.errors.quantity %}
-                                    <p style="color: darkred"> Quantity must bigger than 0</p>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-md-3">
-                                {{ form.category.label_tag }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form.category }}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-md-3">
-                                {{ form.sub_category.label_tag }}
-                            </div>
-                            <div class="col-md-6 date">
-                                {{ form.sub_category }}
-                                 {% if form.errors.sub_category %}
-                                    <p style="color: darkred">Select one or more subcategories</p>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-md-3">
-                                {{ form.discount.label_tag }}
-                            </div>
-                            <div class="col-md-6 date">
-                                {{ form.discount }} %
-                                 {% if form.errors.discount %}
-                                    <p style="color: darkred">Insert a valid percentage</p>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-md-offset-2 col-md-10">
-                            {% if action == "edit" %}
-                                <a class="btn btn-danger" href="../delete">Delete</a>
-                                <input type="submit" value="Edit" class="btn btn-success" />
+            <div class="col-md-10">
+                {% if type == "item" %}
+                    <section id="EditItem">
+                        <form action="." method="POST" class="form-horizontal" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {% if action == 'edit' %}
+                                <h4>Edit Item</h4>
                             {% else %}
-                                <input type="submit" value="Add" class="btn btn-success" />
+                                <h4>Add Item</h4>
                             {% endif %}
-                        </div>
-                    </div>
-                </form>
-            </section>
-        {% elif type == "subcategory" %}
-            <section id="AddSubcategory">
-                <form action="." method="POST" class="form-horizontal">
-                    {% csrf_token %}
-                    <h4>Add Subcategory</h4>
-                    <hr />
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-md-3">
-                                {{ form.subcategory.label_tag }}
+                            <hr/>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        {{ form.name.label_tag }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.name }}
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                {{ form.subcategory }}
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        {{ form.description.label_tag }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.description }}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-md-offset-2 col-md-10">
-                            {% if action == "edit" %}
-                                <input type="submit" value="Save changes" class="btn btn-success" />
-                            {% else %}
-                                <input type="submit" value="Add" class="btn btn-success" />
-                            {% endif %}
-                        </div>
-                    </div>
-                </form>
-            </section>
-        {% else %}
-            <section id="AddSubcategory">
-                <form action="." method="POST" class="form-horizontal">
-                    {% csrf_token %}
-                    <h4>Add Category</h4>
-                    <hr />
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-md-3">
-                                {{ form.category.label_tag }}
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        {{ form.specification.label_tag }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.specification }}
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                {{ form.category }}
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        {{ form.price.label_tag }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.price }}
+                                        {% if form.errors.price %}
+                                            <p style="color: darkred"> Price must bigger than 0</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-md-offset-2 col-md-10">
-                            {% if action == "edit" %}
-                                <input type="submit" value="Save changes" class="btn btn-success" />
-                            {% else %}
-                                <input type="submit" value="Add Category" class="btn btn-success" />
-                            {% endif %}
-                        </div>
-                    </div>
-                </form>
-            </section>
-        {% endif %}
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        {{ form.sellMoney.label_tag }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.sellMoney }}
+                                        {% if form.errors.price %}
+                                            <p style="color: darkred"> Price must higher than 0</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        {{ form.brand.label_tag }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.brand }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        {{ form.quantity.label_tag }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.quantity }}
+                                        {% if form.errors.quantity %}
+                                            <p style="color: darkred"> Quantity must bigger than 0</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        {{ form.category.label_tag }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.category }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        {{ form.sub_category.label_tag }}
+                                    </div>
+                                    <div class="col-md-6 date">
+                                        {{ form.sub_category }}
+                                        {% if form.errors.sub_category %}
+                                            <p style="color: darkred">Select one or more subcategories</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        {{ form.discount.label_tag }}
+                                    </div>
+                                    <div class="col-md-6 date">
+                                        {{ form.discount }} %
+                                        {% if form.errors.discount %}
+                                            <p style="color: darkred">Insert a valid percentage</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        {{ form.picture.label_tag }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.picture }}
 
-        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-offset-2 col-md-10">
+                                    {% if action == "edit" %}
+                                        <a class="btn btn-danger" href="../delete">Delete</a>
+                                        <input type="submit" value="Edit" class="btn btn-success"/>
+                                    {% else %}
+                                        <input type="submit" value="Add" class="btn btn-success"/>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </form>
+                    </section>
+                {% elif type == "subcategory" %}
+                    <section id="AddSubcategory">
+                        <form action="." method="POST" class="form-horizontal">
+                            {% csrf_token %}
+                            <h4>Add Subcategory</h4>
+                            <hr/>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        {{ form.subcategory.label_tag }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.subcategory }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-offset-2 col-md-10">
+                                    {% if action == "edit" %}
+                                        <input type="submit" value="Save changes" class="btn btn-success"/>
+                                    {% else %}
+                                        <input type="submit" value="Add" class="btn btn-success"/>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </form>
+                    </section>
+                {% else %}
+                    <section id="AddSubcategory">
+                        <form action="." method="POST" class="form-horizontal">
+                            {% csrf_token %}
+                            <h4>Add Category</h4>
+                            <hr/>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        {{ form.category.label_tag }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.category }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-offset-2 col-md-10">
+                                    {% if action == "edit" %}
+                                        <input type="submit" value="Save changes" class="btn btn-success"/>
+                                    {% else %}
+                                        <input type="submit" value="Add Category" class="btn btn-success"/>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </form>
+                    </section>
+                {% endif %}
+
+            </div>
         </div>
     </div>
 {% endblock %}

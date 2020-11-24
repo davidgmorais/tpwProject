@@ -11,7 +11,9 @@
 
         <a href="{% url 'item' item.id %}">
               <div class="view overlay">
+                  {% if item.picture %}
                 <img class="card-img-top"  src="{{ item.picture.url }}" class="card-img-top">
+                  {% endif %}
                 <a>
                   <div class="mask rgba-white-slight"></div>
                 </a>
