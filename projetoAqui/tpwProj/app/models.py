@@ -3,9 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from mptt.models import MPTTModel, TreeForeignKey
-
-
-# Create your models here.
+from django.utils.text import slugify
 
 
 class Profile(models.Model):
@@ -14,7 +12,7 @@ class Profile(models.Model):
     last_name = models.CharField(max_length=100, blank=True)
     birthdate = models.DateField(null=True, blank=True)
 
-    money = models.FloatField(blank=True, null=True, default=0)
+    money = models.FloatField(blank=True, null=True, default=None)
 
     def __str__(self):
         return self.user.username
@@ -46,7 +44,8 @@ class Category(MPTTModel):
 
 class Item(models.Model):
     name = models.CharField(max_length=50)
-    description = models.CharField(max_length=150)
+    description = models.CharField(max_length=500)
+    specifications = models.CharField(max_length=10000, null=True)
     price = models.FloatField()
     brand = models.CharField(max_length=30)
     quantity = models.IntegerField()

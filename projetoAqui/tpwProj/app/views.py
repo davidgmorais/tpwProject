@@ -1,8 +1,7 @@
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import EmptyResultSet
 from django.shortcuts import render, redirect
 from app.models import Category, Item, Comment, Profile, Purchase, Sell, Cart, OrderItem
-from app.forms import Search, SignUpForm, Filters, ItemForm, CategoryForm, SubcategoryForm
+from app.forms import Search, SignUpForm, ItemForm, CategoryForm, SubcategoryForm
 from django.db.models import Q
 from django.contrib.auth import login, authenticate
 from datetime import datetime, timedelta
@@ -17,16 +16,12 @@ def home(request):
         'discountedItems': Item.objects.filter(discount__gt=0).order_by('-discount')[:4],
         'biggestDiscount': Item.objects.filter(discount__gt=0).order_by('-discount')[0].discount,
         'newestItems': Item.objects.filter(insertDate__range=[datetime.today() - timedelta(days=14),
-                                                              datetime.today()]).order_by("-insertDate")[:4],
+                                                                datetime.today()]).order_by("-insertDate")[:4],
         'categories': Category.objects.all(),
     }
-    # 'bestsellerItems': Item.objects.all().annotate(comment_avg=Avg('comment__stars'))[:4],
+    #'bestsellerItems': Item.objects.all().annotate(comment_avg=Avg('comment__stars'))[:4],
 
     return render(request, 'homePage.html', tparams)
-
-
-def catSB(request):
-    return render(request, 'catSB.html', {'categories': Category.objects.all(), 'items': Item.objects.all()})
 
 
 def registration(request):
@@ -51,6 +46,7 @@ def registration(request):
 
 
 def itemList(request):
+
     tparams = {
         'items': Item.objects.all(),
     }
@@ -65,6 +61,7 @@ def itemListCat(request, slug):
 
 
 def itemListNew(request):
+
     tparams = {
         'items': Item.objects.filter(insertDate__range=[
             datetime.today() - timedelta(days=14), datetime.today()]).order_by("-insertDate")
@@ -95,11 +92,11 @@ def search(request):
             query = form.cleaned_data['query']
 
             results = Item.objects.filter(
-                Q(name__icontains=query) |
-                Q(description__icontains=query) |
-                Q(category__name=query)
-                # Q(category__parent=query) ID
-            ).distinct()
+                    Q(name__icontains=query) |
+                    Q(description__icontains=query) |
+                    Q(category__name=query)
+                    # Q(category__parent=query) ID
+                ).distinct()
 
             return render(request, 'searchResults.html', {'items': results, 'query': query})
     else:
@@ -185,7 +182,6 @@ def get_cart(email):
 def get_cart_total(cart_items):
     return cart_items.aggregate(price=Sum((F('item__price') * (100 - F('item__discount')) / 100) * F('qty'),
                                           output_field=FloatField()))['price']
-
 
 #
 # def filer_by_category(query, category_id, subcategory_id=None):
@@ -319,7 +315,7 @@ def edit_item(request, item_id):
         return redirect("/login")
 
     if request.method == "POST":
-        form = ItemForm(request.POST)
+        form = ItemForm(request.POST, request.FILES)
         if form.is_valid():
             item = Item.objects.get(id=item_id)
             item.name = form.cleaned_data["name"]
@@ -327,8 +323,11 @@ def edit_item(request, item_id):
             item.price = form.cleaned_data["price"]
             item.quantity = form.cleaned_data["quantity"]
             item.brand = form.cleaned_data["brand"]
-            item.category.set([int(c) for c in form.cleaned_data["category"]])
+            item.category = Category.objects.get(id=form.cleaned_data["category"][0])
             item.discount = form.cleaned_data["discount"]
+            item.sellMoney = form.cleaned_data["sellMoney"]
+            item.specifications = form.cleaned_data["specification"]
+            item.picture = request.FILES["picture"]
             item.save()
             return redirect("/admin/item")
     else:
@@ -338,8 +337,11 @@ def edit_item(request, item_id):
                                  "price": item.price,
                                  "brand": item.brand,
                                  "quantity": item.quantity,
-                                 "category": [c.id for c in item.category.all()],
-                                 "discount": item.discount
+                                 "category": item.category,
+                                 "discount": item.discount,
+                                 "sellMoney": item.sellMoney,
+                                 "specification": item.specifications,
+                                 "picture": item.picture
                                  })
     return render(request, "AdminTemplates/add_edit.html", {"form": form, "action": "edit", "type": "item"})
 
@@ -359,20 +361,23 @@ def add_item(request):
     if not request.user.is_authenticated or request.user.username != 'admin':
         return redirect("/login")
     if request.method == "POST":
-        form = ItemForm(request.POST)
+        form = ItemForm(request.POST, request.FILES)
         if form.is_valid():
             item = Item(
                 name=form.cleaned_data["name"],
                 description=form.cleaned_data["description"],
+                specifications=form.cleaned_data["specification"],
                 price=form.cleaned_data["price"],
                 quantity=form.cleaned_data["quantity"],
                 brand=form.cleaned_data["brand"],
                 insertDate=datetime.today(),
-                discount=form.cleaned_data["discount"]
+                discount=form.cleaned_data["discount"],
+                sellMoney=form.cleaned_data["sellMoney"],
+                category=Category.objects.get(id=form.cleaned_data["category"][0]),
+                picture=request.FILES["picture"]
             )
             item.save()
-            item.category.set([int(sc) for sc in form.cleaned_data["category"]])
-            item.save()
+            print(item)
             return redirect("/admin/item")
     else:
         form = ItemForm()

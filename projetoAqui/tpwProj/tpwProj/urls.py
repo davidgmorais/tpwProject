@@ -39,8 +39,6 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
     path('registration/', views.registration, name='registration'),
 
-    path('cat/', views.catSB),
-
     path("admin/", views.admin, name="Admin"),
     path("admin/item/", views.manage_items, name="ItemManagement"),
     path("admin/item/<int:item_id>/edit/", views.edit_item, name="EditItem"),
@@ -72,6 +70,7 @@ urlpatterns = [
     path("cart/<int:order_id>/decrease", views.decrease_cart, name="decrease_cart_qty"),
     path("cart/<int:order_id>/remove", views.remove_cart, name="remove_from_cart"),
     path("cart/finalize", views.finalize_cart, name="finalize_cart"),
+
 ]
 
 if settings.DEBUG:

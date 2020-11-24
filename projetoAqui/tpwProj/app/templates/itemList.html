@@ -1,4 +1,5 @@
 {% extends 'layout.html' %}
+{% load mathfilters %}
 {% load custom_filters %}
 {% block content %}
  <section class="text-center mb-4">
@@ -11,8 +12,9 @@
 
         <a href="{% url 'item' item.id %}">
               <div class="view overlay">
-                {% comment %} <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg" class="card-img-top" {% endcomment %}
+                  {% if item.picture %}
                 <img class="card-img-top" src="{{ item.picture.url }}" >
+                  {% endif %}
                 <a>
                   <div class="mask rgba-white-slight"></div>
                 </a>

@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% load mptt_tags %}
-{% load custom_filters %}
+{% load mathfilters %}
 {% block content %}
 
     <div class="jumbotron jumbotron-fluid">
@@ -21,7 +21,9 @@
                             <div class="card">
                                 <a href="{% url 'item' item.id %}">
                                     <div class="view overlay">
-                                        <img class="card-img-top" src="{{ item.picture.url }}" class="card-img-top">
+                                        {% if item.picture %}
+                                            <img class="card-img-top" src="{{ item.picture.url }}" class="card-img-top">
+                                        {% endif %}
                                         <a>
                                             <div class="mask rgba-white-slight"></div>
                                         </a>
@@ -118,7 +120,9 @@
                             <div class="card">
                                 <a href="{% url 'item' item.id %}">
                                     <div class="view overlay">
-                                        <img class="card-img-top" src="{{ item.picture.url }}" class="card-img-top">
+                                        {% if item.picture %}
+                                            <img class="card-img-top" src="{{ item.picture.url }}" class="card-img-top">
+                                        {% endif %}
                                         <a>
                                             <div class="mask rgba-white-slight"></div>
                                         </a>
