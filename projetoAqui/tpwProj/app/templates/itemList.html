@@ -136,7 +136,35 @@
                   {% endfor %}
                 </div>
          </section>
-    </div>
+
+            <section>
+                <div class="text-center" style="width: 100%;">
+                    <div class="form-row d-flex justify-content-center">
+                        <div class="col-2">
+                            {% if items.has_previous %}
+                            <button type="submit" class="btn btn-default" name="page" value="1">&laquo; first</button>
+                            <button type="submit" class="btn btn-default" name="page" value="{{ items.previous_page_number }}">previous</button>
+                        {% endif %}
+                        </div>
+                        <div class="col-1">
+                             <span class="current">
+                            Page {{ items.number }} of {{ items.paginator.num_pages }}
+                        </span>
+                        </div>
+                        <div class="col-2">
+                            {% if items.has_next %}
+                            <button type="submit" class="btn btn-default" name="page" value="{{ items.next_page_number }}">next</button>
+                            <button type="submit" class="btn btn-default" name="page" value="{{ items.paginator.num_pages }}">last &raquo;</button>
+                        {% endif %}
+                        </div>
+
+                    </div>
+
+                </div>
+            </section>
+            </form>
+
+            </div>
 
         </div>
     </div>

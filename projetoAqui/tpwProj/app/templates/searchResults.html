@@ -119,32 +119,6 @@
                         </div>
                     </div>
                 </div>
-{#                    <div class="displayItemList">#}
-{#                    <a href="{% url 'item' item.id %}">#}
-{#                        <div id="itemImg">#}
-{#                            <img src="{{ item.picture.url }}" id="img">#}
-{#                        </div>#}
-{#                    </a>#}
-{#                        <div id="itemText">#}
-{#                        <a href="{% url 'item' item.id %}">#}
-{#                            <h4><b>{{ item.name }}</b></h4>#}
-{#                        </a>#}
-{#                            {% if item.discount != 0 %}#}
-{#                            {% with perc=item.discount|div:100 %}#}
-{#                            {% with op=1|sub:perc %}#}
-{#                                <p><h5><del>{{ item.price }}€</del> <strong>{{ item.price|mul:op }}€</strong> ({{ item.discount }}% off)</h5>#}
-{#                            {% endwith %}#}
-{#                            {% endwith %}#}
-{#                        {% else %}#}
-{#                            <h5>{{ item.price }}€</h5>#}
-{#                        {% endif %}#}
-{#                            <p>{{ item.description }}</p>#}
-{#                            <p>{{ item.brand }}</p>#}
-{#                        <a href="{% url 'ItemsPageCat' item.category.slug%}"><p>{{ item.category }}</p></a>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                    <p></p>#}
-
             {%  endfor %}
             {% else %}
                 <p>Not found any result.</p>

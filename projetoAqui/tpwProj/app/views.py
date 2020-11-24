@@ -10,6 +10,7 @@ from json import dumps
 from django.contrib.auth.models import User
 from django.db.models import When, Case, Value, CharField, Avg, Count, Sum, F, FloatField
 from django.db.models.functions import Extract, Round
+from django.core.paginator import Paginator
 
 
 def home(request):
@@ -93,7 +94,13 @@ def itemList(request):
     else:
         form = CategoryFilter()
 
-
+    paginator = Paginator(items, 20)
+    page_nr = request.GET.get('page')
+    print(page_nr)
+    if page_nr is None:
+        page_nr = 1
+    print(page_nr)
+    items = paginator.get_page(page_nr)
     tparams = {
         'items': items,
         'categories': [cat for cat in Category.objects.all() if cat.parent is None],
@@ -143,6 +150,14 @@ def itemListNew(request):
     else:
         form = CategoryFilter()
 
+    paginator = Paginator(items, 20)
+    page_nr = request.GET.get('page')
+    print(page_nr)
+    if page_nr is None:
+        page_nr = 1
+    print(page_nr)
+    items = paginator.get_page(page_nr)
+
     tparams = {
         'items': items,
         'categories': [cat for cat in Category.objects.all() if cat.parent is None],
@@ -184,6 +199,14 @@ def itemListPromos(request):
     else:
         form = CategoryFilter()
 
+    paginator = Paginator(items, 20)
+    page_nr = request.GET.get('page')
+    print(page_nr)
+    if page_nr is None:
+        page_nr = 1
+    print(page_nr)
+    items = paginator.get_page(page_nr)
+
     tparams = {
         'items': items,
         'categories': [cat for cat in Category.objects.all() if cat.parent is None],
@@ -221,14 +244,14 @@ def search(request):
                 Q(name__icontains=query) |
                 Q(description__icontains=query) |
                 Q(category__name=query)
-                # Q(category__parent=query) ID
             ).distinct()
 
-        return render(request, 'searchResults.html', {'items': results, 'query': query})
+            return render(request, 'searchResults.html', {'items': results, 'query': query})
 
     else:
         form = Search()
-    return render(request, 'itemList.html', {'items': Item.objects.all()})
+
+    return redirect("/items")
 
 
 @login_required
