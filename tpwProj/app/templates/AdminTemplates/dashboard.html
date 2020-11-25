@@ -113,6 +113,38 @@
                     </div>
                 </div>
             <br>
+             <div class="container">
+                    <div class="card bg-light">
+                        <div class="card-header">
+                            <div class="container">
+                                <div class="row d-flex justify-content-between">
+                                    Out of Stock Items
+                                    <a href="{% url 'OutOfStockItemManagement' %}" class="btn btn-success btn-sm">See all</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body" style="overflow: auto">
+                            <table class="table table-sm table-striped">
+                                <div class="table-body">
+                                    {% for item in out_of_stock|slice:":5" %}
+                                        <tr>
+                                            <td style="width: 100%">
+                                                <div class="container">
+                                                    <div class="row">
+                                                        <div class="col-md-9">
+                                                            <a href="{% url 'OutOfStockItemEdit' item.id %}">{{ item.name }}</a><br>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor%}
+                                </div>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            <br>
             </div>
             <div class="col-lg-2 col-md-4 col-sm-12">
                 <div class="row">
@@ -238,7 +270,6 @@
 <script>
 
     let category_stats = JSON.parse("{{purchased_cat|escapejs}}");
-    console.log((category_stats))
     let data = [];
     let labels = [];
     let bg = []
@@ -252,7 +283,6 @@
             labels.push(category_stats[pair]['name']);
         }
     }
-    console.log(data, labels)
     renderPie(data, labels, "catChart", false);
 
     labels = ["under 18", "18-40", "41-65", "over 65"]
@@ -277,7 +307,7 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: "data",
+                    label: "purchases",
                     data: data,
                     backgroundColor: bg.slice(0, data.length)
                 }]

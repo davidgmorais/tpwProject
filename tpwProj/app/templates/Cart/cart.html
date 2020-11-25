@@ -99,7 +99,7 @@
                                                 <h4> {{ i.item.price }}€</h4>
                                             {% else %}
                                                 <p style="margin-bottom: 5px; margin-left: 6px; font-size: medium"><s>{{ i.item.price }}€</s></p>
-                                                <h4> {{ i.item.price|discount:i.item.discount }}€</h4>
+                                                <h4> {{ i.item.price|discount:i.item.discount|floatformat:2 }}€</h4>
                                             {% endif %}
                                         </div>
 

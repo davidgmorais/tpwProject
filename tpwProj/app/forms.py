@@ -51,7 +51,7 @@ class CategoryFilter(forms.Form):
                                       label="Price",
                                       widget=forms.widgets.CheckboxSelectMultiple())
 
-    brand = forms.ChoiceField(choices=[(i['brand'], i['brand']) for i in Item.objects.all().values('brand').distinct()],
+    brand = forms.ChoiceField(choices=(),
                               widget=forms.widgets.RadioSelect(),
                               label="Brand",
                               required=False)
@@ -71,6 +71,11 @@ class CategoryFilter(forms.Form):
         widget=forms.widgets.CheckboxSelectMultiple(),
         label="Reviews",
         required=False)
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['brand'].choices = [(i['brand'], i['brand']) for i in Item.objects.all().values('brand').distinct()]
 
 
 class SignUpForm(UserCreationForm):
@@ -136,3 +141,7 @@ class DeleteAccount(forms.Form):
 
     class Meta:
         model = User
+
+
+class AddQuantityForm(forms.Form):
+    quantity = forms.IntegerField(label="Quantity", validators=[validators.MinValueValidator(0)])

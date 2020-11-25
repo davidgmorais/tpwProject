@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from app.models import Category, Item, Comment, Profile, Purchase, Sell, Cart, OrderItem
 from app.forms import Search, SignUpForm, ItemForm, CategoryForm, SubcategoryForm, CategoryFilter, CommentForm, \
-    DeleteAccount
+    DeleteAccount, AddQuantityForm
 from django.db.models import Q
 from django.contrib.auth import login, authenticate
 from datetime import datetime, timedelta
@@ -99,12 +99,8 @@ def itemList(request):
                 items = order(items, form.cleaned_data['order'])
     else:
         form = CategoryFilter()
-    paginator = Paginator(items, 20)
+    paginator = Paginator(items, 16)
     page_nr = request.GET.get('page')
-    print(page_nr)
-    if page_nr is None:
-        page_nr = 1
-    print(page_nr)
     items = paginator.get_page(page_nr)
 
     tparams = {
@@ -152,11 +148,9 @@ def itemListCat(request, slug):
     else:
         form = CategoryFilter()
 
-    paginator = Paginator(items, 20)
+    paginator = Paginator(items, 16)
     page_nr = request.GET.get('page')
-    if page_nr is None:
-        page_nr = 1
-        items = paginator.get_page(page_nr)
+    items = paginator.get_page(page_nr)
 
     c = Category.objects.get(slug=slug)
     tparams = {
@@ -202,12 +196,8 @@ def itemListNew(request):
     else:
         form = CategoryFilter()
 
-    paginator = Paginator(items, 20)
+    paginator = Paginator(items, 16)
     page_nr = request.GET.get('page')
-    print(page_nr)
-    if page_nr is None:
-        page_nr = 1
-    print(page_nr)
     items = paginator.get_page(page_nr)
 
     tparams = {
@@ -253,12 +243,8 @@ def itemListPromos(request):
     else:
         form = CategoryFilter()
 
-    paginator = Paginator(items, 20)
+    paginator = Paginator(items, 16)
     page_nr = request.GET.get('page')
-    print(page_nr)
-    if page_nr is None:
-        page_nr = 1
-    print(page_nr)
     items = paginator.get_page(page_nr)
 
     tparams = {
@@ -524,12 +510,62 @@ def admin(request):
         "best_buyers": best_buyers(5),
         "discount_stats": dumps(discount_stats()),
         "purchased_cat": dumps(list(purchased_cat())),
+        "out_of_stock": Item.objects.filter(quantity=0)
     }
     return render(request, "AdminTemplates/dashboard.html", t_params)
+
+def manage_out_of_stock_items(request):
+    return render(request, "AdminTemplates/out_of_stock.html", {"table": Item.objects.filter(quantity=0), "type": "itemList"})
+
+
+def edit_out_of_stock_items(request, item_id):
+    if not request.user.is_authenticated or request.user.username != 'admin':
+        return redirect("/login")
+
+    if request.method == "POST":
+        form = AddQuantityForm(request.POST)
+        if form.is_valid():
+            item = Item.objects.get(id=item_id)
+            qty = form.cleaned_data["quantity"]
+            item.quantity=qty
+            item.save()
+            return redirect("/admin/outofstock")
+    else:
+        item = Item.objects.get(id=item_id)
+        form = ItemForm(initial={"quantity": item.quantity})
+
+    return render(request, "AdminTemplates/out_of_stock.html", {"form": form, "type": "item", "item": item})
 
 
 def manage_items(request):
     return render(request, "AdminTemplates/managment_table.html", {"table": get_items(), "type": "item"})
+
+
+def add_item(request):
+    if not request.user.is_authenticated or request.user.username != 'admin':
+        return redirect("/login")
+    if request.method == "POST":
+        form = ItemForm(request.POST, request.FILES)
+        if form.is_valid():
+            item = Item(
+                name=form.cleaned_data["name"],
+                description=form.cleaned_data["description"],
+                specifications=form.cleaned_data["specification"],
+                price=form.cleaned_data["price"],
+                quantity=form.cleaned_data["quantity"],
+                brand=form.cleaned_data["brand"],
+                insertDate=datetime.today(),
+                discount=form.cleaned_data["discount"],
+                sellMoney=form.cleaned_data["sellMoney"],
+                category=Category.objects.get(id=form.cleaned_data["category"]),
+                picture=request.FILES["picture"]
+            )
+            item.save()
+            print(item)
+            return redirect("/admin/item")
+    else:
+        form = ItemForm()
+    return render(request, "AdminTemplates/add_edit.html", {"form": form, "action": "add", "type": "item"})
 
 
 def edit_item(request, item_id):
@@ -545,7 +581,7 @@ def edit_item(request, item_id):
             item.price = form.cleaned_data["price"]
             item.quantity = form.cleaned_data["quantity"]
             item.brand = form.cleaned_data["brand"]
-            item.category = Category.objects.get(id=form.cleaned_data["category"][0])
+            item.category = Category.objects.get(id=form.cleaned_data["category"])
             item.discount = form.cleaned_data["discount"]
             item.sellMoney = form.cleaned_data["sellMoney"]
             item.specifications = form.cleaned_data["specification"]
@@ -579,35 +615,30 @@ def delete_item(request, item_id):
         return render(request, "AdminTemplates/delete.html")
 
 
-def add_item(request):
-    if not request.user.is_authenticated or request.user.username != 'admin':
-        return redirect("/login")
-    if request.method == "POST":
-        form = ItemForm(request.POST, request.FILES)
-        if form.is_valid():
-            item = Item(
-                name=form.cleaned_data["name"],
-                description=form.cleaned_data["description"],
-                specifications=form.cleaned_data["specification"],
-                price=form.cleaned_data["price"],
-                quantity=form.cleaned_data["quantity"],
-                brand=form.cleaned_data["brand"],
-                insertDate=datetime.today(),
-                discount=form.cleaned_data["discount"],
-                sellMoney=form.cleaned_data["sellMoney"],
-                category=Category.objects.get(id=form.cleaned_data["category"][0]),
-                picture=request.FILES["picture"]
-            )
-            item.save()
-            print(item)
-            return redirect("/admin/item")
-    else:
-        form = ItemForm()
-    return render(request, "AdminTemplates/add_edit.html", {"form": form, "action": "add", "type": "item"})
-
-
+# CATEGORIES
 def manage_category(request):
     return render(request, "AdminTemplates/managment_table.html", {"table": get_categories(), "type": "category"})
+
+
+def add_category(request):
+    if not request.user.is_authenticated or request.user.username != 'admin':
+        return redirect("/login")
+
+    if request.method == "POST":
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            c = Category(
+                name=form.cleaned_data["category"],
+                slug=0,
+                parent=None
+            )
+            c.save()
+            c.slug = str(c.id) + "-00"
+            c.save()
+            return redirect("/admin/category")
+    else:
+        form = CategoryForm()
+    return render(request, "AdminTemplates/add_edit.html", {"form": form, "action": "add", "type": "category"})
 
 
 def edit_category(request, category_id):
@@ -631,13 +662,13 @@ def edit_category(request, category_id):
     return render(request, "AdminTemplates/cat_add_edit.html", t_params)
 
 
-def delete_subcategory(request, category_id, subcategory_id):
+def delete_category(request, category_id, subcategory_id):
     if not request.user.is_authenticated or request.user.username != 'admin':
         return redirect("/login")
 
     if 'delete' in request.POST:
-        sc = Category.objects.get(slug=str(category_id) + "-" + str(subcategory_id))
-        sc.delete()
+        c = Category.objects.get(id=category_id)
+        c.delete()
         return redirect("/admin/category")
     else:
         return render(request, "AdminTemplates/delete.html")
@@ -664,6 +695,29 @@ def add_subcategory(request, category_id):
     return render(request, "AdminTemplates/add_edit.html", {"form": form, "action": "add", "type": "subcategory", "parentCat": Category.objects.get(id=category_id)})
 
 
+def add_new_subcategory(request):
+    if not request.user.is_authenticated or request.user.username != 'admin':
+        return redirect("/login")
+
+    print(request.method)
+    if request.method == "POST":
+        form = SubcategoryForm(request.POST)
+        if form.is_valid():
+            parent = Category.objects.get(id=form.cleaned_data['parent'])
+            sc = Category(
+                name=form.cleaned_data["subcategory"],
+                slug=0,
+                parent=parent
+            )
+            sc.save()
+            sc.slug = str(parent.id) + "-" + str(sc.id)
+            sc.save()
+            return redirect("/admin/category/" + str(parent.id) + "/edit/")
+    else:
+        form = SubcategoryForm()
+    return render(request, "AdminTemplates/add_new_subcategory.html", {"form": form})
+
+
 def edit_subcategory(request, category_id, subcategory_id):
     if not request.user.is_authenticated or request.user.username != 'admin':
         return redirect("/login")
@@ -681,60 +735,20 @@ def edit_subcategory(request, category_id, subcategory_id):
         })
     return render(request, "AdminTemplates/add_edit.html", {"form": form, "action": "edit", "type": "subcategory"})
 
-def account_edit_comments(request, item_id):
+
+def delete_subcategory(request, category_id, subcategory_id):
     if not request.user.is_authenticated:
         return redirect("/login")
 
-    if request.method == "POST":
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = Comment.objects.filter(user=request.user).get(item=item_id)
-            comment.stars = form.cleaned_data["stars"]
-            comment.text = form.cleaned_data["comment"]
-            comment.save()
-            return redirect("/account")
-    else:
-        comment = Comment.objects.filter(user=request.user).get(item=item_id)
-        form = CommentForm(initial={
-                                    "stars": comment.stars,
-                                    "comment": comment.text})
-    print(form.errors)
-    return render(request, "Account/add_edit_comment.html", {"form": form, "action": "edit", "categories": Category.objects.all(), 'item': Item.objects.get(id=item_id)})
-
-
-def delete_category(request, category_id):
-    if not request.user.is_authenticated or request.user.username != 'admin':
-        return redirect("/login")
-
     if 'delete' in request.POST:
-        c = Category.objects.get(id=category_id)
-        c.delete()
+        sc = Category.objects.get(slug=str(category_id) + "-" + str(subcategory_id))
+        sc.delete()
         return redirect("/admin/category")
     else:
         return render(request, "AdminTemplates/delete.html")
 
 
-def add_category(request):
-    if not request.user.is_authenticated or request.user.username != 'admin':
-        return redirect("/login")
-
-    if request.method == "POST":
-        form = CategoryForm(request.POST)
-        if form.is_valid():
-            c = Category(
-                name=form.cleaned_data["category"],
-                slug=0,
-                parent=None
-            )
-            c.save()
-            c.slug = str(c.id) + "-00"
-            c.save()
-            return redirect("/admin/category")
-    else:
-        form = CategoryForm()
-    return render(request, "AdminTemplates/add_edit.html", {"form": form, "action": "add", "type": "category"})
-
-
+# Sells Admin
 def approve_list(request):
     purchases = Sell.objects.all()
     return render(request, "AdminTemplates/approve_purchase.html", {"purchases": purchases})
@@ -774,6 +788,7 @@ def purchase_details(request, sell_id):
     return render(request, "AdminTemplates/purchase_details.html", {"details": sell, "profit": profit})
 
 
+# ACOUNT
 def account(request):
     if not request.user.is_authenticated:
         return redirect("/login")
@@ -793,6 +808,27 @@ def account(request):
     return render(request, "Account/account.html", t_params)
 
 
+def delete_account(request):
+    if not request.user.is_authenticated:
+        redirect('/')
+
+    if request.method == "POST":
+        form = DeleteAccount(request.POST)
+        if form.is_valid():
+            try:
+                user = authenticate(username=request.user.username, password=form.cleaned_data['password'])
+                if user is not None:
+                    user.delete()
+                    return redirect('/')
+            except User.DoesNotExist:
+                return redirect('/')
+
+    else:
+        form = DeleteAccount()
+
+    return render(request, "Account/delete_account.html", {"form": form, "categories": Category.objects.all()})
+
+
 def account_add_comments(request):
     if not request.user.is_authenticated:
         return redirect("/login")
@@ -801,21 +837,25 @@ def account_add_comments(request):
         form = CommentForm(request.POST)
         if form.is_valid():
             item = Item.objects.get(name=form.cleaned_data['item'])
+            purchases=[]
+            for x in Purchase.objects.filter(user__email=request.user.email):
+                purchases.append(x.item)
 
-            try:
-                cc = Comment.objects.get(item=item)
-                cc.delete()
-            except Comment.DoesNotExist:
-                print("does not exist")
+            if item in purchases:
+                try:
+                    cc = Comment.objects.get(item=item)
+                    cc.delete()
+                except Comment.DoesNotExist:
+                    print("does not exist")
 
-            c = Comment(
-                user=request.user,
-                item=item,
-                stars=form.cleaned_data["stars"],
-                text=form.cleaned_data["comment"],
-            )
-            c.save()
-            return redirect("/account")
+                c = Comment(
+                    user=request.user,
+                    item=item,
+                    stars=form.cleaned_data["stars"],
+                    text=form.cleaned_data["comment"],
+                )
+                c.save()
+                return redirect("/account")
     else:
         form = CommentForm()
     return render(request, "Account/add_edit_comment.html", {"form": form, "action": "add", "categories": Category.objects.all()})
@@ -843,7 +883,7 @@ def account_edit_comments(request, item_id):
 
 
 def account_delete_comment(request, item_id):
-    if not request.user.is_authenticated or request.user.username != 'admin':
+    if not request.user.is_authenticated:
         return redirect("/login")
     if 'delete' in request.POST:
         comment = Comment.objects.get(item=Item.objects.get(id=item_id))
@@ -853,6 +893,7 @@ def account_delete_comment(request, item_id):
         return render(request, "Account/delete_comment.html", {"categories": Category.objects.all()})
 
 
+# CART
 def cart(request):
     if not request.user.is_authenticated:
         return redirect("/login")
@@ -939,46 +980,3 @@ def remove_cart(request, order_id):
     order_item.delete()
     return redirect("/cart")
 
-
-def add_new_subcategory(request):
-    if not request.user.is_authenticated or request.user.username != 'admin':
-        return redirect("/login")
-
-    print(request.method)
-    if request.method == "POST":
-        form = SubcategoryForm(request.POST)
-        if form.is_valid():
-            parent = Category.objects.get(id=form.cleaned_data['parent'])
-            sc = Category(
-                name=form.cleaned_data["subcategory"],
-                slug=0,
-                parent=parent
-            )
-            sc.save()
-            sc.slug = str(parent.id) + "-" + str(sc.id)
-            sc.save()
-            return redirect("/admin/category/" + str(parent.id) + "/edit/")
-    else:
-        form = SubcategoryForm()
-    return render(request, "AdminTemplates/add_new_subcategory.html", {"form": form})
-
-
-def delete_account(request):
-    if not request.user.is_authenticated:
-        redirect('/')
-
-    if request.method == "POST":
-        form = DeleteAccount(request.POST)
-        if form.is_valid():
-            try:
-                user = authenticate(username=request.user.username, password=form.cleaned_data['password'])
-                if user is not None:
-                    user.delete()
-                    return redirect('/')
-            except User.DoesNotExist:
-                return redirect('/')
-
-    else:
-        form = DeleteAccount()
-
-    return render(request, "Account/delete_account.html", {"form": form, "categories": Category.objects.all()})

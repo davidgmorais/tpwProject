@@ -132,7 +132,7 @@
                                   {% if item.discount != 0 %}
                                       {% with perc=item.discount|div:100 %}
                                           {% with op=1|sub:perc %}
-                                              <strong>{{ item.price|mul:op }}€</strong> <del>{{ item.price }}€</del>
+                                              <strong>{{ item.price|mul:op|floatformat:2 }}€</strong> <del>{{ item.price }}€</del>
                                           {% endwith %}
                                       {% endwith %}
                                   {% else %}
@@ -192,7 +192,7 @@
                                   {% if item.discount != 0 %}
                                       {% with perc=item.discount|div:100 %}
                                           {% with op=1|sub:perc %}
-                                              <strong>{{ item.price|mul:op }}€</strong> <del>{{ item.price }}€</del>
+                                              <strong>{{ item.price|mul:op|floatformat:2 }}€</strong> <del>{{ item.price }}€</del>
                                           {% endwith %}
                                       {% endwith %}
                                   {% else %}

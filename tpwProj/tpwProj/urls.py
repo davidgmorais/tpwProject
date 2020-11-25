@@ -60,6 +60,9 @@ urlpatterns = [
     path("admin/purchases/<int:sell_id>/accept/", views.approve, name="ApprovePurchase"),
     path("admin/purchases/<int:sell_id>/decline/", views.decline, name="DeclinePurchase"),
     path("admin/purchases/<int:sell_id>/", views.purchase_details, name="DetailsPurchase"),
+    # out of stock items
+    path("admin/outofstock/", views.manage_out_of_stock_items, name="OutOfStockItemManagement"),
+    path("admin/outofstock/<int:item_id>/", views.edit_out_of_stock_items, name="OutOfStockItemEdit"),
     # account
     path("account/", views.account, name="account"),
     path("account/changepassword/", auth_views.PasswordChangeView.as_view(template_name='Account/change_password.html',
@@ -70,7 +73,7 @@ urlpatterns = [
     path("account/comments/add/", views.account_add_comments, name="addComments"),
     path("account/comments/edit/<int:item_id>/", views.account_edit_comments, name="editComments"),
     path("account/comments/delete/<int:item_id>/", views.account_delete_comment, name="deleteComments"),
-    # path("account/transactions"),
+
     # cart manager
     path("cart/", views.cart, name="cart"),
     path("cart/<int:order_id>/increase/", views.increase_cart, name="increase_cart_qty"),

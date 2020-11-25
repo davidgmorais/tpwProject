@@ -37,10 +37,19 @@
                     <div>
                         <h3>Add to cart</h3>
                     </div>
-                    <a href="{% url 'addToCart' item.id %}" class="btn btn-primary btn-md my-0 p">
-                        Add to cart
-                        <i class="fas fa-shopping-cart ml-1" style="font-family: FontAwesome"></i>
+                   {% if item.quantity == 0 %}
+                        <a href="{% url 'addToCart' item.id %}" class="btn btn-secondary btn-md my-0 p disabled">
+                            <i class="fas fa-shopping-cart ml-1" style="font-family: FontAwesome"></i>
+                                Add to cart
                     </a>
+                        </a>
+                        Sorry! This product is out of stock.
+                    {% else %}
+                        <a href="{% url 'addToCart' item.id %}" class="btn btn-primary btn-md my-0 p">
+                            Add to cart
+                            <i class="fas fa-shopping-cart ml-1" style="font-family: FontAwesome"></i>
+                        </a>
+                    {% endif %}
                 </div>
                 <div>
                     <div>
