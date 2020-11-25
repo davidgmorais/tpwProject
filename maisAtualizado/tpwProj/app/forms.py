@@ -1,11 +1,9 @@
 from django import forms
-from django.db.models import Max
 
 from app.models import Item, Category
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core import validators
-from django.forms import widgets
 
 
 class Search(forms.Form):

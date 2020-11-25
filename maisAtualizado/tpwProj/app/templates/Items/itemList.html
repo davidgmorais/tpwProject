@@ -77,29 +77,20 @@
     </style>
 
 
-
     <div class="container-fluid">
-
         <div class="row">
             <div class="col-lg-2">
-
                 {# Filter sidebar #}
                 {% include 'Items/filters_sidebar.html' %}
-
             </div>
-
-            {# item list #}
             <div class="col-lg-10">
                 <br>
                 <h3>{{ title }}</h3>
                 <section class="text-center mb-4">
                     <div class="row wow fadeIn ">
-
                         {% for item in items %}
                             <div class="col-lg-3 col-md-6 mb-4 item">
-
                                 <div class="card">
-
                                     <a href="{% url 'item' item.id %}">
                                         <div class="view overlay">
                                             <img class="card-img-top" src="{{ item.picture.url }}">
@@ -128,21 +119,20 @@
                                             {% if item.discount != 0 %}
                                                 {% with perc=item.discount|div:100 %}
                                                     {% with op=1|sub:perc %}
-                                                        <strong>{{ item.price|mul:op }}€</strong>
-                                                        <del>{{ item.price }}€</del>
+                                                        {% with pdisc=item.price|mul:op %}
+                                                            <strong>{{ pdisc|floatformat:2 }}€</strong>
+                                                            <del>{{ item.price }}€</del>
+                                                        {% endwith %}
                                                     {% endwith %}
                                                 {% endwith %}
                                             {% else %}
                                                 <strong>{{ item.price }}€</strong>
                                             {% endif %}
                                         </h4>
-
                                         <span class="category-link"><a
                                                 href="{% url 'ItemsPageCat' item.category.slug %}">{{ item.category }}</a></span>
                                     </div>
-
                                 </div>
-
                             </div>
                         {% endfor %}
                     </div>
@@ -174,15 +164,11 @@
                                     </button>
                                 {% endif %}
                             </div>
-
                         </div>
-
                     </div>
                 </section>
                 </form>
-
             </div>
-
         </div>
     </div>
 {% endblock %}

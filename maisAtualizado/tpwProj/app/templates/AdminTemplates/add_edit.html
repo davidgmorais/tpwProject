@@ -5,6 +5,7 @@
         input[type="text"] {
             width: 100%;
         }
+
         .parent select {
             width: 100%;
             pointer-events: none;
@@ -179,13 +180,13 @@
                             </div>
                             <br>
                             <div class="form-row">
-                                    <div class="col-md-3">
-                                        {{ form.subcategory.label_tag }}
-                                    </div>
-                                    <div class="col-md-6">
-                                        {{ form.subcategory }}
-                                    </div>
-                                    {{ form.errors }}
+                                <div class="col-md-3">
+                                    {{ form.subcategory.label_tag }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form.subcategory }}
+                                </div>
+                                {{ form.errors }}
                             </div>
                             <div class="form-row">
                                 <div class="col-md-offset-2 col-md-10">
@@ -195,6 +196,7 @@
                                         <input type="submit" value="Add" class="btn btn-success"/>
                                     {% endif %}
                                 </div>
+
                             </div>
                         </form>
                     </section>
