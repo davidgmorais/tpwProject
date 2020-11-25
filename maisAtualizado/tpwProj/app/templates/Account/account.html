@@ -1,0 +1,163 @@
+{% extends "layout.html" %}
+{% load custom_filters %}
+
+{% block content %}
+    <section><br>
+        <div class="container col-md-8">
+            <h2>Profile</h2>
+            <div class="row">
+                <div class="col-md-2 col-4">
+                    <p>Username:</p>
+                </div>
+                <div class="col-md-6 col-8">
+                    <p>{{ profile.user.username }}</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2 col-4">
+                    <p>Name:</p>
+                </div>
+                <div class="col-md-6 col-8">
+                    <p>{{ profile.first_name }} {{ profile.last_name }}</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2 col-4">
+                    <p>Email:</p>
+                </div>
+                <div class="col-md-6 col-8">
+                    <p>{{ profile.user.email }}</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2 col-4">
+                    <p>Birthday:</p>
+                </div>
+                <div class="col-md-6 col-8">
+                    <p>{{ profile.birthdate }}</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-2 col-4">
+                    <p>Available Money:</p>
+                </div>
+                <div class="col-md-6 col-8">
+                    <p>{% if profile.money %}{{ profile.money }}{% else %}0.00{% endif %}€</p>
+                </div>
+            </div>
+
+            <div class="col-2">
+                <a class="btn btn-outline-dark" href="{% url 'ChangePassword' %}">Change Password</a>
+            </div>
+            <br>
+            <div class="col-2">
+                <form id="logoutForm" action="/logout" method="get">
+                    {% csrf_token %}
+                    <a class="btn btn-outline-dark" href="javascript:document.getElementById('logoutForm').submit()">Log
+                        off</a>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section><br>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            Sells History
+                        </div>
+                        <div class="card-body" style="overflow:auto;max-height: 40vh">
+                            <table class="table table-striped">
+                                <tr>
+                                    <th>Item Name</th>
+                                    <th>Money offer</th>
+                                    <th>Status</th>
+                                </tr>
+                                {% for row in sells %}
+                                    <tr {% if row.pendingSell %} class="table-warning" {% endif %}>
+                                        <td>{{ row.item.name }}</td>
+                                        <td>{{ row.moneyReceived }}€</td>
+                                        <td>
+                                            {% if row.pendingSell %}
+                                                Pending
+                                            {% elif row.accepted %}
+                                                Accepted
+                                            {% else %}
+                                                Denied
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                    <br>
+                </div>
+
+
+                <div class="col-lg-6 col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            Purchases History
+                        </div>
+                        <div class="card-body" style="overflow:auto;max-height: 40vh">
+                            <table class="table table-striped">
+                                <tr>
+                                    <th>Item Name</th>
+                                    <th>Price</th>
+                                    <th>On sale</th>
+                                </tr>
+                                {% for row in purchases %}
+                                    <tr>
+                                        <td>{{ row.item.name }}</td>
+                                        <td>{{ row.price }}€</td>
+                                        <td> {% if row.discountedP %}Yes{% else %}No{% endif %}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section><br>
+        <div class="container">
+            <div class="col-lg-12 col-12">
+                <div class="card">
+                    <div class="card-header">
+                        Your Comments
+                        <a style="align: right" href="{% url 'addComments' %}">Add Comment</a>
+                    </div>
+                    <div class="card-body" style="overflow:auto;max-height: 40vh">
+                        <table class="table table-striped">
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Stars</th>
+                                <th>Comment</th>
+                            </tr>
+                            {% for row in comments %}
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <a href="{% url 'editComments' row.item.id %}">{{ row.item.name }}
+                                            </a>
+                                        </div>
+                                    </td>
+                                    <td>{{ row.stars }}</td>
+                                    <td> {{ row.text }} </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
