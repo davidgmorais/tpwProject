@@ -136,3 +136,7 @@ class DeleteAccount(forms.Form):
 
     class Meta:
         model = User
+
+
+class AddQuantityForm(forms.Form):
+    quantity = forms.IntegerField(label="Quantity", validators=[validators.MinValueValidator(0)])

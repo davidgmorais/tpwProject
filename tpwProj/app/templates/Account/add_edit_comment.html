@@ -15,9 +15,9 @@
                     <form action="." method="POST" class="form-horizontal" enctype="multipart/form-data">
                         {% csrf_token %}
                         {% if action == 'edit' %}
-                            <h4>Edit Item</h4>
+                            <h4>Edit Comment</h4>
                         {% else %}
-                            <h4>Add Item</h4>
+                            <h4>Add Comment</h4>
                         {% endif %}
                         <hr/>
                         <div class="form-group">

@@ -60,6 +60,9 @@ urlpatterns = [
     path("admin/purchases/<int:sell_id>/accept/", views.approve, name="ApprovePurchase"),
     path("admin/purchases/<int:sell_id>/decline/", views.decline, name="DeclinePurchase"),
     path("admin/purchases/<int:sell_id>/", views.purchase_details, name="DetailsPurchase"),
+    # out of stock items
+    path("admin/outofstock/", views.manage_out_of_stock_items, name="OutOfStockItemManagement"),
+    path("admin/outofstock/<int:item_id>/", views.edit_out_of_stock_items, name="OutOfStockItemEdit"),
     # account
     path("account/", views.account, name="account"),
     path("account/changepassword/", auth_views.PasswordChangeView.as_view(template_name='Account/change_password.html',
