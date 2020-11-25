@@ -478,6 +478,7 @@ def discount_stats():
                                       FullPrice=Count(Case(When(discountedP=False, then=Value(1)))))
 
 
+# Create your views here.
 def home_page(request):
     t_params = {
         "deal_of_day": get_top_promo(),
@@ -512,29 +513,6 @@ def admin(request):
         "out_of_stock": Item.objects.filter(quantity=0)
     }
     return render(request, "AdminTemplates/dashboard.html", t_params)
-
-def manage_out_of_stock_items(request):
-    return render(request, "AdminTemplates/out_of_stock.html", {"table": Item.objects.filter(quantity=0), "type": "itemList"})
-
-
-def edit_out_of_stock_items(request, item_id):
-    if not request.user.is_authenticated or request.user.username != 'admin':
-        return redirect("/login")
-
-    if request.method == "POST":
-        form = AddQuantityForm(request.POST)
-        if form.is_valid():
-            item = Item.objects.get(id=item_id)
-            qty = form.cleaned_data["quantity"]
-            item.quantity=qty
-            item.save()
-            return redirect("/admin/outofstock")
-    else:
-        item = Item.objects.get(id=item_id)
-        form = ItemForm(initial={"quantity": item.quantity})
-
-    return render(request, "AdminTemplates/out_of_stock.html", {"form": form, "type": "item", "item": item})
-
 
 def manage_out_of_stock_items(request):
     return render(request, "AdminTemplates/out_of_stock.html", {"table": Item.objects.filter(quantity=0), "type": "itemList"})
@@ -858,7 +836,6 @@ def account_add_comments(request):
     if request.method == "POST":
         form = CommentForm(request.POST)
         if form.is_valid():
-            print("hello")
             item = Item.objects.get(name=form.cleaned_data['item'])
             purchases=[]
             for x in Purchase.objects.filter(user__email=request.user.email):

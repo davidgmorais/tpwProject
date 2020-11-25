@@ -30,6 +30,8 @@ Utilizador Admin
 : aceitar ou negar propostas de vendas
 : estatisticas do negócio
 
+**Nota:** Todos os items aparecem a NEW porque foram adicionados através da interface que criamos para o admin, após 2 semanas ficavam sem essa 'propriedade'
+
 ## Contas
 Conta admin
 : username: admin
