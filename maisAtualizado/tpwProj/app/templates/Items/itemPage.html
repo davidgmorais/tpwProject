@@ -4,115 +4,129 @@
 {% block content %}
 
     <div class="container">
-        <div class="row">
-            <div class="col-sm-7">
-                <img src="{{ item.picture.url }}" style="width: 100% !important; height: auto !important;">
-            </div>
+    <div class="row">
+        <div class="col-sm-7">
+            <img src="{{ item.picture.url }}" style="width: 100% !important; height: auto !important;">
+        </div>
 
-            <div class="col-sm-5">
+        <div class="col-sm-5">
+            <div>
                 <h2><b>{{ item.name }}</b></h2>
+            </div>
+            <div>
                 {% if item.discount != 0 %}
                     {% with perc=item.discount|div:100 %}
                         {% with op=1|sub:perc %}
-                            <p>
-                            <h3>
-                                <del>{{ item.price }}€</del>
-                                <strong>{{ item.price|mul:op }}€</strong> ({{ item.discount }}% off)
-                            </h3>
+                            {% with pdisc=item.price|mul:op %}
+                                <h3>Buy for
+                                    <del>{{ item.price }}€</del>
+                                    <strong>{{ pdisc|floatformat:2 }}€</strong> ({{ item.discount }}% off)
+                                </h3>
+                            {% endwith %}
                         {% endwith %}
                     {% endwith %}
                 {% else %}
-                    <h3>{{ item.price }}€</h3>
+                    <h3>Buy for {{ item.price }}€</h3>
                 {% endif %}
-                <p>Sell for {{ item.sellMoney }}</p>
-
-                <h5>{{ item.brand }}</h5>
-                <h5>{{ item.description }}</h5>
-                {% if user.is_authenticated %}
+                <h4>Sell for {{ item.sellMoney }}€</h4>
+            </div>
+            <h5>Brand: {{ item.brand }}</h5>
+            <p>{{ item.description }}</p>
+            {% if user.is_authenticated %}
+                <div>
                     <div>
-                        <h2>Add to cart</h2>
+                        <h3>Add to cart</h3>
                     </div>
-                    {# https://www.youtube.com/watch?v=Xjty8q524Jo #}
                     <a href="{% url 'addToCart' item.id %}" class="btn btn-primary btn-md my-0 p">
                         Add to cart
-                        <i class="fas fa-shopping-cart ml-1"></i>
+                        <i class="fas fa-shopping-cart ml-1" style="font-family: FontAwesome"></i>
                     </a>
+                </div>
+                <div>
                     <div>
                         <br>
-                        <h5>Sell this item</h5>
+                        <h3>Sell this item</h3>
                     </div>
-                    {# https://www.youtube.com/watch?v=Xjty8q524Jo #}
-                    <a href="{% url 'sellItem' item.id %}" class="btn btn-danger btn-sm my-0 p">
+
+                    <a href="{% url 'sellItem' item.id %}" class="btn btn-danger btn-mm my-0 p">
                         Sell item
-                        <i class="fas fa-shopping-cart ml-1"></i>
+                        <i class="fas fa-shopping-cart ml-1" style="font-family: FontAwesome"></i>
                     </a>
-                {% else %}
-                    <p>To buy and sell items you must be logged in.</p>
-                    <a href="{% url 'login' %}" class="btn btn-primary btn-md my-0 p">
-                        Log in
-                    </a>
-                {% endif %}
-            </div>
-        </div>
+                </div>
 
-        <div class="container">
-            <div class="container-fluid" style="padding-top: 10px">
-                <h1>Comments</h1>
-                <br>
-                {% if comments %}
-                    {% for comment in comments %}
-
-                        <h3><b>{{ comment.user }}</b>:
-                            {% if comment.stars == 0 %}
-                                <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-                            {% endif %}
-                            {% if comment.stars == 1 %}
-                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-                            {% endif %}
-                            {% if comment.stars == 2 %}
-                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-                            {% endif %}
-                            {% if comment.stars == 3 %}
-                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-                            {% endif %}
-                            {% if comment.stars == 4 %}
-                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-                            {% endif %}
-                            {% if comment.stars == 5 %}
-                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                            {% endif %}
-                        </h3>
-                        <p>&emsp;{{ comment.text }}</p>
-                    {% endfor %}
-                {% else %}
-                    <p>No comments for this item</p>
-                {% endif %}
-            </div>
+            {% else %}
+                <p><strong>To buy and sell items you must be logged in.</strong></p>
+                <a href="{% url 'login' %}" class="btn btn-primary btn-sm my-0 p">
+                    Log in
+                </a>
+            {% endif %}
         </div>
+    </div>
+    <div class="container">
+        <div class="container-fluid" style="padding-top: 10px">
+            <h3>Specifications</h3>
+            <hr>
+            {{ item.specifications }}
+        </div>
+    </div>
+    <br>
+    <div class="container">
+        <div class="container-fluid" style="padding-top: 10px">
+            <h3>Comments</h3>
+            <hr>
+            {% if comments %}
+                {% for comment in comments %}
+                    <h4><b>{{ comment.user }}</b>:
+                        {% if comment.stars == 0 %}
+                            <i class="fas fa-star-o" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star-o" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star-o" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star-o" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star-o" style="font-family: FontAwesome"></i>
+
+                        {% elif comment.stars == 1 %}
+                            <i class="fas fa-star" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star-o" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star-o" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star-o" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star-o" style="font-family: FontAwesome"></i>
+
+                        {% elif comment.stars == 2 %}
+                            <i class="fas fa-star" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star-o" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star-o" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star-o" style="font-family: FontAwesome"></i>
+
+                        {% elif comment.stars == 3 %}
+                            <i class="fas fa-star" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star-o" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star-o" style="font-family: FontAwesome"></i>
+
+                        {% elif comment.stars == 4 %}
+                            <i class="fas fa-star" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star-o" style="font-family: FontAwesome"></i>
+
+                        {% elif comment.stars == 5 %}
+                            <i class="fas fa-star" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star" style="font-family: FontAwesome"></i>
+                            <i class="fas fa-star" style="font-family: FontAwesome"></i>
+                        {% endif %}
+                    </h4>
+                    <p>&emsp;{{ comment.text }}</p>
+                {% endfor %}
+            {% else %}
+                <p>No comments for this item</p>
+            {% endif %}
+        </div>
+    </div>
 
 
 {% endblock %}

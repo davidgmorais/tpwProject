@@ -12,80 +12,78 @@
             <div class="col-lg-10">
                 <br>
 
-            {% if not items %}
-                <div>
-                    <h3>Search for: <strong>{{ query }}</strong></h3>
-
-
+                {% if not items %}
+                    <div>
+                        <h3>Search for: <strong>{{ query }}</strong></h3>
                         <br>
                         <h4>Nothing was found. Go to <a href="{% url 'ItemsPage' %}">Products Page</a></h4>
 
-                </div>
+                    </div>
                 {% else %}
-                <div>
-                    <h3>Search for: <strong>{{ query }}</strong></h3>
-
-
+                    <div>
+                        <h3>Search for: <strong>{{ query }}</strong></h3>
                         <br>
                         <h4>Found {{ items|length }} item{{ items|pluralize }}.</h4>
+                    </div>
+                    <section class="text-center mb-4">
 
-                </div>
-                <section class="text-center mb-4">
+                        <div class="row wow fadeIn ">
 
-                    <div class="row wow fadeIn ">
+                            {% for item in items %}
+                                <div class="col-lg-3 col-md-6 mb-4 item">
 
-                        {% for item in items %}
-                            <div class="col-lg-3 col-md-6 mb-4 item">
+                                    <div class="card">
 
-                                <div class="card">
-
-                                    <a href="{% url 'item' item.id %}">
-                                        <div class="view overlay">
-                                            <img class="card-img-top" src="{{ item.picture.url }}">
-                                            <a>
-                                                <div class="mask rgba-white-slight"></div>
-                                            </a>
-                                            {% if item.insertDate|is_new %}
-                                                <span class="new" {% if item.discount != 0 %}
-                                                      style="top: 50px" {% endif %}>New</span>
-                                            {% endif %}
-                                            {% if item.discount != 0 %}
-                                                <span class="price-dec">{{ item.discount }}% Off</span>
-                                            {% endif %}
-                                        </div>
-                                    </a>
-                                    <div class="card-body text-center">
-                                        <h5>
-                                            <strong>
-                                                <a class="dark-grey-text"
-                                                   href="{% url 'item' item.id %}">{{ item.name }} </a>
-                                            </strong>
-                                        </h5>
-                                        <h4 class="blue-text">
-                                            {% if item.discount != 0 %}
-                                                {% with perc=item.discount|div:100 %}
-                                                    {% with op=1|sub:perc %}
-                                                        <strong>{{ item.price|mul:op }}€</strong>
-                                                        <del>{{ item.price }}€</del>
+                                        <a href="{% url 'item' item.id %}">
+                                            <div class="view overlay">
+                                                <img class="card-img-top" src="{{ item.picture.url }}">
+                                                <a>
+                                                    <div class="mask rgba-white-slight"></div>
+                                                </a>
+                                                {% if item.insertDate|is_new %}
+                                                    <span class="new" {% if item.discount != 0 %}
+                                                          style="top: 50px" {% endif %}>New</span>
+                                                {% endif %}
+                                                {% if item.discount != 0 %}
+                                                    <span class="price-dec">{{ item.discount }}% Off</span>
+                                                {% endif %}
+                                            </div>
+                                        </a>
+                                        <div class="card-body text-center">
+                                            <h5>
+                                                <strong>
+                                                    <a class="dark-grey-text"
+                                                       href="{% url 'item' item.id %}">{{ item.name }} </a>
+                                                </strong>
+                                            </h5>
+                                            <h4 class="blue-text">
+                                                {% if item.discount != 0 %}
+                                                    {% with perc=item.discount|div:100 %}
+                                                        {% with op=1|sub:perc %}
+                                                            {% with pdisc=item.price|mul:op %}
+                                                                <strong>{{ pdisc|floatformat:2 }}€</strong>
+                                                                <del>{{ item.price }}€</del>
+                                                            {% endwith %}
+                                                        {% endwith %}
                                                     {% endwith %}
-                                                {% endwith %}
-                                            {% else %}
-                                                <strong>{{ item.price }}€</strong>
-                                            {% endif %}
-                                        </h4>
-                                        <span class="category-link">
+                                                {% else %}
+                                                    <strong>{{ item.price }}€</strong>
+                                                {% endif %}
+                                            </h4>
+                                            <span class="category-link">
                                                 <a href="{% url 'ItemsPageCat' item.category.slug %}">{{ item.category }}</a></span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </section>
-            {% endif %}
+                            {% endfor %}
+                        </div>
+                    </section>
+                {% endif %}
             </div>
         </div>
     </div>
 {% endblock %}
+
 
 
 

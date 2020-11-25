@@ -84,15 +84,15 @@ class OrderItem(models.Model):
         return f"{self.item.name} x {self.qty}"
 
     def get_total_item_price(self):
-        return self.qty * self.item.price
+        return round(self.qty * self.item.price,2)
 
     def get_total_discount_item_price(self):
-        return self.qty * (self.item.price * (1 - self.item.discount / 100))
+        return round(self.qty * (self.item.price * (1 - self.item.discount / 100)), 2)
 
     def get_final_price(self):
         if self.item.discount != 0:
             return self.get_total_discount_item_price()
-        return self.get_total_item_price()
+        return round(self.get_total_item_price(),2)
 
 
 class Comment(models.Model):

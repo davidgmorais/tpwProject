@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from django import template
+from decimal import Decimal
 
 register = template.Library()
 
