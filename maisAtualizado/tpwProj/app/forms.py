@@ -115,7 +115,6 @@ class SubcategoryForm(forms.Form):
 
 
 class CommentForm(forms.Form):
-    item = forms.ChoiceField(choices=[(i.name, i.name) for i in Item.objects.all()])
+    item = forms.ChoiceField(choices=[(i.name, i.name) for i in Item.objects.all()], required=False)
     stars = forms.IntegerField(label="Rating", validators=[validators.MinValueValidator(0), validators.MaxValueValidator(5)])
     comment = forms.CharField(label="Comment", max_length=1000)
-

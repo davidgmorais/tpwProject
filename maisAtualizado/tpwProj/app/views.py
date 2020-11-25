@@ -795,19 +795,18 @@ def account_edit_comments(request, item_id):
     if request.method == "POST":
         form = CommentForm(request.POST)
         if form.is_valid():
-            comment = Item.objects.get(id=item_id)
-            comment.user = Comment.objects.filter(user=request.user)
+            comment = Comment.objects.filter(user=request.user).get(item=item_id)
             comment.stars = form.cleaned_data["stars"]
             comment.text = form.cleaned_data["comment"]
             comment.save()
             return redirect("/account")
     else:
-        comment = Comment.objects.filter(user=request.user)[0]
-        form = CommentForm(initial={"item": comment.item,
+        comment = Comment.objects.filter(user=request.user).get(item=item_id)
+        form = CommentForm(initial={
                                     "stars": comment.stars,
                                     "comment": comment.text})
-
-    return render(request, "Account/add_edit_comment.html", {"form": form, "action": "edit", "categories": Category.objects.all(), 'item':Item.objects.get(id=item_id)})
+    print(form.errors)
+    return render(request, "Account/add_edit_comment.html", {"form": form, "action": "edit", "categories": Category.objects.all(), 'item': Item.objects.get(id=item_id)})
 
 
 def account_delete_comment(request, item_id):
