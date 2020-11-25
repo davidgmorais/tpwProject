@@ -170,6 +170,17 @@
                             {% csrf_token %}
                             <h4>Add Subcategory</h4>
                             <hr/>
+                        {% if parentCat %}
+                            <div class="form-row parent">
+                                <div class="col-md-3">
+                                    Category
+                                </div>
+                                <div class="col-md-6">
+                                    {{ parentCat }}
+                                </div>
+                            </div>
+                            <br>
+                            {% else %}
                             <div class="form-row parent">
                                 <div class="col-md-3">
                                     {{ form.parent.label_tag }}
@@ -179,6 +190,8 @@
                                 </div>
                             </div>
                             <br>
+                            {% endif %}
+
                             <div class="form-row">
                                 <div class="col-md-3">
                                     {{ form.subcategory.label_tag }}

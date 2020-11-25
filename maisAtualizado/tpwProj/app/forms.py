@@ -112,10 +112,15 @@ class CategoryForm(forms.Form):
 
 
 class SubcategoryForm(forms.Form):
-    parent = forms.ChoiceField(choices=[(c.id, c.name) for c in Category.objects.all() if c.parent is None],
+    parent = forms.ChoiceField(choices=(),
                                widget=forms.widgets.Select(),
-                               label="Category")
+                               label="Category",
+                               required=False)
     subcategory = forms.CharField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['parent'].choices = [(c.id, c.name) for c in Category.objects.all() if c.parent is None]
 
 
 class CommentForm(forms.Form):

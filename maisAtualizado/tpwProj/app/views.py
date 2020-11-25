@@ -660,8 +660,8 @@ def add_subcategory(request, category_id):
             sc.save()
             return redirect("/admin/category/" + str(category_id) + "/edit/")
     else:
-        form = SubcategoryForm(initial={'parent': category_id})
-    return render(request, "AdminTemplates/add_edit.html", {"form": form, "action": "add", "type": "subcategory"})
+        form = SubcategoryForm()
+    return render(request, "AdminTemplates/add_edit.html", {"form": form, "action": "add", "type": "subcategory", "parentCat": Category.objects.get(id=category_id)})
 
 
 def edit_subcategory(request, category_id, subcategory_id):
@@ -680,6 +680,26 @@ def edit_subcategory(request, category_id, subcategory_id):
             "subcategory": Category.objects.get(slug=str(category_id) + "-" + str(subcategory_id)).name
         })
     return render(request, "AdminTemplates/add_edit.html", {"form": form, "action": "edit", "type": "subcategory"})
+
+def account_edit_comments(request, item_id):
+    if not request.user.is_authenticated:
+        return redirect("/login")
+
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = Comment.objects.filter(user=request.user).get(item=item_id)
+            comment.stars = form.cleaned_data["stars"]
+            comment.text = form.cleaned_data["comment"]
+            comment.save()
+            return redirect("/account")
+    else:
+        comment = Comment.objects.filter(user=request.user).get(item=item_id)
+        form = CommentForm(initial={
+                                    "stars": comment.stars,
+                                    "comment": comment.text})
+    print(form.errors)
+    return render(request, "Account/add_edit_comment.html", {"form": form, "action": "edit", "categories": Category.objects.all(), 'item': Item.objects.get(id=item_id)})
 
 
 def delete_category(request, category_id):
@@ -961,4 +981,4 @@ def delete_account(request):
     else:
         form = DeleteAccount()
 
-    return render(request, "Account/delete_account.html", {"form": form})
+    return render(request, "Account/delete_account.html", {"form": form, "categories": Category.objects.all()})
