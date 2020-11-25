@@ -13,9 +13,15 @@ from django.core.paginator import Paginator
 
 
 def home(request):
+
+    biggest_discount =Item.objects.filter(discount__gt=0).order_by('-discount')
+    if len(biggest_discount) > 0:
+        biggestDiscount = biggest_discount[0].discount
+    else: biggest_discount = 0
+
     tparams = {
         'discountedItems': Item.objects.filter(discount__gt=0).order_by('-discount')[:4],
-        'biggestDiscount': Item.objects.filter(discount__gt=0).order_by('-discount')[0].discount,
+        'biggestDiscount': biggest_discount,
         'newestItems': Item.objects.filter(insertDate__range=[datetime.today() - timedelta(days=14),
                                                               datetime.today()]).order_by("-insertDate")[:4],
         'categories': Category.objects.all(),
@@ -633,7 +639,6 @@ def delete_subcategory(request, category_id, subcategory_id):
 def add_subcategory(request, category_id):
     if not request.user.is_authenticated or request.user.username != 'admin':
         return redirect("/login")
-
     if request.method == "POST":
         form = SubcategoryForm(request.POST)
         if form.is_valid():

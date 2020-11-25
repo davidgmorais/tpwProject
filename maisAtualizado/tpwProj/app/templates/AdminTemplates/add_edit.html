@@ -169,7 +169,7 @@
                             {% csrf_token %}
                             <h4>Add Subcategory</h4>
                             <hr/>
-                             <div class="form-row parent">
+                            <div class="form-row parent">
                                 <div class="col-md-3">
                                     {{ form.parent.label_tag }}
                                 </div>
@@ -179,6 +179,15 @@
                             </div>
                             <br>
                             <div class="form-row">
+                                    <div class="col-md-3">
+                                        {{ form.subcategory.label_tag }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        {{ form.subcategory }}
+                                    </div>
+                                    {{ form.errors }}
+                            </div>
+                            <div class="form-row">
                                 <div class="col-md-offset-2 col-md-10">
                                     {% if action == "edit" %}
                                         <input type="submit" value="Save changes" class="btn btn-success"/>
@@ -186,7 +195,6 @@
                                         <input type="submit" value="Add" class="btn btn-success"/>
                                     {% endif %}
                                 </div>
-                                {{ form.errors }}
                             </div>
                         </form>
                     </section>

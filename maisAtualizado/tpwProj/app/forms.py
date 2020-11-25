@@ -104,13 +104,13 @@ class ItemForm(forms.Form):
 
 
 class CategoryForm(forms.Form):
-    parent = forms.ChoiceField(choices=[(c.id, c.name) for c in Category.objects.all() if c.parent is None],
-                               widget=forms.widgets.Select(),
-                               label="Category")
     category = forms.CharField()
 
 
 class SubcategoryForm(forms.Form):
+    parent = forms.ChoiceField(choices=[(c.id, c.name) for c in Category.objects.all() if c.parent is None],
+                               widget=forms.widgets.Select(),
+                               label="Category")
     subcategory = forms.CharField()
 
 
