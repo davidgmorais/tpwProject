@@ -102,6 +102,12 @@ class ItemForm(forms.Form):
     picture = forms.ImageField(label="Picture")
     sellMoney = forms.FloatField(label="Money for users")
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['category'].choices = [(c.name, [(sc.id, sc.name) for sc in Category.objects.all()
+                                                     if sc.parent is not None and sc.parent.name == c.name])
+                                           for c in Category.objects.all() if c.parent is None]
+
 
 class CategoryForm(forms.Form):
     category = forms.CharField()
@@ -116,5 +122,14 @@ class SubcategoryForm(forms.Form):
 
 class CommentForm(forms.Form):
     item = forms.ChoiceField(choices=[(i.name, i.name) for i in Item.objects.all()], required=False)
-    stars = forms.IntegerField(label="Rating", validators=[validators.MinValueValidator(0), validators.MaxValueValidator(5)])
+    stars = forms.IntegerField(label="Rating",
+                               validators=[validators.MinValueValidator(0), validators.MaxValueValidator(5)])
     comment = forms.CharField(label="Comment", max_length=1000)
+
+
+class DeleteAccount(forms.Form):
+    password = forms.CharField(widget=forms.PasswordInput(),
+                               label="Confirm your password:")
+
+    class Meta:
+        model = User

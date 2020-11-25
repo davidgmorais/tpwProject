@@ -54,7 +54,7 @@ urlpatterns = [
     path("admin/category/<int:category_id>/edit/<int:subcategory_id>/", views.edit_subcategory, name="EditSC"),
     path("admin/category/<int:category_id>/delete/<int:subcategory_id>/", views.delete_subcategory, name="DeleteSC"),
     path("admin/category/<int:category_id>/add/", views.add_subcategory, name="AddSC"),
-path("admin/subcategory/add/", views.add_new_subcategory, name='addNewSubcategory'),
+    path("admin/subcategory/add/", views.add_new_subcategory, name='addNewSubcategory'),
     # approve sells
     path("admin/purchases/", views.approve_list, name="ListPurchase"),
     path("admin/purchases/<int:sell_id>/accept/", views.approve, name="ApprovePurchase"),
@@ -63,7 +63,10 @@ path("admin/subcategory/add/", views.add_new_subcategory, name='addNewSubcategor
     # account
     path("account/", views.account, name="account"),
     path("account/changepassword/", auth_views.PasswordChangeView.as_view(template_name='Account/change_password.html',
-                                                                         success_url='/account/'),name='ChangePassword'),
+                                                                          success_url='/account/'),
+         name='ChangePassword'),
+    path("account/delete/", views.delete_account, name='DeleteAccount'),
+
     path("account/comments/add/", views.account_add_comments, name="addComments"),
     path("account/comments/edit/<int:item_id>/", views.account_edit_comments, name="editComments"),
     path("account/comments/delete/<int:item_id>/", views.account_delete_comment, name="deleteComments"),

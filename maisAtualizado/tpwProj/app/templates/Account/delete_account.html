@@ -1,0 +1,17 @@
+{% extends "layout2.html" %}
+
+{% block cont %}
+    <div class="container text-center" style="margin-top: 10%">
+        <form action="." method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <div class="container">
+                    {{ form.password.label_tag }}
+                </div>
+                {{ form.password }}
+            </div>
+            <a class="btn btn-outline-secondary" href="{% url 'account' %}">Back</a>
+            <input type="submit" value="Delete" class="btn btn-danger">
+        </form>
+    </div>
+{% endblock %}

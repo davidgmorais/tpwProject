@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from app.models import Category, Item, Comment, Profile, Purchase, Sell, Cart, OrderItem
-from app.forms import Search, SignUpForm, ItemForm, CategoryForm, SubcategoryForm, CategoryFilter, CommentForm
+from app.forms import Search, SignUpForm, ItemForm, CategoryForm, SubcategoryForm, CategoryFilter, CommentForm, \
+    DeleteAccount
 from django.db.models import Q
 from django.contrib.auth import login, authenticate
 from datetime import datetime, timedelta
@@ -150,6 +151,12 @@ def itemListCat(request, slug):
                 items = order(items, form.cleaned_data['order'])
     else:
         form = CategoryFilter()
+
+    paginator = Paginator(items, 20)
+    page_nr = request.GET.get('page')
+    if page_nr is None:
+        page_nr = 1
+        items = paginator.get_page(page_nr)
 
     c = Category.objects.get(slug=slug)
     tparams = {
@@ -911,6 +918,7 @@ def remove_cart(request, order_id):
     order_item.delete()
     return redirect("/cart")
 
+
 def add_new_subcategory(request):
     if not request.user.is_authenticated or request.user.username != 'admin':
         return redirect("/login")
@@ -932,3 +940,24 @@ def add_new_subcategory(request):
     else:
         form = SubcategoryForm()
     return render(request, "AdminTemplates/add_new_subcategory.html", {"form": form})
+
+
+def delete_account(request):
+    if not request.user.is_authenticated:
+        redirect('/')
+
+    if request.method == "POST":
+        form = DeleteAccount(request.POST)
+        if form.is_valid():
+            try:
+                user = authenticate(username=request.user.username, password=form.cleaned_data['password'])
+                if user is not None:
+                    user.delete()
+                    return redirect('/')
+            except User.DoesNotExist:
+                return redirect('/')
+
+    else:
+        form = DeleteAccount()
+
+    return render(request, "Account/delete_account.html", {"form": form})
