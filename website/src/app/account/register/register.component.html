@@ -1,0 +1,76 @@
+<nav class="navbar navbar-expand-lg sticky-top navbar-light bg-light justify-content-between">
+  <div class="container">
+
+    <div class="col-xl-2 col-lg-2 col-md-6 col-6 order-xl-1 order-lg-1 order-md-1 order-1">
+      <div class="row">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup1"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="/">Store</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup1">
+    <div class="container">
+      <div class="navbar-nav d-flex justify-content-between">
+        <a class="nav-item nav-link" routerLink="/">Back to Store</a>
+        <a class="nav-item nav-link" routerLink="/login">Sign In</a>
+        <a class="nav-item nav-link" routerLink="/registration">Sign Up</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+<div class="container">
+  <br>
+  <h2>Sign up</h2>
+  <hr/>
+  <form [formGroup]="registerGroup" (submit)="register()">
+    <div class="col-md-4">
+
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" formControlName="username" id="username" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="firstName">First Name:</label>
+        <input type="text" formControlName="firstName" id="firstName" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="lastName">Last Name:</label>
+        <input type="text" formControlName="lastName" id="lastName" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" formControlName="email" id="email" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="birthdate">Birthdate:</label>
+        <input type="date" formControlName="birthdate" id="birthdate" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" formControlName="password" id="password" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm password:</label>
+        <input type="password" formControlName="confirmPassword" id="confirmPassword" class="form-control">
+      </div>
+
+      <input type="submit" value="Log in" class="btn btn-secondary"/>
+
+    </div>
+
+  </form>
+</div>

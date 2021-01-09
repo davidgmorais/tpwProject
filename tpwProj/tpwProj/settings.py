@@ -142,4 +142,4 @@ REST_FRAMEWORK = {
 
 
 # CORS (Cross-Origin Resource Sharing) Config
-CORS_ORIGIN_ALLOW_ANY = True
+CORS_ORIGIN_ALLOW_ALL = True

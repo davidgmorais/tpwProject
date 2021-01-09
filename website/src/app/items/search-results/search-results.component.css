@@ -1,0 +1,69 @@
+.new {
+  background-color: #8493ca;
+  display: inline-block;
+  font-size: 11px;
+  color: #fff;
+  right: 20px;
+  top: 20px;
+  padding: 1px 16px;
+  font-weight: 700;
+  text-align: center;
+  position: absolute;
+  text-transform: uppercase;
+  height: 26px;
+  line-height: 24px;
+}
+
+.price-dec {
+  background-color: sandybrown;
+  display: inline-block;
+  font-size: 11px;
+  color: #fff;
+  right: 20px;
+  top: 20px;
+  padding: 1px 16px;
+  font-weight: 700;
+  text-align: center;
+  position: absolute;
+  text-transform: uppercase;
+  height: 26px;
+  line-height: 25px;
+}
+
+.item {
+  padding: 1%;
+  margin-top: 5px;
+}
+
+@media (max-width: 768px) {
+  .item h5 {
+    font-size: 20px;
+  }
+
+  .item s {
+    font-size: 10px
+  }
+
+  .item .discount-flag {
+    font-size: 12px
+  }
+}
+
+.item del {
+  color: red;
+}
+
+.item :hover h6 {
+  color: darkred;
+}
+
+.item a {
+  text-decoration: None;
+  color: black;
+}
+
+.item .card {
+  background-color: white;
+  padding: 20px;
+  box-shadow: 5px 5px 8px 1px #d4d4d4;
+}

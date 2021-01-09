@@ -1,0 +1,63 @@
+<nav class="navbar navbar-expand-lg sticky-top navbar-light bg-light justify-content-between">
+  <div class="container">
+
+    <div class="col-xl-2 col-lg-2 col-md-6 col-6 order-xl-1 order-lg-1 order-md-1 order-1">
+      <div class="row">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup1"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="/">Store</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup1">
+    <div class="container">
+      <div class="navbar-nav d-flex justify-content-between">
+        <a class="nav-item nav-link" routerLink="/">Back to Store</a>
+        <a class="nav-item nav-link" routerLink="/login">Sign In</a>
+        <a class="nav-item nav-link" routerLink="/registration">Sign Up</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+
+<div class="container">
+  <br>
+  <div class="row">
+    <div class="col-md-8">
+      <section id="loginForm">
+        <form class="form-horizontal" [formGroup]="loginGroup" (submit)="login()">
+          <h4>Sign In</h4>
+          <hr/>
+
+          <div class="form-group">
+            <label for="username">Username</label>
+            <br>
+            <input type="text" id="username" formControlName="username">
+          </div>
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <br>
+            <input type="password" id="password" formControlName="password">
+          </div>
+
+          <div class="form-group">
+            <input type="hidden" name="next" value="/"/>
+            <input type="submit" value="Log in" class="btn btn-secondary"/>
+          </div>
+          <p class="validation-summary-errors" *ngIf="errorMsg">{{errorMsg}}</p>
+        </form>
+        <div>
+          <p>Don't have an account? <b>Register </b><a routerLink="/registration">here</a></p>
+        </div>
+      </section>
+    </div>
+
+  </div>
+</div>

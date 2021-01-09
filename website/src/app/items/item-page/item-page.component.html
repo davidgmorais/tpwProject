@@ -1,0 +1,142 @@
+<app-navbar></app-navbar>
+<div class="container" *ngIf="item">
+  <div class="row">
+    <div class="col-sm-7">
+      <img src="{{ item.picture }}" style="width: 100% !important; height: auto !important;">
+    </div>
+
+    <div class="col-sm-5">
+      <div>
+        <h2><b>{{ item.name }}</b></h2>
+      </div>
+      <div>
+
+        <h3 *ngIf="item.discount != 0">Buy for
+          <del>{{ item.price }}€</del>
+          <strong>{{ ((item.price - item.discount) * 100 / item.price).toFixed(2)  }}€</strong> ({{item.discount}}% off)
+        </h3>
+
+        <h3 *ngIf="item.discount == 0">Buy for {{ item.price }}€</h3>
+        <h4>Sell for {{ item.sellMoney }}€</h4>
+      </div>
+      <h5>Brand: {{ item.brand }}</h5>
+      <p>{{ item.description }}</p>
+
+      <div *ngIf="userIsAuthenticated">
+        <div>
+          <div>
+            <h3>Add to cart</h3>
+          </div>
+
+          <div *ngIf="item.quantity == 0">
+            <a (click)="addToCart()" class="btn btn-secondary btn-md my-0 p disabled">
+              Add to cart
+              <i class="material-icons">shopping_cart</i>
+            </a>
+            Sorry! This product is out of stock.
+          </div>
+
+          <div *ngIf="item.quantity != 0">
+            <a (click)="addToCart()" class="btn btn-primary btn-md my-0 p">
+              Add to cart
+              <i class="material-icons">shopping_cart</i>
+            </a>
+          </div>
+
+        </div>
+        <div>
+          <div>
+            <br>
+            <h3>Sell this item</h3>
+          </div>
+
+          <a (click)="sellItem()" class="btn btn-danger btn-mm my-0 p">
+            Sell item
+            <i class="material-icons">shopping_cart</i>
+          </a>
+        </div>
+      </div>
+
+      <div *ngIf="!userIsAuthenticated">
+        <p><strong>To buy and sell items you must be logged in.</strong></p>
+        <a routerLink="/login" class="btn btn-primary btn-sm my-0 p">
+          Log in
+        </a>
+      </div>
+
+    </div>
+  </div>
+  <div class="container">
+    <div class="container-fluid" style="padding-top: 10px">
+      <h3>Specifications</h3>
+      <hr>
+      {{ item.specifications }}
+    </div>
+  </div>
+  <br>
+  <div class="container">
+    <div class="container-fluid" style="padding-top: 10px">
+      <h3>Comments</h3>
+      <hr>
+      <div *ngIf="comments && comments.length > 0">
+        <div *ngFor="let comment of comments">
+        <h4><b>{{ comment.user }}</b>:
+          <div *ngIf="comment.stars == 0">
+            <i class="material-icons">star_border</i>
+            <i class="material-icons">star_border</i>
+            <i class="material-icons">star_border</i>
+            <i class="material-icons">star_border</i>
+            <i class="material-icons">star_border</i>
+          </div>
+
+          <div *ngIf="comment.stars == 1">
+            <i class="material-icons">star</i>
+            <i class="material-icons">star_border</i>
+            <i class="material-icons">star_border</i>
+            <i class="material-icons">star_border</i>
+            <i class="material-icons">star_border</i>
+          </div>
+
+          <div *ngIf="comment.stars == 2">
+            <i class="material-icons">star</i>
+            <i class="material-icons">star</i>
+            <i class="material-icons">star_border</i>
+            <i class="material-icons">star_border</i>
+            <i class="material-icons">star_border</i>
+          </div>
+
+          <div *ngIf="comment.stars == 3">
+            <i class="material-icons">star</i>
+            <i class="material-icons">star</i>
+            <i class="material-icons">star</i>
+            <i class="material-icons">star_border</i>
+            <i class="material-icons">star_border</i>
+          </div>
+
+          <div *ngIf="comment.stars == 4">
+            <i class="material-icons">star</i>
+            <i class="material-icons">star</i>
+            <i class="material-icons">star</i>
+            <i class="material-icons">star</i>
+            <i class="material-icons">star_border</i>
+          </div>
+
+          <div *ngIf="comment.stars == 5">
+            <i class="material-icons">star</i>
+            <i class="material-icons">star</i>
+            <i class="material-icons">star</i>
+            <i class="material-icons">star</i>
+            <i class="material-icons">star</i>
+          </div>
+        </h4>
+        <p>&emsp;{{ comment.text }}</p>
+        </div>
+      </div>
+      <div *ngIf="!comments || comments.length == 0">
+        <p>No comments for this item</p>
+      <div>
+    </div>
+  </div>
+    </div>
+  </div>
+</div>

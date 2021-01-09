@@ -1,0 +1,64 @@
+<app-navbar></app-navbar>
+<div class="container-fluid">
+
+  <div class="row">
+    <div class="col-lg-2">
+    </div>
+
+    <div class="col-lg-10">
+      <br>
+
+      <div *ngIf="!results || results.length == 0">
+        <h3>Search for: <strong>{{ query }}</strong></h3>
+        <br>
+        <h4>Nothing was found. Go to <a routerLink="/items">Products Page</a></h4>
+      </div>
+
+      <div *ngIf="results && results.length > 0">
+        <div>
+          <h3>Search for: <strong>{{ query }}</strong></h3>
+          <br>
+          <h4>Found {{ results.length }} item(s)</h4>
+        </div>
+        <section class="text-center mb-4">
+
+          <div class="row wow fadeIn ">
+
+            <div class="col-lg-3 col-md-6 mb-4 item" *ngFor="let item of results">
+
+              <div class="card">
+
+                <a routerLink="/item/{{item.id}}">
+                  <div class="view overlay">
+                    <img class="card-img-top" src="{{ item.picture }}" alt="Item image">
+                    <a>
+                      <div class="mask rgba-white-slight"></div>
+                    </a>
+                    <span *ngIf="item.isNew()" class="new" [style]="{'top': (item.discount != 0 ? '50px': '0')}">New</span>
+                    <span *ngIf="item.discount != 0" class="price-dec">{{ item.discount }}% Off</span>
+                  </div>
+                </a>
+                <div class="card-body text-center">
+                  <h5>
+                    <strong>
+                      <a class="dark-grey-text"
+                         routerLink="/item/{{item.id}}">{{ item.name }}</a>
+                    </strong>
+                  </h5>
+                  <h4 class="blue-text">
+                    <strong *ngIf="item.discount != 0">{{ (item.price - item.discount) * 100 / item.price  }}€</strong> <del>{{ item.price }}€</del>
+                    <strong *ngIf="item.discount == 0">{{ item.price }}€</strong>
+                  </h4>
+                  <span class="category-link">
+                    <a routerLink="/items/category/{{item.category.slug}}">{{ item.category.name }}</a></span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+      </div>
+
+    </div>
+  </div>
+</div>

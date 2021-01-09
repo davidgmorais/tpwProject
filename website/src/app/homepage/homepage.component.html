@@ -1,0 +1,99 @@
+<app-navbar></app-navbar>
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-4">Store</h1>
+    <p class="lead">Where you can buy and sell items!!</p>
+  </div>
+</div>
+
+<section style="margin-top: 5vh" *ngIf="biggestDiscount > 0">
+  <div class="container">
+    <div class="section-title">
+      <h2><a routerLink="/items/promo">Discounts up to {{ biggestDiscount }}%</a></h2>
+      <hr>
+    </div>
+    <div class="row">
+      <div class="col-lg-3 col-md-6 mb-4 item" *ngFor="let item of discountedItems">
+
+        <div class="card">
+
+          <a routerLink="/item/{{item.id}}">
+            <div class="view overlay">
+              <img class="card-img-top" src="{{ item.picture }}" alt="Item image">
+              <a>
+                <div class="mask rgba-white-slight"></div>
+              </a>
+              <span *ngIf="item.isNew()" class="new" [style]="{'top': (item.discount != 0 ? '50px': '0')}">New</span>
+              <span *ngIf="item.discount != 0" class="price-dec">{{ item.discount }}% Off</span>
+            </div>
+          </a>
+          <div class="card-body text-center">
+
+            <h5>
+              <strong>
+                <a class="dark-grey-text" routerLink="item/{{item.id}}">{{ item.name }} </a>
+              </strong>
+            </h5>
+
+            <h4 class="blue-text">
+              <strong *ngIf="item.discount != 0">{{ (item.price - item.discount) * 100 / item.price  }}€</strong> <del>{{ item.price }}€</del>
+              <strong *ngIf="item.discount == 0">{{ item.price }}€</strong>
+            </h4>
+
+            <span class="category-link"><a routerLink="/items/category/{{item.category.slug}}">{{ item.category }}</a></span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+
+<section style="margin-top: 5vh" *ngIf="newestItems && newestItems.length > 0">
+  <div class="container">
+    <div class="section-title">
+      <h2><a routerLink="/items/new">New In</a></h2>
+      <hr>
+    </div>
+    <div class="row">
+      <div class="col-lg-3 col-md-6 mb-4 item" *ngFor="let item of newestItems">
+
+        <div class="card">
+
+          <a routerLink="/item/{{item.id}}">
+            <div class="view overlay">
+              <img class="card-img-top" src="{{ item.picture }}" alt="Item image">
+              <a>
+                <div class="mask rgba-white-slight"></div>
+              </a>
+              <span *ngIf="item.isNew()" class="new" [style]="{'top': (item.discount != 0 ? '50px': '0')}">New</span>
+              <span *ngIf="item.discount != 0" class="price-dec">{{ item.discount }}% Off</span>
+            </div>
+          </a>
+          <div class="card-body text-center">
+
+            <h5>
+              <strong>
+                <a class="dark-grey-text" routerLink="/item/{{item.id}}">{{ item.name }} </a>
+              </strong>
+            </h5>
+
+            <h4 class="blue-text">
+              <strong *ngIf="item.discount != 0">{{ (item.price - item.discount) * 100 / item.price  }}€</strong> <del>{{ item.price }}€</del>
+              <strong *ngIf="item.discount == 0">{{ item.price }}€</strong>
+            </h4>
+
+            <span class="category-link"><a routerLink="/items/category/{{item.category.slug}}">{{ item.category }}</a></span>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+

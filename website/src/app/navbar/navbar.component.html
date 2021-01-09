@@ -1,0 +1,106 @@
+<nav class="navbar navbar-expand-lg sticky-top navbar-light bg-light justify-content-between">
+  <div class="container">
+
+    <div class="col-xl-2 col-lg-2 col-md-6 col-6 order-xl-1 order-lg-1 order-md-1 order-1">
+      <div class="row">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup1"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" routerLink="/">Store</a>
+      </div>
+    </div>
+
+    <div class="col-xl-8 col-lg-8 col-md-12 col-12 order-xl-2 order-lg-2 order-md-3 order-3">
+      <form class="form-row" [formGroup]="searchForm" (submit)="search()">
+        <div class="col-md-10 col-8">
+          <input class="form-control" type="search" placeholder="Search" aria-label="Search" name="query" formControlName="query">
+
+        </div>
+        <div class="col-md-2 col-4">
+          <input class="btn btn-dark" type="submit" value="Search">
+        </div>
+      </form>
+    </div>
+
+    <div class="col-xl-2 col-lg-2 col-md-6 col-6 order-xl-3 order-lg-3 order-md-2 order-2 d-flex justify-content-end">
+      <div class="navbar-nav">
+        <div class="row">
+          <div>
+            <a *ngIf="userIsAuthenticated" class="nav-item nav-link" routerLink="/account"><i class="material-icons">account_circle</i></a>
+            <a *ngIf="!userIsAuthenticated" class="nav-item nav-link" routerLink="/login"><i class="material-icons">account_circle</i></a>
+          </div>
+
+
+          <div class="d-block d-lg-none" *ngIf="userIsAuthenticated">
+            <a class="nav-item nav-link" routerLink="/cart"><i class="material-icons">shopping_cart</i></a>
+          </div>
+
+          <div class="dropdown d-none d-lg-block" *ngIf="userIsAuthenticated">
+            <a class="nav-item nav-link dropdown" type="button" id="dropdownMenu2"
+               data-toggle="dropdown" aria-haspopup="true"><i class="material-icons"
+                                                              style="cursor: pointer">shopping_cart</i></a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu2"
+                 style="width: 20vw">
+              <div class="container">
+                <div class="row d-flex justify-content-between">
+                  <div class="col-5">
+                    <h5>Shopping cart</h5>
+                  </div>
+                  <div class="col-5" style="text-align: right">
+                    <a routerLink="/cart/">See cart</a>
+                  </div>
+                </div>
+
+                <div *ngIf="cart && cart.items.length > 0">
+                  <div style="overflow: auto; max-height: 20vh">
+                    <table class="table table-striped" style="overflow: auto;">
+                      <tr *ngFor="let row of cart.items">
+                        <td><span>{{ row.name }}</span> <span
+                          style="font-size: small; margin-left: 10px"> x{{ row.quantity }}</span>
+                        </td>
+                        <td style="text-align: right">{{ row.price }}€</td>
+                      </tr>
+                    </table>
+
+                  </div>
+                  <h5 style="text-align: right; margin-right: 10px"><b>Total:</b> {{ cart.total().toFixed(2) }}€</h5>
+                </div>
+
+                <p *ngIf="!cart || cart.items.length == 0">Your shopping card is empty</p>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup1">
+    <div class="container">
+      <div class="navbar-nav d-flex justify-content-between">
+        <a class="nav-item nav-link" routerLink="/items" >Products</a>
+        <div class="dropdown nav-item">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Categories
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <div *ngIf="categories && categories.length > 0">
+              <a class="dropdown-item" routerLink="/items/category/{{category.slug}}" *ngFor="let category of categories"><strong>{{ category.name }}</strong></a>
+            </div>
+
+          </div>
+        </div>
+        <a class="nav-item nav-link" routerLink="/items/promo">Promos</a>
+        <a class="nav-item nav-link" routerLink="/items/new">New in</a>
+        <!--{% if user.username == 'admin' %}-->
+        <a class="nav-item nav-link" *ngIf="userIsAuthenticated" routerLink="/admin">Admin Page</a>
+      </div>
+    </div>
+  </div>
+</nav>

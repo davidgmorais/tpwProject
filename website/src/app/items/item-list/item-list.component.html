@@ -1,0 +1,79 @@
+<app-navbar></app-navbar>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-2">
+      <!--{# Filter sidebar #}
+      {% include 'Items/filters_sidebar.html' %}-->
+    </div>
+    <div class="col-lg-10">
+      <br>
+      <h3>{{ title }}</h3>
+      <section class="text-center mb-4">
+        <p *ngIf="!items || items.length == 0">No items to show here</p>
+        <div class="row wow fadeIn ">
+          <div class="col-lg-3 col-md-6 mb-4 item" *ngFor="let item of items">
+            <div class="card">
+              <a routerLink="/item/{{item.id}}">
+                <div class="view overlay">
+                  <img class="card-img-top" src="{{ item.picture }}">
+                  <a>
+                    <div class="mask rgba-white-slight"></div>
+                  </a>
+                  <span *ngIf="isNew(item)" class="new" [style]="{'top': (item.discount != 0 ? '50px': '0')}">New</span>
+                  <span *ngIf="item.discount != 0" class="price-dec">{{ item.discount }}% Off</span>
+                </div>
+              </a>
+              <div class="card-body text-center">
+
+                <h5>
+                  <strong>
+                    <a class="dark-grey-text"
+                       routerLink="/item/{{item.id}}">{{ item.name }} </a>
+                  </strong>
+                </h5>
+
+                <h4 class="blue-text">
+                  <strong *ngIf="item.discount != 0">{{ ((item.price - item.discount) * 100 / item.price).toFixed(2)  }}€ </strong> <del>{{ item.price }}€</del>
+                  <strong *ngIf="item.discount == 0">{{ item.price }}€</strong>
+                </h4>
+                <span class="category-link"><a
+                  routerLink="/items/category/{{item.category.slug}}">{{ item.category }}</a></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <!-- Pagination -->
+        <div class="text-center" style="width: 100%;">
+          <div class="form-row d-flex justify-content-center">
+            <div class="col-2">
+              <!--{% if items.has_previous %}
+              <button type="submit" class="btn btn-default" name="page" value="1">&laquo; first
+              </button>
+              <button type="submit" class="btn btn-default" name="page"
+                      value="{{ items.previous_page_number }}">previous
+              </button>
+              {% endif %}-->
+            </div>
+            <div class="col-1">
+                             <!--<span class="current">
+                            Page {{ items.number }} of {{ items.paginator.num_pages }}
+                        </span>-->
+            </div>
+            <div class="col-2">
+             <!-- {% if items.has_next %}
+              <button type="submit" class="btn btn-default" name="page"
+                      value="{{ items.next_page_number }}">next
+              </button>
+              <button type="submit" class="btn btn-default" name="page"
+                      value="{{ items.paginator.num_pages }}">last &raquo;
+              </button>
+              {% endif %}-->
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
