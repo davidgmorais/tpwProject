@@ -23,6 +23,40 @@ from django.urls import path
 from app import views
 
 urlpatterns = [
+    # serializers
+    path("api/category/", views.CategoryView.as_view()),
+    path("api/category/<int:pk>/", views.CategoryDetailView.as_view()),
+    path("api/category/<int:id>/delete/", views.api_delete_category, name="DeleteCategory"),
+
+    path("api/item/", views.ItemView.as_view()),
+    path("api/item/<int:pk>", views.ItemDetailView.as_view()),
+    path("api/item/<int:id>/delete/", views.api_delete_item, name="DeleteItem"),
+
+    path("api/orderitem/", views.OrderItemView.as_view()),
+    path("api/orderitem/<int:pk>", views.OrderItemDetailView.as_view()),
+    path("api/orderitem/<int:id>/delete/", views.api_delete_orderitem, name="DeleteOrderItem"),
+
+    path("api/cart/", views.CartView.as_view()),
+    path("api/cart/<int:pk>", views.CartDetailView.as_view()),
+    path("api/cart/<int:id>/delete/", views.api_delete_cart, name="DeleteCart"),
+
+    path("api/comment/", views.CommentView.as_view()),
+    path("api/comment/<int:pk>", views.CommentDetailView.as_view()),
+    path("api/comment/<int:id>/delete/", views.api_delete_comment, name="DeleteCart"),
+
+    path("api/purchase/", views.PurchaseView.as_view()),
+    path("api/purchase/<int:pk>", views.PurchaseDetailView.as_view()),
+
+    path("api/sell/", views.SellView.as_view()),
+    path("api/sell/<int:pk>", views.SellDetailView.as_view()),
+
+    path("api/profiles/", views.api_get_profiles, name="CategoryManagement"),
+    path("api/profiles/int:id>/edit/", views.api_update_profiles, name="EditCategory"),
+    path("api/profiles/<int:id>/delete/", views.api_delete_profiles, name="DeleteCategory"),
+    path("api/profiles/add/", views.api_create_profiles, name="AddCategory"),
+
+
+    # old
     path('djangoadmin/', admin.site.urls),
     path('', views.home, name="HomePage"),
 

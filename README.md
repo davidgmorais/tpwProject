@@ -1,4 +1,12 @@
 # TPW Project
+**Notas deste commit:**
+- sell ainda tem um erro, mostrar o moneyReceived
+- purchase e sell não têm delete porque achei que não fazia sentido
+- cart não tem nenhum método porque também achei que não faziam sentido
+- falta fazer o profile ainda
+
+---
+
 Projeto criado no âmbito da cadeira de Tecnologias e Programação Web que consiste numa loja de compra e venda de itens gerido por um user admin.
 
 ## Funcionalidades

@@ -11,8 +11,198 @@ from django.contrib.auth.models import User
 from django.db.models import When, Case, Value, CharField, Avg, Count, Sum, F, FloatField
 from django.db.models.functions import Extract, Round
 from django.core.paginator import Paginator
+from rest_framework import status, generics, permissions
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from app.serializers import CategorySerializer, ItemSerializer, OrderItemSerializer, CartSerializer, CommentSerializer,\
+    PurchaseSerializer, SellSerializer, ProfileSerializer
 
 
+# SERIALIZER'S VIEWS
+class CategoryView(generics.ListCreateAPIView):
+    queryset = Category.objects.root_nodes()
+    serializer_class = CategorySerializer
+
+
+class CategoryDetailView(generics.RetrieveUpdateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+
+class ItemView(generics.ListCreateAPIView):
+    queryset = Item.objects.all()
+    serializer_class = ItemSerializer
+
+
+class ItemDetailView(generics.RetrieveUpdateAPIView):
+    queryset = Item.objects.all()
+    serializer_class = ItemSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+
+class OrderItemView(generics.ListCreateAPIView):
+    queryset = OrderItem.objects.all()
+    serializer_class = OrderItemSerializer
+
+
+class OrderItemDetailView(generics.RetrieveUpdateAPIView):
+    queryset = OrderItem.objects.all()
+    serializer_class = OrderItemSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+
+class CartView(generics.ListCreateAPIView):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+
+
+class CartDetailView(generics.RetrieveUpdateAPIView):
+    queryset = Cart.objects.all()
+    serializer_class = CartSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+
+class CommentView(generics.ListCreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+
+class CommentDetailView(generics.RetrieveUpdateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+
+class PurchaseView(generics.ListCreateAPIView):
+    queryset = Purchase.objects.all()
+    serializer_class = PurchaseSerializer
+
+
+class PurchaseDetailView(generics.RetrieveUpdateAPIView):
+    queryset = Purchase.objects.all()
+    serializer_class = PurchaseSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+
+class SellView(generics.ListCreateAPIView):
+    queryset = Sell.objects.all()
+    serializer_class = SellSerializer
+
+
+class SellDetailView(generics.RetrieveUpdateAPIView):
+    queryset = Sell.objects.all()
+    serializer_class = SellSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+
+# SERIALIZER'S DELETE VIEWS
+
+@api_view(['DELETE'])
+def api_delete_category(request, id):
+    try:
+        cat = Category.objects.get(id=id)
+    except Category.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    cat.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['DELETE'])
+def api_delete_item(request, id):
+    try:
+        item = Item.objects.get(id=id)
+    except Item.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    item.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['DELETE'])
+def api_delete_orderitem(request, id):
+    try:
+        orderItem = OrderItem.objects.get(id=id)
+    except OrderItem.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    orderItem.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['DELETE'])
+def api_delete_cart(request, id):
+    try:
+        cart = Cart.objects.get(id=id)
+    except Cart.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    item.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['DELETE'])
+def api_delete_comment(request, id):
+    try:
+        comment = Comment.objects.get(id=id)
+    except Comment.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    comment.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# SERIALIZER'S PROFILE VIEWS
+@api_view(['GET'])
+def api_get_profiles(request):
+    print(request.GET)
+    profs = Profile.objects.all()
+    serializer = ProfileSerializer(profs, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def api_get_profile(request):
+    print(request.GET)
+    _id = int(request.GET['id'])
+    try:
+        prof = Profile.objects.get(id=_id)
+    except Category.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    serializer = ProfileSerializer(prof)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def api_create_profiles(request):
+    serializer = ProfileSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def api_update_profiles(request, id):
+    try:
+        prof = Profile.objects.get(id=id)
+    except Category.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    serializer = ProfileSerializer(prof, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['DELETE'])
+def api_delete_profiles(request, id):
+    print(request)
+    try:
+        prof = Profile.objects.get(id=id)
+    except Profile.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    prof.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# Collapse all: CTRL + SHIFT + -
 def home(request):
     biggest_discount = Item.objects.filter(discount__gt=0).order_by('-discount')
     if len(biggest_discount) > 0:

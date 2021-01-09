@@ -25,7 +25,7 @@ class Profile(models.Model):
 
 
 class Category(MPTTModel):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(max_length=200, unique=True, default=None)
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
 
