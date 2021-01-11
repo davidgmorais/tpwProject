@@ -1,5 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.authtoken.views import ObtainAuthToken
+
 from app.models import Category, Item, Comment, Profile, Purchase, Sell, Cart, OrderItem
 from app.forms import Search, SignUpForm, ItemForm, CategoryForm, SubcategoryForm, CategoryFilter, CommentForm, \
     DeleteAccount, AddQuantityForm
@@ -14,8 +17,9 @@ from django.core.paginator import Paginator
 from rest_framework import status, generics, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from app.serializers import CategorySerializer, ItemSerializer, OrderItemSerializer, CartSerializer, CommentSerializer,\
+from app.serializers import CategorySerializer, ItemSerializer, OrderItemSerializer, CartSerializer, CommentSerializer, \
     PurchaseSerializer, SellSerializer, ProfileSerializer
+from rest_framework.authtoken.models import Token
 
 
 # SERIALIZER'S VIEWS
@@ -23,15 +27,42 @@ class CategoryView(generics.ListCreateAPIView):
     queryset = Category.objects.root_nodes()
     serializer_class = CategorySerializer
 
+    def post(self, request, *args, **kwargs):
+        self.permission_classes = (permissions.IsAuthenticated,)
+        self.authentication_classes = [TokenAuthentication]
+
+        if request.user.username == 'admin':
+            return self.create(request, *args, **kwargs)
+
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
 
 class CategoryDetailView(generics.RetrieveUpdateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = (permissions.IsAuthenticated,)
 
 
 class ItemView(generics.ListCreateAPIView):
     queryset = Item.objects.all()
+    serializer_class = ItemSerializer
+
+
+class CategoryItemView(generics.ListCreateAPIView):
+    serializer_class = ItemSerializer
+
+    def get_queryset(self):
+        slug = self.kwargs['slug']
+        return Item.objects.filter(category__slug=slug)
+
+
+class NewItemView(generics.ListCreateAPIView):
+    queryset = Item.objects.filter(insertDate__range=[datetime.today() - timedelta(days=14),
+                                                      datetime.today()]).order_by("-insertDate")
+    serializer_class = ItemSerializer
+
+
+class PromoItemView(generics.ListCreateAPIView):
+    queryset = Item.objects.filter(discount__gt=0).order_by('-discount')
     serializer_class = ItemSerializer
 
 
@@ -58,9 +89,19 @@ class CartView(generics.ListCreateAPIView):
 
 
 class CartDetailView(generics.RetrieveUpdateAPIView):
-    queryset = Cart.objects.all()
-    serializer_class = CartSerializer
+    authentication_classes = [TokenAuthentication]
     permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = CartSerializer
+
+    def get(self, request, *args, **kwargs):
+        pk = kwargs['pk']
+
+        try:
+            c = Cart.objects.get(user__id=pk)
+        except Cart.DoesNotExist:
+            c = Cart(user=User.objects.get(id=pk))
+            c.save()
+        return Response(CartSerializer(c, many=False).data)
 
 
 class CommentView(generics.ListCreateAPIView):
@@ -95,6 +136,19 @@ class SellDetailView(generics.RetrieveUpdateAPIView):
     serializer_class = SellSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
+
+class Login(ObtainAuthToken):
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email
+        })
 
 # SERIALIZER'S DELETE VIEWS
 
@@ -249,7 +303,7 @@ def registration(request):
             return redirect('HomePage')
     else:
         form = SignUpForm()
-    return render(request, 'signup.html', {'form': form, 'categories': Category.objects.all(),})
+    return render(request, 'signup.html', {'form': form, 'categories': Category.objects.all(), })
 
 
 def order(items, mode):
@@ -478,10 +532,12 @@ def search(request):
                 Q(description__icontains=query) |
                 Q(category__name=query)
             ).distinct()
-            return render(request, 'Items/searchResults.html', {'items': results, 'query': query, 'categories': Category.objects.all(),'form': form})
+            return render(request, 'Items/searchResults.html',
+                          {'items': results, 'query': query, 'categories': Category.objects.all(), 'form': form})
     else:
         form1 = Search()
-    return render(request, 'Items/itemList.html', {'items': Item.objects.all(), 'categories': Category.objects.all(), 'form': form1})
+    return render(request, 'Items/itemList.html',
+                  {'items': Item.objects.all(), 'categories': Category.objects.all(), 'form': form1})
 
 
 @login_required
@@ -704,8 +760,10 @@ def admin(request):
     }
     return render(request, "AdminTemplates/dashboard.html", t_params)
 
+
 def manage_out_of_stock_items(request):
-    return render(request, "AdminTemplates/out_of_stock.html", {"table": Item.objects.filter(quantity=0), "type": "itemList"})
+    return render(request, "AdminTemplates/out_of_stock.html",
+                  {"table": Item.objects.filter(quantity=0), "type": "itemList"})
 
 
 def edit_out_of_stock_items(request, item_id):
@@ -717,7 +775,7 @@ def edit_out_of_stock_items(request, item_id):
         if form.is_valid():
             item = Item.objects.get(id=item_id)
             qty = form.cleaned_data["quantity"]
-            item.quantity=qty
+            item.quantity = qty
             item.save()
             return redirect("/admin/outofstock")
     else:
@@ -882,7 +940,8 @@ def add_subcategory(request, category_id):
             return redirect("/admin/category/" + str(category_id) + "/edit/")
     else:
         form = SubcategoryForm()
-    return render(request, "AdminTemplates/add_edit.html", {"form": form, "action": "add", "type": "subcategory", "parentCat": Category.objects.get(id=category_id)})
+    return render(request, "AdminTemplates/add_edit.html", {"form": form, "action": "add", "type": "subcategory",
+                                                            "parentCat": Category.objects.get(id=category_id)})
 
 
 def add_new_subcategory(request):
@@ -1027,7 +1086,7 @@ def account_add_comments(request):
         form = CommentForm(request.POST)
         if form.is_valid():
             item = Item.objects.get(name=form.cleaned_data['item'])
-            purchases=[]
+            purchases = []
             for x in Purchase.objects.filter(user__email=request.user.email):
                 purchases.append(x.item)
 
@@ -1048,7 +1107,8 @@ def account_add_comments(request):
                 return redirect("/account")
     else:
         form = CommentForm()
-    return render(request, "Account/add_edit_comment.html", {"form": form, "action": "add", "categories": Category.objects.all()})
+    return render(request, "Account/add_edit_comment.html",
+                  {"form": form, "action": "add", "categories": Category.objects.all()})
 
 
 def account_edit_comments(request, item_id):
@@ -1066,10 +1126,12 @@ def account_edit_comments(request, item_id):
     else:
         comment = Comment.objects.filter(user=request.user).get(item=item_id)
         form = CommentForm(initial={
-                                    "stars": comment.stars,
-                                    "comment": comment.text})
+            "stars": comment.stars,
+            "comment": comment.text})
     print(form.errors)
-    return render(request, "Account/add_edit_comment.html", {"form": form, "action": "edit", "categories": Category.objects.all(), 'item': Item.objects.get(id=item_id)})
+    return render(request, "Account/add_edit_comment.html",
+                  {"form": form, "action": "edit", "categories": Category.objects.all(),
+                   'item': Item.objects.get(id=item_id)})
 
 
 def account_delete_comment(request, item_id):
@@ -1169,4 +1231,3 @@ def remove_cart(request, order_id):
     order_item = OrderItem.objects.get(id=order_id)
     order_item.delete()
     return redirect("/cart")
-

@@ -11,7 +11,7 @@ import {ItemsService} from '../services/items.service';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
-  userIsAuthenticated: boolean;
+  userIsAuthenticated: string;
   cart: Cart;
   categories: Category[];
   searchForm: FormGroup;
@@ -23,6 +23,7 @@ export class NavbarComponent implements OnInit {
       query: ['']
     });
     this.getCategories();
+    this.userIsAuthenticated = localStorage.getItem('auth_token');
   }
 
   search(): void {

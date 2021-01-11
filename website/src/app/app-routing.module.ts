@@ -7,6 +7,9 @@ import {ItemListComponent} from './items/item-list/item-list.component';
 import {LoginComponent} from './account/login/login.component';
 import {RegisterComponent} from './account/register/register.component';
 import {ItemPageComponent} from './items/item-page/item-page.component';
+import {DashboardComponent} from './admin/dashboard/dashboard.component';
+import {ManagementTableComponent} from './admin/management-table/management-table.component';
+import {AddAndEditComponent} from './admin/add-and-edit/add-and-edit.component';
 
 const routes: Routes = [
   {path: '', component: HomepageComponent},
@@ -18,6 +21,11 @@ const routes: Routes = [
 
   {path: 'login', component: LoginComponent},
   {path: 'registration', component: RegisterComponent},
+
+  {path: 'admin', component: DashboardComponent},
+  {path: 'admin/:type', component: ManagementTableComponent},
+  {path: 'admin/:type/:action/:id', component: AddAndEditComponent},
+  {path: 'admin/:type/:action', component: AddAndEditComponent},
 
   {path: '**', redirectTo: ''}
 ];

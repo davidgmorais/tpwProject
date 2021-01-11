@@ -23,7 +23,7 @@ export class ItemsService {
   }
 
   getItemsByCategory(category: string): Observable<any> {
-    const url = this.apiURL + 'items/' + category;
+    const url = this.apiURL + 'items/category/' + category;
     return  this.http.get<Item[]>(url);
   }
 
@@ -39,7 +39,6 @@ export class ItemsService {
 
   getItemInfo(id: number): Observable<Item> {
     const url = this.apiURL + 'item/' + id;
-    console.log(url);
     return this.http.get<Item>(url);
   }
 
@@ -53,8 +52,18 @@ export class ItemsService {
     return this.http.get<Category[]>(url);
   }
 
+  addCategory(token: string, category: string): Observable<any> {
+    const url = this.apiURL + 'category/';
+    const headers = {headers: new HttpHeaders({'Content-Type': 'application/json', Authorization: 'Token ' + token})};
+    const body = {
+      name: category,
+      subcategories: []
+    };
+    return this.http.post(url, body, headers);
+  }
+
   getItemComments(itemId: number): Observable<Comments[]> {
-    const url = this.apiURL + 'comments/' + itemId;
+    const url = this.apiURL + 'comments/' + itemId  ;
     return this.http.get<Comments[]>(url);
   }
 

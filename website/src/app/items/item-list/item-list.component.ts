@@ -80,7 +80,7 @@ export class ItemListComponent implements OnInit {
   private getItemsByCategory(categorySlug: string): void {
     this.itemService.getItemsByCategory(categorySlug).subscribe(response => {
       this.items = response;
-    })
+    });
 
   }
 }

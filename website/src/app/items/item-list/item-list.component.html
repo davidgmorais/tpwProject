@@ -33,7 +33,9 @@
                 </h5>
 
                 <h4 class="blue-text">
-                  <strong *ngIf="item.discount != 0">{{ ((item.price - item.discount) * 100 / item.price).toFixed(2)  }}€ </strong> <del>{{ item.price }}€</del>
+                  <div *ngIf="item.discount != 0">
+                    <strong>{{ ((100 - item.discount) * item.price / 100).toFixed(2)  }}€</strong> <del>{{ item.price }}€</del>
+                  </div>
                   <strong *ngIf="item.discount == 0">{{ item.price }}€</strong>
                 </h4>
                 <span class="category-link"><a

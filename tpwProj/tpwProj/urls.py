@@ -19,6 +19,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 
+
+
 from django.urls import path
 from app import views
 
@@ -29,8 +31,13 @@ urlpatterns = [
     path("api/category/<int:id>/delete/", views.api_delete_category, name="DeleteCategory"),
 
     path("api/item/", views.ItemView.as_view()),
+    path("api/items/new", views.NewItemView.as_view()),
+    path("api/items/promo", views.PromoItemView.as_view()),
+    path("api/items/category/<str:slug>", views.CategoryItemView.as_view()),
     path("api/item/<int:pk>", views.ItemDetailView.as_view()),
     path("api/item/<int:id>/delete/", views.api_delete_item, name="DeleteItem"),
+
+    path("api/login", views.Login.as_view()),
 
     path("api/orderitem/", views.OrderItemView.as_view()),
     path("api/orderitem/<int:pk>", views.OrderItemDetailView.as_view()),
@@ -51,7 +58,7 @@ urlpatterns = [
     path("api/sell/<int:pk>", views.SellDetailView.as_view()),
 
     path("api/profiles/", views.api_get_profiles, name="CategoryManagement"),
-    path("api/profiles/int:id>/edit/", views.api_update_profiles, name="EditCategory"),
+    path("api/profiles/<int:id>/edit/", views.api_update_profiles, name="EditCategory"),
     path("api/profiles/<int:id>/delete/", views.api_delete_profiles, name="DeleteCategory"),
     path("api/profiles/add/", views.api_create_profiles, name="AddCategory"),
 
