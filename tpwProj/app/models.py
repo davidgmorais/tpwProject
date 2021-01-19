@@ -50,7 +50,7 @@ class Item(models.Model):
     brand = models.CharField(max_length=30)
     quantity = models.IntegerField()
     insertDate = models.DateField()
-    category = models.ForeignKey('Category', null=True, blank=True, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.CASCADE)
     discount = models.FloatField()
     picture = models.ImageField(upload_to='images/', blank=True, null=True)
     sellMoney = models.FloatField(null=True)

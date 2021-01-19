@@ -67,7 +67,8 @@ urlpatterns = [
     path("api/sell/", views.SellView.as_view()),
     path("api/sell/<int:pk>", views.SellDetailView.as_view()),
 
-    path("api/profiles/", views.api_get_profiles, name="CategoryManagement"),
+    path("api/profiles/", views.ProfileView.as_view(), name="getProfileList"),
+    path("api/profiles/<int:_id>/", views.api_get_profile, name="getProfile"),
     path("api/profiles/<int:id>/edit/", views.api_update_profiles, name="EditCategory"),
     path("api/profiles/<int:id>/delete/", views.api_delete_profiles, name="DeleteCategory"),
     path("api/profiles/add/", views.api_create_profiles, name="AddCategory"),

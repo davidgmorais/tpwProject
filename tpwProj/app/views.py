@@ -18,7 +18,7 @@ from rest_framework import status, generics, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from app.serializers import CategorySerializer, ItemSerializer, OrderItemSerializer, CartSerializer, CommentSerializer, \
-    PurchaseSerializer, SellSerializer, ProfileSerializer
+    PurchaseSerializer, SellSerializer, ProfileSerializer, UserSerializer
 from rest_framework.authtoken.models import Token
 
 from base64 import decodestring
@@ -370,13 +370,25 @@ def api_get_profiles(request):
     return Response(serializer.data)
 
 
+class ProfileView(generics.ListCreateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = ProfileSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.create(validated_data=request.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.error_messages,
+                        status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['GET'])
-def api_get_profile(request):
+def api_get_profile(request, _id):
     print(request.GET)
-    _id = int(request.GET['id'])
     try:
         prof = Profile.objects.get(id=_id)
-    except Category.DoesNotExist:
+    except Profile.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     serializer = ProfileSerializer(prof)
     return Response(serializer.data)

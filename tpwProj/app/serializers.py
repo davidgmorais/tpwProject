@@ -1,4 +1,5 @@
 import six
+from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 
 from app.models import Category, Cart, Item, Comment, Purchase, Sell, OrderItem, Profile
@@ -95,11 +96,18 @@ class ItemSerializer(serializers.ModelSerializer):
     picture = Base64ImageField(
         max_length=None, use_url=True,
     )
+    category = serializers.SerializerMethodField()
 
     class Meta:
         model = Item
         fields = ('id', 'name', 'description', 'specifications', 'price', 'brand',
                   'quantity', 'insertDate', 'discount', 'picture', 'sellMoney', 'category')
+
+    def get_category(self, item):
+        category = Category.objects.get(id=item.category.parent.id)
+        print(category)
+        serializer = CategorySerializer(Category.objects.get(id=item.category.id))
+        return serializer.data
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -150,9 +158,36 @@ class SellSerializer(serializers.ModelSerializer):
         return serializer.data
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('username', 'password', 'email')
+        extra_kwargs = {'password': {'write_only': True}}
+
+    # def create(self, validated_data):
+    #     password = validated_data.pop('password')
+    #     user = User(**validated_data)
+    #     user.set_password(password)
+    #     user.save()
+    #     return user
+
+
 # Ainda está mal
 # https://www.youtube.com/watch?v=Wo0AXv7B0iE
 class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(required=True)
+
     class Meta:
         model = Profile
         fields = ('id', 'user', 'first_name', 'last_name', 'birthdate', 'money')
+
+    def create(self, validated_data):
+        user_data = validated_data.pop('user')
+        user = UserSerializer.create(UserSerializer(), validated_data=user_data)
+        profile = Profile.objects.get(user_id=user.id)
+        profile.first_name = validated_data.pop('first_name')
+        profile.last_name = validated_data.pop('last_name')
+        profile.birthdate = validated_data.pop('birthdate')
+        profile.money = 0
+        profile.save()
+        return profile

@@ -42,7 +42,7 @@
               <strong *ngIf="item.discount == 0">{{ item.price }}€</strong>
             </h4>
 
-            <span class="category-link"><a routerLink="/items/category/{{item.category.slug}}">{{ item.category }}</a></span>
+            <span class="category-link"><a routerLink="/items/category/{{item.category.id}}">{{ item.category.name }}</a></span>
           </div>
 
         </div>
@@ -91,7 +91,7 @@
               <strong *ngIf="item.discount == 0">{{ item.price }}€</strong>
             </h4>
 
-            <span class="category-link"><a routerLink="/items/category/{{item.category.slug}}">{{ item.category }}</a></span>
+            <span class="category-link"><a routerLink="/items/category/{{item.category.id}}">{{ item.category.name }}</a></span>
           </div>
 
         </div>
