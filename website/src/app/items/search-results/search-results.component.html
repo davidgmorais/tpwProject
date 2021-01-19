@@ -34,7 +34,7 @@
                     <a>
                       <div class="mask rgba-white-slight"></div>
                     </a>
-                    <span *ngIf="item.isNew()" class="new" [style]="{'top': (item.discount != 0 ? '50px': '0')}">New</span>
+                    <span *ngIf="isNew(item)" class="new" [style]="{'top': (item.discount != 0 ? '50px': '0')}">New</span>
                     <span *ngIf="item.discount != 0" class="price-dec">{{ item.discount }}% Off</span>
                   </div>
                 </a>
@@ -46,7 +46,7 @@
                     </strong>
                   </h5>
                   <h4 class="blue-text">
-                    <strong *ngIf="item.discount != 0">{{ (item.price - item.discount) * 100 / item.price  }}€</strong> <del>{{ item.price }}€</del>
+                    <strong *ngIf="item.discount != 0">{{ ((item.price - item.discount) * 100 / item.price).toFixed(2) }}€</strong> <del>{{ item.price }}€</del>
                     <strong *ngIf="item.discount == 0">{{ item.price }}€</strong>
                   </h4>
                   <span class="category-link">

@@ -30,9 +30,9 @@ export class ItemPageComponent implements OnInit {
   }
 
   private getComments(id: string): void {
-    this.itemService.getItemComments(+id).subscribe(response => {
-      this.comments = response;
-    });
+    // this.itemService.getItemComments(+id).subscribe(response => {
+    //   this.comments = response;
+    // });
   }
 
   addToCart(): void {

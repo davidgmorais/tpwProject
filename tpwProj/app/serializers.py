@@ -96,18 +96,12 @@ class ItemSerializer(serializers.ModelSerializer):
     picture = Base64ImageField(
         max_length=None, use_url=True,
     )
-    category = serializers.SerializerMethodField()
 
     class Meta:
         model = Item
         fields = ('id', 'name', 'description', 'specifications', 'price', 'brand',
                   'quantity', 'insertDate', 'discount', 'picture', 'sellMoney', 'category')
 
-    def get_category(self, item):
-        category = Category.objects.get(id=item.category.parent.id)
-        print(category)
-        serializer = CategorySerializer(Category.objects.get(id=item.category.id))
-        return serializer.data
 
 
 class OrderItemSerializer(serializers.ModelSerializer):

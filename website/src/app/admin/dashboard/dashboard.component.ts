@@ -139,7 +139,6 @@ export class DashboardComponent implements OnInit {
   private getApproveList(): void {
     this.itemService.getApproveList(this.token).subscribe(response => {
       this.pending = response.filter(p => p.pendingSell);
-      console.log(response);
     });
   }
 

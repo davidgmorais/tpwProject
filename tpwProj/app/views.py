@@ -21,6 +21,8 @@ from app.serializers import CategorySerializer, ItemSerializer, OrderItemSeriali
     PurchaseSerializer, SellSerializer, ProfileSerializer, UserSerializer
 from rest_framework.authtoken.models import Token
 
+from rest_framework import pagination
+
 from base64 import decodestring
 import re
 
@@ -54,9 +56,39 @@ class CategoryDetailView(generics.RetrieveUpdateAPIView):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
+def filterApi(result, params):
+    if params.get('min'):
+        result = result.filter(price__gte=params.get('min'))
+
+    if params.get('max'):
+        result = result.filter(price__lte=params.get('max'))
+
+    if params.get('brand'):
+        result = filter_by_brand(result, params.get('brand'))
+
+    if params.get('availability'):
+        result = filter_by_availability(result, params.get('availability'))
+
+    if params.get('discount'):
+        result = filter_by_discount(result, params.get('discount'))
+
+    if params.get('reviews'):
+        result = result.annotate(comment_avg=Round(Avg('comment__stars'))).filter(comment_avg=params.get('reviews'))
+
+    if params.get('order'):
+        result = order(result, params.get('order'))
+
+    return result
+
+
 class ItemView(generics.ListCreateAPIView):
-    queryset = Item.objects.all()
     serializer_class = ItemSerializer
+    pagination_class = pagination.PageNumberPagination
+    pagination.PageNumberPagination.page_size = 16
+
+    def get_queryset(self):
+        result = Item.objects.all()
+        return filterApi(result, self.request.query_params)
 
     def post(self, request, *args, **kwargs):
         self.permission_classes = (permissions.IsAuthenticated,)
@@ -71,21 +103,34 @@ class ItemView(generics.ListCreateAPIView):
 
 class CategoryItemView(generics.ListCreateAPIView):
     serializer_class = ItemSerializer
+    pagination_class = pagination.PageNumberPagination
+    pagination.PageNumberPagination.page_size = 16
 
     def get_queryset(self):
         slug = self.kwargs['slug']
-        return Item.objects.filter(category__slug=slug)
+        result = Item.objects.filter(category__slug=slug)
+        return filterApi(result, self.request.query_params)
 
 
 class NewItemView(generics.ListCreateAPIView):
-    queryset = Item.objects.filter(insertDate__range=[datetime.today() - timedelta(days=14),
-                                                      datetime.today()]).order_by("-insertDate")
     serializer_class = ItemSerializer
+    pagination_class = pagination.PageNumberPagination
+    pagination.PageNumberPagination.page_size = 16
+
+    def get_queryset(self):
+        result = Item.objects.filter(insertDate__range=[datetime.today() - timedelta(days=14),
+                                                        datetime.today()]).order_by("-insertDate")
+        return filterApi(result, self.request.query_params)
 
 
 class PromoItemView(generics.ListCreateAPIView):
-    queryset = Item.objects.filter(discount__gt=0).order_by('-discount')
     serializer_class = ItemSerializer
+    pagination_class = pagination.PageNumberPagination
+    pagination.PageNumberPagination.page_size = 16
+
+    def get_queryset(self):
+        result = Item.objects.filter(discount__gt=0).order_by('-discount')
+        return filterApi(result, self.request.query_params)
 
 
 class ItemDetailView(generics.RetrieveUpdateAPIView):
@@ -188,6 +233,24 @@ class ApproveListView(generics.ListAPIView):
 
     queryset = Sell.objects.all()
     serializer_class = SellSerializer
+
+
+class ItemSearch(generics.ListAPIView):
+    serializer_class = ItemSerializer
+
+    def get_queryset(self):
+        query = self.kwargs['query']
+        return Item.objects.filter(
+            Q(name__icontains=query) |
+            Q(description__icontains=query) |
+            Q(category__name=query)
+        ).distinct()
+
+
+@api_view(['GET'])
+def brand_list(request):
+    brands = [i['brand'] for i in Item.objects.all().values('brand').distinct()]
+    return Response(status=status.HTTP_200_OK, data=brands)
 
 
 # SERIALIZER'S ADMIN VIEWS

@@ -37,6 +37,9 @@ urlpatterns = [
     path("api/item/<int:pk>", views.ItemDetailView.as_view()),
     path("api/item/<int:id>/delete/", views.api_delete_item, name="DeleteItem"),
 
+    path("api/search/<str:query>/", views.ItemSearch.as_view(), name="DeleteItem"),
+    path('api/brands', views.brand_list),
+
     path("api/login", views.Login.as_view()),
 
     path("api/admin/stats/discount", views.discount_stats_view),

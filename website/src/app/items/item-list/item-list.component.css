@@ -68,3 +68,15 @@
   padding: 20px;
   box-shadow: 5px 5px 8px 1px #d4d4d4;
 }
+
+.price-input input {
+  width: 100%;;
+}
+
+#filters .form-group ul {
+  width: 100%;
+  margin: 0px -15%;
+  list-style: None;
+  max-height: 18vh;
+  overflow: auto
+}

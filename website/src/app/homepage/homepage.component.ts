@@ -14,7 +14,6 @@ export class HomepageComponent implements OnInit {
   discountedItems: Item[] = [];
   biggestDiscount: number;
   newestItems: Item[] = [];
-  categories: Category[] = [];
 
   constructor(private itemService: ItemsService) { }
 
