@@ -22,6 +22,8 @@ import {DatePipe} from '@angular/common';
 import { OutOfStockComponent } from './admin/out-of-stock/out-of-stock.component';
 import { ApprovePurchasesComponent } from './admin/approve-purchases/approve-purchases.component';
 import { PurchaseDetailsComponent } from './admin/purchase-details/purchase-details.component';
+import { ProfileComponent } from './profile/profile.component';
+import { AddAndEditCommentComponent } from './add-and-edit-comment/add-and-edit-comment.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +43,8 @@ import { PurchaseDetailsComponent } from './admin/purchase-details/purchase-deta
     OutOfStockComponent,
     ApprovePurchasesComponent,
     PurchaseDetailsComponent,
+    ProfileComponent,
+    AddAndEditCommentComponent,
   ],
     imports: [
         BrowserModule,

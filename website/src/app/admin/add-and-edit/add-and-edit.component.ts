@@ -115,7 +115,6 @@ export class AddAndEditComponent implements OnInit {
     }
   }
 
-
   private getItem(): void {
     this.itemService.getItemInfo(+this.id).subscribe(response => {
       this.item = response;

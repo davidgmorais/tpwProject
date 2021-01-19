@@ -49,12 +49,17 @@ export class ItemsService {
     return this.http.get<Item[]>(url);
   }
 
-
+  // Nao vai funcionar, a mudar, o id não é do item
   getItemComments(itemId: number): Observable<Comments[]> {
     const url = this.apiURL + 'comments/' + itemId  ;
     return this.http.get<Comments[]>(url);
   }
 
+  // acho q deve ser assim
+  getComments(): Observable<Comments[]> {
+    const url = this.apiURL + 'comments/' ;
+    return this.http.get<Comments[]>(url);
+  }
 
   // CATEGORIES
   // MAYBE CREATE CATEGORY SPECIFIC SERVICE

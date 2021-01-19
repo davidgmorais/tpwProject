@@ -15,6 +15,8 @@ import {AddEditSubcategoryComponent} from './admin/add-edit-subcategory/add-edit
 import {OutOfStockComponent} from './admin/out-of-stock/out-of-stock.component';
 import {ApprovePurchasesComponent} from './admin/approve-purchases/approve-purchases.component';
 import {PurchaseDetailsComponent} from './admin/purchase-details/purchase-details.component';
+import { ProfileComponent } from './profile/profile.component';
+import { AddAndEditCommentComponent } from './add-and-edit-comment/add-and-edit-comment.component';
 
 const routes: Routes = [
   {path: '', component: HomepageComponent},
@@ -39,6 +41,10 @@ const routes: Routes = [
   {path: 'admin/category/:action', component: AddEditCategoryComponent},
   {path: 'admin/subcategory/:action/:id', component: AddEditSubcategoryComponent},
   {path: 'admin/subcategory/:action', component: AddEditSubcategoryComponent},
+
+  {path: 'account', component: ProfileComponent},
+  {path: 'account/comments/:action', component: AddAndEditCommentComponent},
+  {path: 'account/comments/:action/:id', component: AddAndEditCommentComponent},
 
   {path: '**', redirectTo: ''}
 ];
