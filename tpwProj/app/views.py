@@ -81,10 +81,18 @@ def filterApi(result, params):
     return result
 
 
-class ItemView(generics.ListCreateAPIView):
+class ItemList(generics.ListCreateAPIView):
     serializer_class = ItemSerializer
     pagination_class = pagination.PageNumberPagination
     pagination.PageNumberPagination.page_size = 16
+
+    def get_queryset(self):
+        result = Item.objects.all()
+        return filterApi(result, self.request.query_params)
+
+
+class ItemView(generics.ListCreateAPIView):
+    serializer_class = ItemSerializer
 
     def get_queryset(self):
         result = Item.objects.all()

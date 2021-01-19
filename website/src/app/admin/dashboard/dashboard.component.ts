@@ -63,7 +63,8 @@ export class DashboardComponent implements OnInit {
 
   private getItems(): void {
     this.itemService.getNewItems().subscribe(response => {
-      this.items = response.slice(0, 11);
+      this.items = response.results as Item[];
+      this.items = this.items.slice(0, 11);
     });
   }
 

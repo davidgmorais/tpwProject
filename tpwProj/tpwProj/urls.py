@@ -30,7 +30,8 @@ urlpatterns = [
     path("api/category/<int:pk>/", views.CategoryDetailView.as_view()),
     path("api/category/<int:id>/delete/", views.api_delete_category, name="DeleteCategory"),
 
-    path("api/item/", views.ItemView.as_view()),
+    path("api/item/", views.ItemList.as_view()),
+    path("api/item/all", views.ItemView.as_view()),
     path("api/items/new", views.NewItemView.as_view()),
     path("api/items/promo", views.PromoItemView.as_view()),
     path("api/items/category/<str:slug>", views.CategoryItemView.as_view()),

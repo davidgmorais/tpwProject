@@ -20,7 +20,7 @@ export class ItemsService {
   constructor(private http: HttpClient) { }
 
   getItems(): Observable<Item[]> {
-    const url = this.apiURL + 'item/';
+    const url = this.apiURL + 'item/all';
     return this.http.get<Item[]>(url);
   }
 
@@ -104,7 +104,7 @@ export class ItemsService {
   // MAYBE CREATE ADMIN SPECIFIC SERVICE
 
   addItem(token: string, item: Item): Observable<any> {
-    const url = this.apiURL + 'item/';
+    const url = this.apiURL + 'item/all';
     const headers = {headers: new HttpHeaders({'Content-Type': 'application/json', Authorization: 'Token ' + token})};
     return this.http.post(url, item, headers);
   }
