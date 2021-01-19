@@ -30,12 +30,16 @@ urlpatterns = [
     path("api/category/<int:pk>/", views.CategoryDetailView.as_view()),
     path("api/category/<int:id>/delete/", views.api_delete_category, name="DeleteCategory"),
 
-    path("api/item/", views.ItemView.as_view()),
+    path("api/item/", views.ItemList.as_view()),
+    path("api/item/all", views.ItemView.as_view()),
     path("api/items/new", views.NewItemView.as_view()),
     path("api/items/promo", views.PromoItemView.as_view()),
     path("api/items/category/<str:slug>", views.CategoryItemView.as_view()),
     path("api/item/<int:pk>", views.ItemDetailView.as_view()),
     path("api/item/<int:id>/delete/", views.api_delete_item, name="DeleteItem"),
+
+    path("api/search/<str:query>/", views.ItemSearch.as_view(), name="DeleteItem"),
+    path('api/brands', views.brand_list),
 
     path("api/login", views.Login.as_view()),
 

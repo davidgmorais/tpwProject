@@ -24,11 +24,10 @@ export class LoginComponent implements OnInit {
 
   login(): void {
     if (this.loginGroup.invalid) {
-      this.errorMsg = 'Please fill all the fiels.';
+      this.errorMsg = 'Please fill all the fields.';
       return;
     }
 
-    // user service - login method
     const username = this.loginGroup.value.username;
     const password = this.loginGroup.value.password;
     this.userService.login(username, password).subscribe(response => {

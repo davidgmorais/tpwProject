@@ -1,9 +1,5 @@
-import json
-
-
 import six
 from django.core.files.base import ContentFile
-
 
 from app.models import Category, Cart, Item, Comment, Purchase, Sell, OrderItem, Profile
 from rest_framework import serializers
@@ -16,24 +12,16 @@ import uuid
 import imghdr
 
 
-# Nested Serializers: https://django.cowhite.com/blog/create-and-update-django-rest-framework-nested-serializers/
 class CategorySerializer(serializers.ModelSerializer):
     subcategories = serializers.ListSerializer(source="children", child=RecursiveField())
 
     class Meta:
         model = Category
         fields = ("id", "name", "slug", "subcategories")
-        # extra_kwargs = {
-        #     'slug': {'read_only': True},
-        # }
 
     def create(self, validated_data):
         subcategories_data = validated_data.pop('children')
         cat_slug = validated_data['name'].replace(" ", "").lower()
-        # category = Category.objects.create(
-        #     name=validated_data['name'],
-        #     slug=cat_slug,
-        # )
         if 'parent' in validated_data:
             parent = validated_data['parent']
             category = Category.objects.create(
@@ -103,18 +91,11 @@ class ItemSerializer(serializers.ModelSerializer):
     picture = Base64ImageField(
         max_length=None, use_url=True,
     )
-    category = serializers.SerializerMethodField()
 
     class Meta:
         model = Item
         fields = ('id', 'name', 'description', 'specifications', 'price', 'brand',
                   'quantity', 'insertDate', 'discount', 'picture', 'sellMoney', 'category')
-
-    def get_category(self, item):
-        category = Category.objects.get(id=item.category.parent.id)
-        print(category)
-        serializer = CategorySerializer(Category.objects.get(id=item.category.id))
-        return serializer.data
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -166,15 +147,6 @@ class SellSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    # password = serializers.CharField(
-    #     write_only=True,
-    #     required=True,
-    #     style={'input_type': 'password', 'placeholder': 'Password'}
-    # )
-    #
-    # class Meta:
-    #     model = User
-    #     fields = ('id', 'username', 'email', 'password')
     class Meta:
         model = User
         fields = ('username', 'password', 'email')
@@ -212,71 +184,3 @@ class ProfileSerializer(serializers.ModelSerializer):
         profile.money = 0
         profile.save()
         return profile
-
-    # user = UserSerializer()
-    # # birthdate = serializers.DateField(format="%d/%m/%Y", input_formats=['%d/%m/%Y'])
-    #
-    # class Meta:
-    #     model = Profile
-    #     fields = ('user', 'first_name', 'last_name', 'birthdate')
-    #     extra_kwargs = {
-    #         'money': {'read_only': True},
-    #     }
-    #
-    # def create(self, validated_data):
-    #
-    #     print(validated_data)
-    #     user_info = json.loads(json.dumps(validated_data.pop('user')))
-    #     print(user_info)
-    #
-    #     # user = User.objects.create(**user_info)
-    #     #print(user)
-    #     #user.refresh_from_db()
-    #     # 2020-11-07
-    #
-    #     date = validated_data['birthdate']
-    #     # print(date)
-    #
-    #     # profile = Profile.objects.create(user=User.objects.create(**user_info))
-    #     profile = Profile.objects.create(**validated_data)
-    #     print(profile)
-    #     #money=0, first_name=validated_data['first_name'], last_name=validated_data['last_name'], birthdate=validated_data['birthdate']
-    #     profile.user = User.objects.create(**user_info)
-    #     profile.save()
-    #     print(profile)
-    #     return profile
-    #
-    # def update(self, instance, validated_data):
-    #     print(instance)
-    #     print(validated_data)
-    #
-    #     # retrieve the User
-    #     user_data = validated_data.pop('user', None)
-    #     print(user_data)
-    #     print(validated_data)
-    #     for attr, value in user_data.items():
-    #         setattr(instance.user, attr, value)
-    #
-    #     # retrieve Profile
-    #     for attr, value in validated_data.items():
-    #         setattr(instance, attr, value)
-    #     instance.user.save()
-    #     instance.save()
-    #     return instance
-    #
-    # def update(self, instance, validated_data):
-    #     print(instance.children)
-    #     print(validated_data)
-    #     subcategories_data = validated_data.pop('children')
-    #
-    #     subcategories = instance.children.all()
-    #     subcategories = list(subcategories)
-    #     print(subcategories)
-    #     instance.name = validated_data.get('name', instance.name)
-    #     instance.save()
-    #
-    #     for subcategory_data in subcategories_data:
-    #         subcategory = subcategories.pop(0)
-    #         subcategory.name = subcategory_data.get('name', subcategory.name)
-    #         subcategory.save()
-    #     return instance

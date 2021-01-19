@@ -20,23 +20,49 @@ export class ItemsService {
   constructor(private http: HttpClient) { }
 
   getItems(): Observable<Item[]> {
-    const url = this.apiURL + 'item/';
+    const url = this.apiURL + 'item/all';
     return this.http.get<Item[]>(url);
   }
 
-  getItemsByCategory(category: string): Observable<any> {
-    const url = this.apiURL + 'items/category/' + category;
-    return  this.http.get<Item[]>(url);
+  getItemList(page: number = 1, filters?: string): Observable<any> {
+    let url = this.apiURL + 'item/';
+    if (filters) {
+      url += filters + '&page=' + page;
+    } else {
+      url += '?page=' + page;
+    }
+    return this.http.get(url);
   }
 
-  getNewItems(): Observable<Item[]> {
-    const url = this.apiURL + 'items/new';
-    return this.http.get<Item[]>(url);
+
+  getItemsByCategory(category: string, page: number = 1, filters?: string): Observable<any> {
+    let url = this.apiURL + 'items/category/' + category;
+    if (filters && filters !== '?') {
+      url += filters + '&page=' + page;
+    } else {
+      url += '?page' + page;
+    }
+    return  this.http.get(url);
   }
 
-  getPromoItems(): Observable<any> {
-    const url = this.apiURL + 'items/promo';
-    return this.http.get<Item[]>(url);
+  getNewItems(page: number = 1, filters?: string): Observable<any> {
+    let url = this.apiURL + 'items/new';
+    if (filters) {
+      url += filters + '&page=' + page;
+    } else {
+      url += '?page' + page;
+    }
+    return this.http.get(url);
+  }
+
+  getPromoItems(page: number = 1, filters?: string): Observable<any> {
+    let url = this.apiURL + 'items/promo';
+    if (filters) {
+      url += filters + '&page=' + page;
+    } else {
+      url += '?page' + page;
+    }
+    return this.http.get(url);
   }
 
   getItemInfo(id: number): Observable<Item> {
@@ -44,12 +70,16 @@ export class ItemsService {
     return this.http.get<Item>(url);
   }
 
-  getSearchResults(query: string): Observable<any> {
-    const url = this.apiURL + 'search/' + query;
+  getSearchResults(query: string): Observable<Item[]> {
+    const url = this.apiURL + 'search/' + query + '/';
     return this.http.get<Item[]>(url);
   }
 
-  // Nao vai funcionar, a mudar, o id não é do item
+  getBrands(): Observable<any> {
+    const url = this.apiURL + 'brands';
+    return this.http.get(url);
+  }
+
   getItemComments(itemId: number): Observable<Comments[]> {
     const url = this.apiURL + 'comments/' + itemId  ;
     return this.http.get<Comments[]>(url);
@@ -79,7 +109,7 @@ export class ItemsService {
   // MAYBE CREATE ADMIN SPECIFIC SERVICE
 
   addItem(token: string, item: Item): Observable<any> {
-    const url = this.apiURL + 'item/';
+    const url = this.apiURL + 'item/all';
     const headers = {headers: new HttpHeaders({'Content-Type': 'application/json', Authorization: 'Token ' + token})};
     return this.http.post(url, item, headers);
   }
@@ -189,5 +219,4 @@ export class ItemsService {
     const headers = {headers: new HttpHeaders({'Content-Type': 'application/json', Authorization: 'Token ' + token})};
     return this.http.delete(url, headers);
   }
-
 }

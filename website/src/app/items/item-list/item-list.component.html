@@ -2,6 +2,82 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-lg-2">
+
+      <div class="container filter-tab">
+        <br>
+        <a (click)="clear()" style="cursor: pointer">Clear</a>
+        <section>
+          <div class="container">
+            <form id="filters" [formGroup]="filterGroup">
+              <div class="form-group">
+                <label for="order">Sort by:</label>
+                <div>
+                  <select id="order" formControlName="order" class="form-control">
+                    <option [ngValue]="null">Sorting order</option>
+                    <option *ngFor="let order of sortChoices" value="{{order.value}}">{{order.name}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="min">Min price:</label>
+                <div class="d-flex">
+                  <input type="number" id="min" formControlName="min" min="0.01" class="form-control">
+                  <span style="margin: 6px 10px">€</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="max">Max price:</label>
+                <div class="d-flex">
+                  <input type="number" id="max" formControlName="max" class="form-control">
+                  <span style="margin: 6px 10px">€</span>
+                </div>
+              </div>
+              <div class="form-group" id="brands">
+                <label for="brand">Brand:</label>
+                <div>
+                  <select id="brand" formControlName="brand" class="form-control">
+                    <option [ngValue]="null">Select brand</option>
+                    <option *ngFor="let brand of brandList" value="{{brand}}">{{brand}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="availability">Availability:</label>
+                <div>
+                  <select id="availability" formControlName="availability" class="form-control">
+                    <option [ngValue]="null">Select availability</option>
+                    <option value="1">Available</option>
+                    <option value="2">Not available</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="discount">Discount:</label>
+                <div>
+                  <select id="discount" formControlName="discount" class="form-control">
+                    <option [ngValue]="null">Select discount</option>
+                    <option value="1">Discounted</option>
+                    <option value="2">Not discounted</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="reviews">Reviews:</label>
+                <div>
+                  <select id="reviews" formControlName="reviews" class="form-control">
+                    <option [ngValue]="null">Select Rating</option>
+                    <option *ngFor="let rating of ratingList" value="{{rating.value}}">{{rating.name}}</option>
+                  </select>
+                </div>
+              </div>
+
+              <button class="btn btn-dark" style="width: 100%" (click)="filter()">Apply</button>
+            </form>
+          </div>
+        </section>
+      </div>
+
+
       <!--{# Filter sidebar #}
       {% include 'Items/filters_sidebar.html' %}-->
     </div>
@@ -39,39 +115,32 @@
                   <strong *ngIf="item.discount == 0">{{ item.price }}€</strong>
                 </h4>
                 <span class="category-link"><a
-                  routerLink="/items/category/{{item.category.id}}">{{ item.category.name }}</a></span>
+                  routerLink="/items/category/{{item.category}}">{{ item.category }}</a></span>
               </div>
             </div>
           </div>
         </div>
       </section>
-      <section>
+      <section *ngIf="items.length > 0">
         <!-- Pagination -->
         <div class="text-center" style="width: 100%;">
-          <div class="form-row d-flex justify-content-center">
-            <div class="col-2">
-              <!--{% if items.has_previous %}
-              <button type="submit" class="btn btn-default" name="page" value="1">&laquo; first
-              </button>
-              <button type="submit" class="btn btn-default" name="page"
-                      value="{{ items.previous_page_number }}">previous
-              </button>
-              {% endif %}-->
-            </div>
-            <div class="col-1">
-                             <!--<span class="current">
-                            Page {{ items.number }} of {{ items.paginator.num_pages }}
-                        </span>-->
+          <div class="row">
+            <div class="col-5" style="text-align: right">
+              <div *ngIf="currentPage > 1">
+                <button class="btn btn-default" name="page" (click)="firstPage()">&laquo; first</button>
+                <button class="btn btn-default" name="page" (click)="previousPage()">previous</button>
+              </div>
             </div>
             <div class="col-2">
-             <!-- {% if items.has_next %}
-              <button type="submit" class="btn btn-default" name="page"
-                      value="{{ items.next_page_number }}">next
-              </button>
-              <button type="submit" class="btn btn-default" name="page"
-                      value="{{ items.paginator.num_pages }}">last &raquo;
-              </button>
-              {% endif %}-->
+              <span class="current">
+                Page {{ currentPage }} of {{ maxPage }}
+              </span>
+            </div>
+            <div class="col-5" style="text-align: left">
+              <div *ngIf="currentPage < maxPage">
+                <button class="btn btn-default" name="page" (click)="nextPage()">next</button>
+                <button class="btn btn-default" name="page" (click)="lastPage()">last &raquo;</button>
+              </div>
             </div>
           </div>
         </div>

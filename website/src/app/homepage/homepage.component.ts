@@ -14,7 +14,6 @@ export class HomepageComponent implements OnInit {
   discountedItems: Item[] = [];
   biggestDiscount: number;
   newestItems: Item[] = [];
-  categories: Category[] = [];
 
   constructor(private itemService: ItemsService) { }
 
@@ -25,7 +24,8 @@ export class HomepageComponent implements OnInit {
 
   private getPromos(): void {
     this.itemService.getPromoItems().subscribe(response => {
-      this.discountedItems = response.slice(0, 4);
+      this.discountedItems = response.results as Item[];
+      this.discountedItems = this.discountedItems.slice(0, 4);
       if (this.discountedItems.length > 0) {
         this.biggestDiscount = this.discountedItems.find( x => Math.max(x.discount)).discount;
       }
@@ -39,7 +39,8 @@ export class HomepageComponent implements OnInit {
 
   private getNew(): void {
     this.itemService.getNewItems().subscribe(response => {
-      this.newestItems = response.slice(0, 4);
+      this.newestItems = response.results as Item[];
+      this.newestItems = this.newestItems.slice(0, 4);
     });
   }
 

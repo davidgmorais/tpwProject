@@ -35,6 +35,7 @@ export class ManagementTableComponent implements OnInit {
 
   private getItems(): void {
     this.itemService.getItems().subscribe(response => {
+      console.log(response)
       this.table = response;
     });
   }
