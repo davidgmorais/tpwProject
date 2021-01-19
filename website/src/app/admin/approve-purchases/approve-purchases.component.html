@@ -1,0 +1,55 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
+  <button class="btn btn-sm btn-dark" id="menu-toggle" (click)="toggleFunction()">Menu</button>
+  <a class="navbar-brand" routerLink="/admin/" style="padding-left: 1%;">Admin Site</a>
+</nav>
+<div class="d-flex" id="wrapper">
+
+  <div class="bg-light border-right" id="sidebar-wrapper">
+    <div class="list-group list-group-flush">
+      <a routerLink="/admin" class="list-group-item list-group-item-action bg-light">Dashboard</a>
+      <a routerLink="/admin/item" class="list-group-item list-group-item-action bg-light">Items Manager</a>
+      <a routerLink="/admin/category" class="list-group-item list-group-item-action bg-light">Category Manager</a>
+      <a routerLink="/admin/purchases" class="list-group-item list-group-item-action bg-light d-flex justify-content-between">Approve Purchases</a>
+      <a routerLink="/" class="list-group-item list-group-item-action bg-light">Back to site</a>
+      <a routerLink="/logout" class="list-group-item list-group-item-action bg-light">Log out</a>
+    </div>
+  </div>
+  <div id="page-content-wrapper">
+    <br>
+    <div class="container-fluid">
+      <div class="row d-flex justify-content-between col-md-12">
+        <h3>Purchase History</h3>
+      </div>
+      <br>
+      <table class="table table-striped">
+        <thead>
+        <tr class="thead-dark">
+          <th style="width: 50%" >Item</th>
+          <th style="width: 25%" >User</th>
+          <th style="width: 25%" colspan="4">Status</th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of purchases" [ngClass]="{'table-warning' : row.pendingSell}">
+
+            <td style="width: 50%" ><a routerLink="/admin/purchases/{{ row.id }}">{{ row.item.name }}</a></td>
+            <td style="width: 25%" > {{ row.user.first_name }} {{ row.user.last_name }}</td>
+
+            <td *ngIf="row.pendingSell" style="width: 19%" >Pending</td>
+            <td *ngIf="row.pendingSell" style="width: 3%" colspan="2"><a style="color: green; cursor: pointer" (click)="approve(row.id)"><i class="material-icons md-18">done</i></a></td>
+            <td *ngIf="row.pendingSell" style="" colspan="2"><a style="color: red; cursor: pointer" (click)="deny(row.id)"><i class="material-icons md-18">clear</i></a></td>
+
+
+            <td *ngIf="!row.pendingSell && row.accepted" style="width: 19%" >Accepted</td>
+            <td *ngIf="!row.pendingSell && !row.accepted" style="width: 19%" >Denied</td>
+            <td *ngIf="!row.pendingSell" style="" colspan="4"></td>
+
+          </tr>
+        </tbody>
+      </table>
+      <div class="col-md-12">
+        <p>Total: {{ purchases.length }}</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -21,6 +21,9 @@ from app.serializers import CategorySerializer, ItemSerializer, OrderItemSeriali
     PurchaseSerializer, SellSerializer, ProfileSerializer
 from rest_framework.authtoken.models import Token
 
+from base64 import decodestring
+import re
+
 
 # SERIALIZER'S VIEWS
 class CategoryView(generics.ListCreateAPIView):
@@ -41,10 +44,29 @@ class CategoryDetailView(generics.RetrieveUpdateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
+    def put(self, request, *args, **kwargs):
+        self.permission_classes = (permissions.IsAuthenticated,)
+        self.authentication_classes = [TokenAuthentication]
+
+        if request.user.username == 'admin':
+            return self.update(request, *args, **kwargs)
+
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
 
 class ItemView(generics.ListCreateAPIView):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
+
+    def post(self, request, *args, **kwargs):
+        self.permission_classes = (permissions.IsAuthenticated,)
+        self.authentication_classes = [TokenAuthentication]
+
+        if request.user.username == 'admin':
+            print('i\'m admin')
+            return self.create(request, *args, **kwargs)
+
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
 class CategoryItemView(generics.ListCreateAPIView):
@@ -69,7 +91,15 @@ class PromoItemView(generics.ListCreateAPIView):
 class ItemDetailView(generics.RetrieveUpdateAPIView):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+
+    def put(self, request, *args, **kwargs):
+        self.permission_classes = (permissions.IsAuthenticated,)
+        self.authentication_classes = [TokenAuthentication]
+
+        if request.user.username == 'admin':
+            return self.update(request, *args, **kwargs)
+
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
 class OrderItemView(generics.ListCreateAPIView):
@@ -135,6 +165,7 @@ class SellDetailView(generics.RetrieveUpdateAPIView):
     queryset = Sell.objects.all()
     serializer_class = SellSerializer
     permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = [TokenAuthentication]
 
 
 class Login(ObtainAuthToken):
@@ -150,26 +181,154 @@ class Login(ObtainAuthToken):
             'email': user.email
         })
 
-# SERIALIZER'S DELETE VIEWS
 
+class ApproveListView(generics.ListAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = [TokenAuthentication]
+
+    queryset = Sell.objects.all()
+    serializer_class = SellSerializer
+
+
+# SERIALIZER'S ADMIN VIEWS
+@api_view(['PUT'])
+def decline_view(request, sell_id):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = [TokenAuthentication]
+
+    if request.user.username == 'admin':
+        sell = Sell.objects.get(id=sell_id)
+        sell.pendingSell = False
+        sell.accepted = False
+        sell.save()
+        return Response(status=status.HTTP_200_OK)
+    else:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['PUT'])
+def approve_view(request, sell_id):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = [TokenAuthentication]
+
+    if request.user.username == 'admin':
+        sell = Sell.objects.get(id=sell_id)
+        sell.pendingSell = False
+        sell.accepted = True
+        sell.save()
+
+        item = Item.objects.get(id=sell.item.id)
+        item.quantity += 1
+        item.save()
+
+        profile = Profile.objects.get(user__email=sell.user.email)
+        if profile.money is None:
+            profile.money = sell.moneyReceived
+        profile.money += sell.moneyReceived
+        profile.save()
+        return Response(status=status.HTTP_200_OK)
+    else:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['GET'])
+def discount_stats_view(request):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = [TokenAuthentication]
+
+    if request.user.username == 'admin':
+        stats = Purchase.objects.aggregate(Discounted=Count(Case(When(discountedP=True, then=Value(1)))),
+                                           FullPrice=Count(Case(When(discountedP=False, then=Value(1)))))
+        return Response(status=status.HTTP_200_OK, data=stats)
+    return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['GET'])
+def purchased_cat_view(request):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = [TokenAuthentication]
+
+    if request.user.username == 'admin':
+        categories = Category.objects.values('parent').annotate(purchases=Count('item__purchase')).order_by(
+            '-purchases')
+        for c in categories:
+            if c['parent'] is not None:
+                c['name'] = Category.objects.get(id=c['parent']).name
+        return Response(status=status.HTTP_200_OK, data=categories)
+    return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['GET'])
+def purchases_age_view(request):
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = [TokenAuthentication]
+
+    if request.user.username == 'admin':
+        age_groups = Profile.objects.annotate(Age=datetime.today().year - Extract('birthdate', 'year'),
+                                              AgeGroup=Case(When(Age__gte=65, then=Value('over 65')),
+                                                            When(Age__range=[41, 65], then=Value('41-65')),
+                                                            When(Age__range=[18, 40], then=Value('18-40')),
+                                                            When(Age__lt=18, then=Value('under 18')),
+                                                            output_field=CharField()),
+                                              ).values('AgeGroup').annotate(purchases=Count('user__purchase__item'))
+        return Response(status=status.HTTP_200_OK, data=age_groups)
+    return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['GET'])
+def best_buyers_view(request):
+    if request.user.username == 'admin':
+        users = Profile.objects.annotate(purchases=Count('user__purchase'))
+        if len(users) >= 5:
+            users = users[:5]
+        serializer = ProfileSerializer(users, many=True)
+        return Response(status=status.HTTP_200_OK, data=serializer.data)
+
+    else:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['GET'])
+def out_of_stock_view(request):
+    if request.user.username == 'admin':
+        items = Item.objects.filter(quantity=0)
+        serializer = ItemSerializer(items, many=True)
+        return Response(status=status.HTTP_200_OK, data=serializer.data)
+    else:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+# SERIALIZER'S DELETE VIEWS
 @api_view(['DELETE'])
 def api_delete_category(request, id):
-    try:
-        cat = Category.objects.get(id=id)
-    except Category.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    cat.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = [TokenAuthentication]
+
+    if request.user.username == 'admin':
+        try:
+            cat = Category.objects.get(id=id)
+        except Category.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        cat.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    else:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(['DELETE'])
 def api_delete_item(request, id):
-    try:
-        item = Item.objects.get(id=id)
-    except Item.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    item.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = [TokenAuthentication]
+
+    if request.user.username == 'admin':
+        try:
+            item = Item.objects.get(id=id)
+        except Item.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    else:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(['DELETE'])
@@ -895,12 +1054,12 @@ def edit_category(request, category_id):
     if request.method == "POST":
         form = CategoryForm(request.POST)
         if form.is_valid():
-            category = Category.objects.get(slug=str(category_id) + "-00")
+            category = Category.objects.get(id=category_id)
             category.name = form.cleaned_data["category"]
             category.save()
             return redirect("/admin/category")
     else:
-        form = CategoryForm(initial={"category": Category.objects.get(slug=str(category_id) + "-00").name})
+        form = CategoryForm(initial={"category": Category.objects.get(id=category_id).name})
 
     t_params = {
         "form": form,

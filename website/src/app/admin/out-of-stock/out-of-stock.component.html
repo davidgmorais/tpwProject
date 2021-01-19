@@ -1,0 +1,78 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
+  <button class="btn btn-sm btn-dark" id="menu-toggle" (click)="toggleFunction()">Menu</button>
+  <a class="navbar-brand" routerLink="/admin/" style="padding-left: 1%; color: white; cursor:pointer;">Admin Site</a>
+</nav>
+<div class="d-flex" id="wrapper">
+
+  <div class="bg-light border-right" id="sidebar-wrapper">
+    <div class="list-group list-group-flush">
+      <a routerLink="/admin" class="list-group-item list-group-item-action bg-light">Dashboard</a>
+      <a routerLink="/admin/item" class="list-group-item list-group-item-action bg-light">Items Manager</a>
+      <a routerLink="/admin/category" class="list-group-item list-group-item-action bg-light">Category Manager</a>
+      <a routerLink="/admin/purchases" class="list-group-item list-group-item-action bg-light d-flex justify-content-between">Approve Purchases</a>
+      <a routerLink="/" class="list-group-item list-group-item-action bg-light">Back to site</a>
+      <a routerLink="/logout" class="list-group-item list-group-item-action bg-light">Log out</a>
+    </div>
+  </div>
+  <div id="page-content-wrapper">
+
+    <div class="container" *ngIf="item">
+      <br>
+      <div class="row">
+        <div class="col-md-10">
+          <section id="EditItem">
+            <form class="form-horizontal" [formGroup]="quantityGroup" (submit)="upgradeQuantity()">
+              <h4>Edit Quantity of {{ item.name }}</h4>
+              <hr/>
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-md-3">
+                    <label for="quantity">Quantity:</label>
+                  </div>
+                  <div class="col-md-6">
+                    <input type="number" id="quantity" formControlName="quantity">
+                    <p *ngIf="errorMsg" style="color: darkred">{{errorMsg}}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="col-md-offset-2 col-md-10">
+                  <input type="submit" value="Edit" class="btn btn-success"/>
+                </div>
+              </div>
+            </form>
+          </section>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="container" *ngIf="!id">
+      <br>
+      <div class="container-fluid">
+        <div class="row d-flex justify-content-between col-md-12">
+          <div class="col-md-6">
+            <h3>Select item to edit</h3>
+          </div>
+        </div>
+        <br>
+        <table class="table table-striped">
+          <thead>
+          <tr class="thead-dark">
+            <th style="width: 84%" colspan="2">Item name</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let row of table">
+            <td style="width: 90%"><a routerLink="/admin/outofstock/{{row.id}}">{{ row.name }}</a></td>
+          </tr>
+          </tbody>
+        </table>
+        <div class="col-md-12">
+          <p>Item total: {{ table.length }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

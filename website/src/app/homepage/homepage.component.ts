@@ -11,10 +11,10 @@ import {max} from 'rxjs/operators';
 })
 export class HomepageComponent implements OnInit {
 
-  discountedItems: Item[];
+  discountedItems: Item[] = [];
   biggestDiscount: number;
-  newestItems: Item[];
-  categories: Category[];
+  newestItems: Item[] = [];
+  categories: Category[] = [];
 
   constructor(private itemService: ItemsService) { }
 
@@ -26,7 +26,9 @@ export class HomepageComponent implements OnInit {
   private getPromos(): void {
     this.itemService.getPromoItems().subscribe(response => {
       this.discountedItems = response.slice(0, 4);
-      this.biggestDiscount = this.discountedItems.find( x => Math.max(x.discount)).discount;
+      if (this.discountedItems.length > 0) {
+        this.biggestDiscount = this.discountedItems.find( x => Math.max(x.discount)).discount;
+      }
     });
   }
 

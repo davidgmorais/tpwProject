@@ -16,6 +16,12 @@ import {ItemsService} from './services/items.service';
 import { DashboardComponent } from './admin/dashboard/dashboard.component';
 import { ManagementTableComponent } from './admin/management-table/management-table.component';
 import { AddAndEditComponent } from './admin/add-and-edit/add-and-edit.component';
+import { AddEditCategoryComponent } from './admin/add-edit-category/add-edit-category.component';
+import { AddEditSubcategoryComponent } from './admin/add-edit-subcategory/add-edit-subcategory.component';
+import {DatePipe} from '@angular/common';
+import { OutOfStockComponent } from './admin/out-of-stock/out-of-stock.component';
+import { ApprovePurchasesComponent } from './admin/approve-purchases/approve-purchases.component';
+import { PurchaseDetailsComponent } from './admin/purchase-details/purchase-details.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +36,11 @@ import { AddAndEditComponent } from './admin/add-and-edit/add-and-edit.component
     DashboardComponent,
     ManagementTableComponent,
     AddAndEditComponent,
+    AddEditCategoryComponent,
+    AddEditSubcategoryComponent,
+    OutOfStockComponent,
+    ApprovePurchasesComponent,
+    PurchaseDetailsComponent,
   ],
     imports: [
         BrowserModule,
@@ -39,7 +50,8 @@ import { AddAndEditComponent } from './admin/add-and-edit/add-and-edit.component
     ],
   providers: [
     UserService,
-    ItemsService
+    ItemsService,
+    DatePipe
   ],
   bootstrap: [AppComponent]
 })

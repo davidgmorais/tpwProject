@@ -31,17 +31,16 @@ export class ItemListComponent implements OnInit {
         this.getPromoItems();
 
       } else if (params.get('id') === 'category') {
-        const categorySlug = params.get('slug');
-        if (categorySlug) {
-          this.getCategory(categorySlug);
-          this.getItemsByCategory(categorySlug);
+        const categoryId = params.get('slug');
+        if (categoryId) {
+          this.getCategory(categoryId);
 
         } else {
-          this.router.navigateByUrl('');
+          this.router.navigateByUrl('/');
         }
 
       } else {
-        this.router.navigateByUrl('');
+        this.router.navigateByUrl('/');
       }
     });
 
@@ -58,10 +57,12 @@ export class ItemListComponent implements OnInit {
     return new Date(item.insertDate) > dateThreshold;
   }
 
-  private getCategory(slug): void {
-    this.itemService.getCategories().subscribe(response => {
-      this.category = response.find(c => c.slug === slug);
+  private getCategory(categoryId): void {
+    this.itemService.getCategory(categoryId).subscribe(response => {
+      this.category = response;
       this.title = this.category.name;
+      this.getItemsByCategory(this.category.slug);
+
     });
   }
 

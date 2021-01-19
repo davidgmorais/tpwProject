@@ -24,13 +24,9 @@ export class ItemPageComponent implements OnInit {
   }
 
   private getItem(id: string): void {
-    // for testing
-    this.itemService.getItems().subscribe(response => {
-      this.item = response.filter(i => i.id === +id)[0];
-    });
-    /*this.itemService.getItemInfo(+id).subscribe(response => {
+    this.itemService.getItemInfo(+id).subscribe(response => {
       this.item = response;
-    });*/
+    });
   }
 
   private getComments(id: string): void {

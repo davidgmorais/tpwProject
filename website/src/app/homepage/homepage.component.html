@@ -6,7 +6,7 @@
   </div>
 </div>
 
-<section style="margin-top: 5vh" *ngIf="biggestDiscount > 0">
+<section style="margin-top: 5vh" *ngIf="discountedItems.length > 0">
   <div class="container">
     <div class="section-title">
       <h2><a routerLink="/items/promo">Discounts up to {{ biggestDiscount }}%</a></h2>
@@ -55,7 +55,7 @@
 </section>
 
 
-<section style="margin-top: 5vh" *ngIf="newestItems && newestItems.length > 0">
+<section style="margin-top: 5vh" *ngIf="newestItems.length > 0">
   <div class="container">
     <div class="section-title">
       <h2><a routerLink="/items/new">New In</a></h2>

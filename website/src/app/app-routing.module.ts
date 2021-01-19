@@ -10,6 +10,11 @@ import {ItemPageComponent} from './items/item-page/item-page.component';
 import {DashboardComponent} from './admin/dashboard/dashboard.component';
 import {ManagementTableComponent} from './admin/management-table/management-table.component';
 import {AddAndEditComponent} from './admin/add-and-edit/add-and-edit.component';
+import {AddEditCategoryComponent} from './admin/add-edit-category/add-edit-category.component';
+import {AddEditSubcategoryComponent} from './admin/add-edit-subcategory/add-edit-subcategory.component';
+import {OutOfStockComponent} from './admin/out-of-stock/out-of-stock.component';
+import {ApprovePurchasesComponent} from './admin/approve-purchases/approve-purchases.component';
+import {PurchaseDetailsComponent} from './admin/purchase-details/purchase-details.component';
 
 const routes: Routes = [
   {path: '', component: HomepageComponent},
@@ -23,9 +28,17 @@ const routes: Routes = [
   {path: 'registration', component: RegisterComponent},
 
   {path: 'admin', component: DashboardComponent},
+  {path: 'admin/outofstock', component: OutOfStockComponent},
+  {path: 'admin/outofstock/:id', component: OutOfStockComponent},
+  {path: 'admin/purchases', component: ApprovePurchasesComponent},
+  {path: 'admin/purchases/:id', component: PurchaseDetailsComponent},
   {path: 'admin/:type', component: ManagementTableComponent},
-  {path: 'admin/:type/:action/:id', component: AddAndEditComponent},
-  {path: 'admin/:type/:action', component: AddAndEditComponent},
+  {path: 'admin/item/:action/:id', component: AddAndEditComponent},
+  {path: 'admin/item/:action', component: AddAndEditComponent},
+  {path: 'admin/category/:action/:id', component: AddEditCategoryComponent},
+  {path: 'admin/category/:action', component: AddEditCategoryComponent},
+  {path: 'admin/subcategory/:action/:id', component: AddEditSubcategoryComponent},
+  {path: 'admin/subcategory/:action', component: AddEditSubcategoryComponent},
 
   {path: '**', redirectTo: ''}
 ];

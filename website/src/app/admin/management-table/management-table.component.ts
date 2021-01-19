@@ -9,7 +9,9 @@ import {ItemsService} from '../../services/items.service';
 })
 export class ManagementTableComponent implements OnInit {
   type: string;
+  toDeleteId: number;
   table: any = [];
+  token: string;
 
   constructor(private router: Router, private route: ActivatedRoute, private itemService: ItemsService) { }
 
@@ -27,6 +29,7 @@ export class ManagementTableComponent implements OnInit {
         this.router.navigateByUrl('/admin');
       }
     });
+    this.token = localStorage.getItem('auth_token');
 
   }
 
@@ -45,5 +48,23 @@ export class ManagementTableComponent implements OnInit {
 
   toggleFunction(): void {
     document.getElementById('wrapper').classList.toggle('toggled');
+  }
+
+  toDelete(id: number = null): void {
+    this.toDeleteId = id;
+  }
+
+  deleteCategory(): void {
+    this.itemService.deleteCategory(this.token, this.toDeleteId).subscribe(response => {
+      this.toDeleteId = null;
+      this.getCategories();
+    });
+  }
+
+  deleteItem(): void {
+    this.itemService.deleteItem(this.token, this.toDeleteId).subscribe(response => {
+      this.toDeleteId = null;
+      this.getItems();
+    });
   }
 }

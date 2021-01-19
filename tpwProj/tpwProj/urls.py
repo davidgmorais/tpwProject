@@ -39,6 +39,16 @@ urlpatterns = [
 
     path("api/login", views.Login.as_view()),
 
+    path("api/admin/stats/discount", views.discount_stats_view),
+    path("api/admin/stats/category", views.purchased_cat_view),
+    path("api/admin/stats/age", views.purchases_age_view),
+    path("api/admin/stats/bestbuyers", views.best_buyers_view),
+    path("api/admin/outofstock", views.out_of_stock_view),
+    path("api/admin/purchases", views.ApproveListView.as_view()),
+    path("api/admin/purchases/<int:sell_id>/decline", views.decline_view),
+    path("api/admin/purchases/<int:sell_id>/approve", views.approve_view),
+
+
     path("api/orderitem/", views.OrderItemView.as_view()),
     path("api/orderitem/<int:pk>", views.OrderItemDetailView.as_view()),
     path("api/orderitem/<int:id>/delete/", views.api_delete_orderitem, name="DeleteOrderItem"),

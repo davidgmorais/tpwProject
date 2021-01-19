@@ -8,7 +8,7 @@ export class Item {
   price: number;
   brand: string;
   quantity: number;
-  insertDate: Date;
+  insertDate: any;
   category: Category;
   discount: number;
   picture: string;

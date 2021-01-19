@@ -1,0 +1,99 @@
+<script src="node_modules/chart.js/Chart.min.js"></script>
+<script src="node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
+  <button class="btn btn-sm btn-dark" id="menu-toggle" (click)="toggleFunction()">Menu</button>
+  <a class="navbar-brand" routerLink="/admin/" style="padding-left: 1%;">Admin Site</a>
+</nav>
+<div class="d-flex" id="wrapper">
+
+  <div class="bg-light border-right" id="sidebar-wrapper">
+    <div class="list-group list-group-flush">
+      <a routerLink="/admin" class="list-group-item list-group-item-action bg-light">Dashboard</a>
+      <a routerLink="/admin/item" class="list-group-item list-group-item-action bg-light">Items Manager</a>
+      <a routerLink="/admin/category" class="list-group-item list-group-item-action bg-light">Category Manager</a>
+      <a routerLink="/admin/purchases" class="list-group-item list-group-item-action bg-light d-flex justify-content-between">Approve Purchases</a>
+      <a routerLink="/" class="list-group-item list-group-item-action bg-light">Back to site</a>
+      <a routerLink="/logout" class="list-group-item list-group-item-action bg-light">Log out</a>
+    </div>
+  </div>
+  <div id="page-content-wrapper">
+
+    <div class="container">
+      <br>
+      <div class="col-md-10">
+        <section *ngIf="details">
+          <h4>Purchase Information</h4>
+          <hr />
+          <div class="row">
+            <div class="col-md-3">
+              <p>item name:</p>
+            </div>
+            <div class="col-md-6">
+              {{ details.item.name }}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-3">
+              <p>Owner:</p>
+            </div>
+            <div class="col-md-6">
+              {{ details.user.first_name }} {{ details.user.last_name }}
+            </div>
+          </div>
+          <br>
+
+          <div class="row">
+            <div class="col-md-3">
+              <p>Item original price:</p>
+            </div>
+            <div class="col-md-6">
+              {{ details.item.price }}€
+            </div>
+          </div>
+
+
+          <div class="row" [ngStyle]="{'color' : (profit > 0 ? 'green': 'red')}">
+            <div class="col-md-3">
+              <p>Selling offer:</p>
+            </div>
+            <div class="col-md-6">
+              {{ details.moneyReceived }}€ ( <span *ngIf="profit >= 0"> + </span> {{ profit }} € )
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-3">
+              <p>In stock:</p>
+            </div>
+            <div class="col-md-6">
+              {{ details.item.quantity }}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-3">
+              <p>Status:</p>
+            </div>
+              <div class="col-md-3" *ngIf="details.pendingSell">
+                Pending
+              </div>
+              <div class="col-md-4"  *ngIf="details.pendingSell">
+                <button class="btn btn-success" (click)="approve()">Approve</button>
+                <button class="btn btn-danger" (click)="deny()">Decline</button>
+              </div>
+              <div class="col-md-4" *ngIf="!details.pendingSell && details.accepted">
+                Accepted
+              </div>
+              <div class="col-md-4" *ngIf="!details.pendingSell && !details.accepted">
+                Denied
+              </div>
+          </div>
+
+        </section>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,3 +1,6 @@
+<script src="node_modules/chart.js/Chart.min.js"></script>
+<script src="node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
   <button class="btn btn-sm btn-dark" id="menu-toggle" (click)="toggleFunction()">Menu</button>
   <a class="navbar-brand" routerLink="/admin/" style="padding-left: 1%;">Admin Site</a>
@@ -33,11 +36,11 @@
               </div>
               <div class="card-body" style="overflow: auto;">
                 <table class="table table-sm table-striped">
-                  <div class="table-body">
+                  <tbody class="table-body">
                     <tr *ngFor="let it of items">
                       <td style="width: 90%">
                         <div class="container">
-                          <a routerLink="/admin/item/{{ it.id }}/edit">{{ it.name }}</a>
+                          <a routerLink="/admin/item/edit/{{ it.id }}">{{ it.name }}</a>
                           <p style="font-size: small">{{ it.insertDate }}</p>
                         </div>
                       </td>
@@ -47,7 +50,7 @@
                         </a>
                       </td>
                     </tr>
-                  </div>
+                  </tbody>
                 </table>
               </div>
             </div>
@@ -67,16 +70,16 @@
               </div>
               <div class="card-body" style="overflow: auto">
                 <table class="table table-sm table-striped">
-                  <div class="table-body">
+                  <tbody>
                     <tr *ngFor="let cat of category">
-                      <td style="width: 90%">
+                      <td>
                         <div class="container">
-                          <a routerLink="/admin/category/{{ cat.id }}/edit">{{ cat.name }}</a><br>
-    <!--                      <span style="font-size: small">Subcategories: {{ subcat|length }}</span>-->
+                          <a routerLink="/admin/category/edit/{{ cat.id }}">{{ cat.name }}</a><br>
+                          <span style="font-size: small">Subcategories: {{ cat.subcategories.length }}</span>
                         </div>
                       </td>
                     </tr>
-                  </div>
+                  </tbody>
                 </table>
               </div>
             </div>
@@ -94,22 +97,22 @@
               </div>
               <div class="card-body" style="overflow: auto">
                 <table class="table table-sm table-striped">
-                  <div class="table-body">
+                  <tbody class="table-body">
                     <tr *ngFor="let sell of pending">
                       <td style="width: 100%">
                         <div class="container">
                           <div class="row">
                             <div class="col-md-9">
-                              <a routerLink="/admin/purchases/{{ sell.id }}/">{{ sell }}</a><br>
+                              <a routerLink="/admin/purchases/{{ sell.id }}/">{{ sell.item.name }}</a><br>
                               <span style="font-size: small">Money Received: {{ sell.moneyReceived }}€</span>
                             </div>
                             <div class="col-md-1">
-                              <a routerLink="purchases/{{ sell.id }}/accept">
+                              <a (click)="approve(sell.id)" style="color: green; cursor: pointer">
                                 <i class="material-icons" >done</i>
                               </a>
                             </div>
                             <div class="col-md-1">
-                              <a routerLink="purchases/{{ sell.id }}/decline">
+                              <a (click)="deny(sell.id)" style="color: red; cursor: pointer;">
                                 <i class="material-icons">clear</i>
                               </a>
                             </div>
@@ -117,7 +120,7 @@
                         </div>
                       </td>
                     </tr>
-                  </div>
+                  </tbody>
                 </table>
               </div>
             </div>
@@ -129,25 +132,25 @@
                 <div class="container">
                   <div class="row d-flex justify-content-between">
                     Out of Stock Items
-                    <a routerLink="{% url 'OutOfStockItemManagement' %}" class="btn btn-success btn-sm">See all</a>
+                    <a routerLink="/admin/outofstock" class="btn btn-success btn-sm">See all</a>
                   </div>
                 </div>
               </div>
               <div class="card-body" style="overflow: auto">
                 <table class="table table-sm table-striped">
-                  <div class="table-body">
+                  <tbody class="table-body">
                     <tr *ngFor="let item of outOfStock">
                       <td style="width: 100%">
                         <div class="container">
                           <div class="row">
                             <div class="col-md-9">
-                              <a routerLink="/outOfStock/{{item.id}}" >{{ item.name }}</a><br>
+                              <a routerLink="/admin/outofstock/{{item.id}}" >{{ item.name }}</a><br>
                             </div>
                           </div>
                         </div>
                       </td>
                     </tr>
-                  </div>
+                  </tbody>
                 </table>
               </div>
             </div>
@@ -167,7 +170,7 @@
                     </div>
                   </div>
                   <div class="card-body" style="overflow: auto">
-                    <canvas id="pieChart" style="width: 120vh;"></canvas>
+                    <canvas id="pieChart" style="width: 100%;"></canvas>
                   </div>
                 </div>
               </div>
@@ -186,12 +189,12 @@
                   </div>
                   <div class="card-body" style="overflow: auto">
                     <table class="table table-sm table-striped">
-                      <div class="table-body">
+                      <tbody class="table-body">
                         <tr *ngFor="let user of bestBuyers">
-                          <td>{{ user.index }}</td>
-                          <td>{{ user }}</td>
+                          <td>{{ bestBuyers.indexOf(user) + 1 }}</td>
+                          <td>{{ user.first_name }}</td>
                         </tr>
-                      </div>
+                      </tbody>
                     </table>
                   </div>
                 </div>
@@ -211,12 +214,12 @@
                   </div>
                   <div class="card-body" style="overflow: auto">
                     <table class="table table-sm table-striped">
-                      <div class="table-body">
+                      <tbody class="table-body">
                         <tr *ngFor="let user of bestBuyers">
-                          <td>{{ user.index }}</td>
-                          <td>{{ user }}</td>
+                          <td>{{ bestBuyers.indexOf(user) + 1 }}</td>
+                          <td>{{ user.first_name }}</td>
                         </tr>
-                      </div>
+                      </tbody>
                     </table>
                   </div>
                 </div>

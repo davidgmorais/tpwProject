@@ -11,7 +11,7 @@ admin.site.register(Purchase)
 admin.site.register(Cart)
 
 
-# admin.site.register(Profile)
+admin.site.register(Profile)
 
 
 
