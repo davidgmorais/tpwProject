@@ -195,7 +195,7 @@ class CommentView(generics.ListCreateAPIView):
 class CommentDetailView(generics.RetrieveUpdateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+
 
 
 class PurchaseView(generics.ListCreateAPIView):
@@ -404,10 +404,16 @@ def api_delete_item(request, id):
 
 @api_view(['DELETE'])
 def api_delete_orderitem(request, id):
+
     try:
         orderItem = OrderItem.objects.get(id=id)
     except OrderItem.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if not request.user or request.user.id != orderItem.cart.user.id:
+        print(request.user.id)
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
     orderItem.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
