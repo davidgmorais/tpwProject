@@ -1,0 +1,17 @@
+.cart_item {
+  padding: 1%;
+}
+
+.cart_item s  {
+  color: red;
+}
+
+.cart_item a {
+  color: black;
+}
+
+.cart_item .container {
+  background-color: white;
+  padding: 20px;
+  box-shadow: 5px 5px 8px 1px #d4d4d4;
+}

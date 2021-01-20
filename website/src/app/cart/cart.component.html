@@ -1,0 +1,140 @@
+<app-navbar></app-navbar>
+<br>
+<div class="container">
+  <div class="row">
+    <div class="col-6">
+      <h3>My cart</h3>
+    </div>
+
+    <div class="col-6" style="text-align: right">
+      <!--      <p>{{ cart.items|length }} items</p>-->
+    </div>
+  </div>
+  <hr>
+</div>
+
+<div class="container" id="cart_list" *ngIf="orderedItems.length != 0">
+  <div class="cart_item" *ngFor="let order of orderedItems">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-2 d-none d-lg-block">
+          <div style="max-width: 100%;">
+            <a routerLink="/item/{{order.item.id}}">
+              <img src="{{ order.item.picture }}" style="width:70%;">
+            </a>
+          </div>
+          <br>
+        </div>
+
+        <div class="col-lg-6 col-md-12" style="height: inherit;">
+          <a routerLink="/item/{{order.item.id}}">
+            <h5>{{ order.item.name }}</h5>
+          </a>
+        </div>
+
+        <div class="col-lg-4 col-md-12 col-10">
+          <div class="row">
+            <div class="col-lg-8 col-md-7 col-10" style="margin-top: 5%;">
+              <div class="row">
+                <div class="col-lg-1 col-md-2 col-1">
+                  <a (click)="removeItem(order.id)">
+                    <i class="material-icons">delete</i>
+                  </a>
+                </div>
+
+                <div class="offset-lg-1 col-lg-8 col-md-8 col-9">
+
+                  <div class="input-group">
+                    <span class="input-group-btn">
+                      <a *ngIf="order.qty == 1" (click)="decreaseOrderQty(order.id)">
+                        <button type="button" class="btn btn-dark">
+                          <span class="material-icons" style="font-size: small">remove</span>
+                        </button>
+                      </a>
+                      <button type="button" class="btn btn-dark" *ngIf="order.qty > 1" disabled="disabled">
+                        <span class="material-icons" style="font-size: small">remove</span>
+                      </button>
+                    </span>
+                    <input type="text" readonly class="form-control input-number" value="{{ order.qty }}" min="1"
+                           max="{{ order.qty }}">
+                    <span class="input-group-btn">
+                      <a *ngIf="order.item.quantity > order.qty" (click)="increaseOrderQty(order.id)" )>
+                        <button type="button" class="btn btn-dark" disabled="disabled">
+                          <span class="material-icons" style="font-size: small">add</span>
+                        </button>
+                      </a>
+                      <button type="button" class="btn btn-dark" *ngIf="order.item.quantity <= order.qty"
+                              disabled="disabled">
+                        <span class="material-icons" style="font-size: small">add</span>
+                      </button>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-5 col-2" style="text-align: right; margin-top: 3%">
+              <h4 *ngIf="order.item.discount==0"> {{ order.item.price }}€</h4>
+              <div *ngIf="order.item.discount!=0">
+                <p style="margin-bottom: 5px; margin-left: 6px; font-size: medium"><s>{{ order.item.price }}€</s></p>
+                <h4>{{ ((100 - order.item.discount) * order.item.price / 100).toFixed(2)  }}€</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+</div>
+
+
+  <div class="container" *ngIf="orderedItems.length != 0">
+    <div class="row">
+      <div class="offset-md-1 col-4">
+        <label >Discount Money</label>
+      </div>
+
+      <div class="col-6" style="text-align: right">
+        <h5 *ngIf="profile.money != 0">{{ profile.money }}€</h5>
+        <h5 *ngIf="profile.money != 0">0.00€</h5>
+      </div>
+    </div>
+    <div class="row">
+      <div class="offset-md-1 col-4">
+        <h5>Subtotal</h5>
+      </div>
+      <div class="col-6" style="text-align: right">
+        <h4>{{ subtotal }}€</h4>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="offset-md-1 col-4">
+        <h2>Total</h2>
+      </div>
+      <div class="col-6" style="text-align: right">
+        <h3>{{ total }}€</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" id="cart_list" *ngIf="orderedItems.length == 0">
+    <p>Your shopping cart is empty at the moment.</p>
+  </div>
+
+  <br>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 col-6">
+        <a routerLink="/" class="btn btn-outline-dark">Keep shopping</a>
+      </div>
+
+      <div class="col-md-6 col-6" style="text-align: right" *ngIf="orderedItems.length != 0">
+        <input (click)="purchaseCart()" name="done" value="Finalize" class="btn btn-outline-dark">
+      </div>
+
+    </div>
+  </div>
+
+<br>
+

@@ -24,6 +24,7 @@ import { ApprovePurchasesComponent } from './admin/approve-purchases/approve-pur
 import { PurchaseDetailsComponent } from './admin/purchase-details/purchase-details.component';
 import { ProfileComponent } from './profile/profile.component';
 import { AddAndEditCommentComponent } from './add-and-edit-comment/add-and-edit-comment.component';
+import { CartComponent } from './cart/cart.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { AddAndEditCommentComponent } from './add-and-edit-comment/add-and-edit-
     PurchaseDetailsComponent,
     ProfileComponent,
     AddAndEditCommentComponent,
+    CartComponent,
   ],
     imports: [
         BrowserModule,

@@ -1,10 +1,10 @@
 import {Item} from './Item';
-import {Profile} from './Profile';
+import {User} from './User';
 
 export class Purchase {
   id: number;
   item: Item;
   price: number;
-  user: Profile;
+  user: User;
   discountedP: boolean;
 }

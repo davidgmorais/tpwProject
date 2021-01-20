@@ -1,5 +1,5 @@
 import {Item} from './Item';
-import {Profile} from './Profile';
+import {User} from './User';
 
 export class Sell {
   id: number;
@@ -7,5 +7,5 @@ export class Sell {
   moneyReceived: number;
   pendingSell: boolean;
   accepted: boolean;
-  user: Profile;
+  user: User;
 }

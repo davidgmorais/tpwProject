@@ -78,11 +78,9 @@ export class AddEditSubcategoryComponent implements OnInit {
       this.itemService.getCategories().subscribe(response => {
         const parentCategory = response.find(c => c.subcategories.find( sc => sc.id === +categoryId));
         this.category = parentCategory.subcategories.find(sc => sc.id === +categoryId);
-
         this.subcategoryGroup.setValue({name: this.category.name, parent: parentCategory.name});
       });
     }
-
   }
 
   addSubcategory(): void {
@@ -96,6 +94,9 @@ export class AddEditSubcategoryComponent implements OnInit {
     } else {
       parent = this.subcategoryGroup.value.parent;
     }
+    console.log(parent);
+    console.log('hh');
+    console.log(this.subcategoryGroup.value.parent);
 
     this.itemService.addSubcategory(this.token, this.subcategoryGroup.value.name, parent).subscribe(response => {
       this.location.back();

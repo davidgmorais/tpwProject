@@ -3,7 +3,7 @@ import {Profile} from './Profile';
 
 export class Cart {
   id: number;
-  user: Profile;
+  user: number;
 
   /*total(): number {
     let total = 0;

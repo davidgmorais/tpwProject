@@ -7,6 +7,7 @@ import {Cart} from '../../models/Cart';
 import {Profile} from '../../models/Profile';
 import {UserService} from '../../services/user.service';
 import {OrderItem} from '../../models/OrderItem';
+import {Sell} from '../../models/Sell';
 
 @Component({
   selector: 'app-item-page',
@@ -14,7 +15,6 @@ import {OrderItem} from '../../models/OrderItem';
   styleUrls: ['./item-page.component.css']
 })
 export class ItemPageComponent implements OnInit {
-
   profile: Profile;
   cart: Cart;
   item: Item;
@@ -23,8 +23,10 @@ export class ItemPageComponent implements OnInit {
   userIsAuthenticated: string;
   token: string;
   username: string;
+  sell: Sell;
 
-  constructor(private route: ActivatedRoute, private router: Router, private itemService: ItemsService, private userService: UserService) {
+  constructor(private route: ActivatedRoute, private router: Router, private itemService: ItemsService,
+              private userService: UserService) {
     this.userIsAuthenticated = localStorage.getItem('username');
     this.token = localStorage.getItem('auth_token');
     this.username = localStorage.getItem('username');
@@ -55,18 +57,35 @@ export class ItemPageComponent implements OnInit {
     });
   }
 
-  addToCart(): void {
-    this.itemService.getCart(this.token).subscribe(response => {
-      this.cart = response.filter(i => i.user.id === this.profile.id)[0];
+  addToCart(id: number): void {
+    this.itemService.getCart().subscribe(response => {
+      this.cart = response.filter(i => i.user === +this.profile.user)[0];
     });
+
+    if (this.cart == null){
+      this.createCart(+id);
+    }
+
     this.itemService.orderItem(this.token, this.cart, this.item).subscribe(response => {
-      this.router.navigateByUrl('/');
+      this.router.navigateByUrl('/cart');
     });
   }
 
   sellItem(): void {
-    this.itemService.sellItem(this.token, this.profile, this.item).subscribe(response => {
+    this.sell.item = this.item;
+    this.sell.user = this.profile.user;
+    this.sell.moneyReceived = this.item.sellMoney;
+    this.sell.pendingSell = true;
+    this.sell.accepted = false;
+    console.log(this.sell.item);
+    this.itemService.sellItem(this.token, this.sell).subscribe(response => {
       this.router.navigateByUrl('/account');
+    });
+  }
+
+  createCart(id: number): void{
+    this.itemService.addCart(this.token, this.cart).subscribe(response => {
+      this.router.navigateByUrl('/item/' + id);
     });
   }
 }

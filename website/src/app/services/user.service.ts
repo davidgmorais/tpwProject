@@ -38,6 +38,12 @@ export class UserService {
     return this.http.get<Profile[]>(url);
   }
 
+  updateAccount(money: number, id: number): Observable<any> {
+    const url = this.apiURL + 'profiles/' + id;
+    const headers = {headers: new HttpHeaders({'Content-Type': 'application/json'})};
+    return this.http.put(url, money, headers);
+  }
+
   getComments(): Observable<Comments[]> {
     const url = this.apiURL + 'comment/';
     return this.http.get<Comments[]>(url);

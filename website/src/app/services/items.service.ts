@@ -8,6 +8,7 @@ import {Profile} from '../models/Profile';
 import {Sell} from '../models/Sell';
 import {Cart} from '../models/Cart';
 import {OrderItem} from '../models/OrderItem';
+import {Purchase} from "../models/Purchase";
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -116,9 +117,16 @@ export class ItemsService {
     return this.http.post(url, item, headers);
   }
 
-  getCart(token: string): Observable<Cart[]>{
+  addCart(token: string, cart: Cart): Observable<any> {
+    console.log('hereeee');
     const url = this.apiURL + 'cart';
     const headers = {headers: new HttpHeaders({'Content-Type': 'application/json', Authorization: 'Token ' + token})};
+    return this.http.post(url, cart, headers);
+  }
+
+  getCart(): Observable<Cart[]>{
+    const url = this.apiURL + 'cart';
+    const headers = {headers: new HttpHeaders({'Content-Type': 'application/json'})};
     return this.http.get<Cart[]>(url, headers);
   }
 
@@ -133,17 +141,22 @@ export class ItemsService {
     return this.http.post(url, body, headers);
   }
 
-  sellItem(token: string, profile: Profile, item: Item): Observable<any>{
+  getOrderItems(): Observable<OrderItem[]>{
+    const url = this.apiURL + 'orderitem';
+    const headers = {headers: new HttpHeaders({'Content-Type': 'application/json'})};
+    return this.http.get<OrderItem[]>(url, headers);
+  }
+
+  purchaseItem(token: string, purchase: Purchase): Observable<any>{
+    const url = this.apiURL + 'purchase';
+    const headers = {headers: new HttpHeaders({'Content-Type': 'application/json', Authorization: 'Token ' + token})};
+    return this.http.post(url, purchase, headers);
+  }
+
+  sellItem(token: string, sell: Sell): Observable<any>{
     const url = this.apiURL + 'sell';
     const headers = {headers: new HttpHeaders({'Content-Type': 'application/json', Authorization: 'Token ' + token})};
-    const body = {
-      profile,
-      item,
-      moneyReceived: item.sellMoney,
-      pendingSell: true,
-      accepted: false,
-    };
-    return this.http.post(url, body, headers);
+    return this.http.post(url, sell, headers);
   }
 
   getDiscountStats(token: string): Observable<any>{

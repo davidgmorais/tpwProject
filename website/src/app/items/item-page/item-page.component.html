@@ -12,8 +12,8 @@
       <div>
 
         <h3 *ngIf="item.discount != 0">Buy for
-          <del>{{ item.price }}€</del>
-          <strong>{{ ((100 - item.discount) * item.price / 100).toFixed(2)  }}€</strong> ({{item.discount}}% off)
+          <del>{{ item.price }}€ </del>
+          <strong>{{ ((100 - item.discount) * item.price / 100).toFixed(2)  }}€ </strong> ({{item.discount}}% off)
         </h3>
 
         <h3 *ngIf="item.discount == 0">Buy for {{ item.price }}€</h3>
@@ -29,7 +29,7 @@
           </div>
 
           <div *ngIf="item.quantity == 0">
-            <a (click)="addToCart()" class="btn btn-secondary btn-md my-0 p disabled">
+            <a class="btn btn-secondary btn-md my-0 p disabled">
               Add to cart
               <i class="material-icons">shopping_cart</i>
             </a>
@@ -37,7 +37,7 @@
           </div>
 
           <div *ngIf="item.quantity != 0">
-            <a (click)="addToCart()" class="btn btn-primary btn-md my-0 p">
+            <a (click)="addToCart(item.id)" class="btn btn-primary btn-md my-0 p">
               Add to cart
               <i class="material-icons">shopping_cart</i>
             </a>

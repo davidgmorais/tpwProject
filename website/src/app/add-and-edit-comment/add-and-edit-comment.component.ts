@@ -115,7 +115,7 @@ export class AddAndEditCommentComponent implements OnInit {
             text: this.comment.text,
             stars: this.comment.stars,
           });
-          this.item = this.comment.item;
+          this.item.id = this.comment.item;
         }
       });
     }

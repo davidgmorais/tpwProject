@@ -17,6 +17,7 @@ import {ApprovePurchasesComponent} from './admin/approve-purchases/approve-purch
 import {PurchaseDetailsComponent} from './admin/purchase-details/purchase-details.component';
 import { ProfileComponent } from './profile/profile.component';
 import { AddAndEditCommentComponent } from './add-and-edit-comment/add-and-edit-comment.component';
+import { CartComponent } from './cart/cart.component';
 
 const routes: Routes = [
   {path: '', component: HomepageComponent},
@@ -41,6 +42,8 @@ const routes: Routes = [
   {path: 'admin/category/:action', component: AddEditCategoryComponent},
   {path: 'admin/subcategory/:action/:id', component: AddEditSubcategoryComponent},
   {path: 'admin/subcategory/:action', component: AddEditSubcategoryComponent},
+
+  {path: 'cart', component: CartComponent},
 
   {path: 'account', component: ProfileComponent},
   {path: 'account/comments/:action', component: AddAndEditCommentComponent},
