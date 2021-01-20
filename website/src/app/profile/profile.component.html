@@ -56,13 +56,12 @@
       <a class="btn btn-outline-dark" routerLink="/account/changepassword">Change Password</a>
     </div>
     <br>
+    -->
 
     <div class="col-2">
-      <form id="logoutForm" action="/logout" method="get">
-        <a class="btn btn-outline-dark" routerLink="/login">Log off</a>
-      </form>
+        <button class="btn btn-outline-dark" (click)="logout()">Log out</button>
     </div>
-    <br>-->
+    <br>
     <div class="col-2">
       <a class="btn btn-outline-danger" routerLink="/account/delete">Delete Account</a>
     </div>

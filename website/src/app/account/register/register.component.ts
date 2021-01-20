@@ -35,12 +35,12 @@ export class RegisterComponent implements OnInit {
   }
 
   register(): void {
-    alert('register');
     if (this.registerGroup.invalid) {
       this.raiseErrors = true;
       return;
     }
     this.raiseErrors = false;
+
     const user = new User();
     user.username = this.registerGroup.value.username;
     user.email = this.registerGroup.value.email;
@@ -54,9 +54,12 @@ export class RegisterComponent implements OnInit {
     profile.birthdate = this.registerGroup.value.birthdate;
 
     this.userService.register(profile).subscribe(response => {
-      this.router.navigateByUrl('/');
+      this.login(user);
     });
 
+  }
+
+  login(user: User): void {
     this.userService.login(user.username, user.password).subscribe(response => {
       this.token = response.token;
       localStorage.setItem('auth_token', this.token);

@@ -152,6 +152,18 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('username', 'password', 'email', 'id')
         extra_kwargs = {'password': {'write_only': True}}
 
+    def create(self, validated_data):
+        print(validated_data)
+        user = User.objects.create(
+            username=validated_data['username'],
+            email=validated_data['email']
+        )
+
+        user.set_password(validated_data['password'])
+        user.save()
+
+        return user
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(required=True)
@@ -161,13 +173,13 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ('id', 'user', 'first_name', 'last_name', 'birthdate', 'money')
 
     def create(self, validated_data):
-        print(validated_data)
-        user_data = validated_data.pop('user')
+        user_data = validated_data['user']
         user = UserSerializer.create(UserSerializer(), validated_data=user_data)
         profile = Profile.objects.get(user_id=user.id)
-        profile.first_name = validated_data.pop('first_name')
-        profile.last_name = validated_data.pop('last_name')
-        profile.birthdate = validated_data.pop('birthdate')
+        profile.first_name = validated_data['first_name']
+        profile.last_name = validated_data['last_name']
+        profile.birthdate = validated_data['birthdate']
         profile.money = 0
         profile.save()
+        cart = Cart.objects.create(user=user)
         return profile

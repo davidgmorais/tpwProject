@@ -56,4 +56,11 @@ export class ProfileComponent implements OnInit {
       this.sells = response.filter(i => i.user === this.profile.user);
     });
   }
+
+  logout(): void {
+    this.token = null;
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('username');
+    this.router.navigateByUrl('/');
+  }
 }
