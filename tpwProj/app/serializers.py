@@ -162,25 +162,12 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         print(validated_data)
-        # <QueryDict: {'csrfmiddlewaretoken': ['V2q0NRsKObnt97RjU8SdrNg9Wm6uDXQvpQPUro7HvR5q5GE7WUCDZjuJexXz8k6t'],
-        # 'user.username': ['last'], 'user.password': ['last'], 'user.email': ['last@tpw.com'],
-        # 'first_name': ['last'], 'last_name': [''], 'birthdate': [''], 'money': ['']}>
-        user_data = {
-            'email': validated_data['user.email'],
-            'username': validated_data['user.username'],
-            'password': validated_data['user.password'],
-        }
-        # user_data = validated_data.pop('user')
-        print(user_data, "-----\n")
+        user_data = validated_data.pop('user')
         user = UserSerializer.create(UserSerializer(), validated_data=user_data)
         profile = Profile.objects.get(user_id=user.id)
-        profile.first_name = validated_data['first_name']
-        profile.last_name = validated_data['last_name']
-        profile.birthdate = validated_data['birthdate']
-
-        # profile.first_name = validated_data.pop('first_name')
-        # profile.last_name = validated_data.pop('last_name')
-        # profile.birthdate = validated_data.pop('birthdate')
+        profile.first_name = validated_data.pop('first_name')
+        profile.last_name = validated_data.pop('last_name')
+        profile.birthdate = validated_data.pop('birthdate')
         profile.money = 0
         profile.save()
         return profile

@@ -27,6 +27,12 @@ export class UserService {
     return this.http.post(url, body, httpOptions);
   }
 
+  register(profile: Profile): Observable<any> {
+    const url = this.apiURL + 'profiles/';
+    const headers = {headers: new HttpHeaders({'Content-Type': 'application/json'})};
+    return this.http.post(url, profile, headers);
+  }
+
   getAccounts(): Observable<Profile[]> {
     const url = this.apiURL + 'profiles/';
     return this.http.get<Profile[]>(url);
@@ -58,7 +64,7 @@ export class UserService {
   }
 
   addComment(comment: Comments): Observable<any> {
-    const url = this.apiURL + 'comment/' + comment.id;
+    const url = this.apiURL + 'comment/';
     const headers = {headers: new HttpHeaders({'Content-Type': 'application/json'})};
     return this.http.post(url, comment, headers);
   }

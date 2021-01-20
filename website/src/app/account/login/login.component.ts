@@ -36,6 +36,13 @@ export class LoginComponent implements OnInit {
       localStorage.setItem('username', username);
       this.router.navigateByUrl('/');
     });
-
   }
+
+  logout(): void {
+    this.token = null;
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('username');
+    this.router.navigateByUrl('/');
+  }
+
 }

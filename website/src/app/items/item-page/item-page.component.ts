@@ -39,7 +39,9 @@ export class ItemPageComponent implements OnInit {
   }
 
   addToCart(): void {
-
+    /*this.itemService.getCart().subscribe(response => {
+      this.cart = response.filter(i => i.user.)
+    });*/
   }
 
   sellItem(): void {

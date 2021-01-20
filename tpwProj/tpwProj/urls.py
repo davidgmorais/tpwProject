@@ -42,6 +42,7 @@ urlpatterns = [
     path('api/brands', views.brand_list),
 
     path("api/login", views.Login.as_view()),
+    path("api/register", views.ProfileView.as_view()),
 
     path("api/admin/stats/discount", views.discount_stats_view),
     path("api/admin/stats/category", views.purchased_cat_view),
