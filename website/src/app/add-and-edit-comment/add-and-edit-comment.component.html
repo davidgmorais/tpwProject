@@ -21,10 +21,10 @@
           <div class="form-group" *ngIf="action === 'add'">
             <div class="row">
               <div class="col-md-3">
-                <label for="category">Item:</label>
+                <label for="item">Item:</label>
               </div>
               <div class="col-md-6">
-                <select class="form-control" id="category" formControlName="item">
+                <select class="form-control" id="item" formControlName="item">
                   <option [ngValue]='null' disabled>Select Item</option>
                   <option *ngFor="let item of itemOptions" value="{{item.id}}">{{item.name}}</option>
                 </select>

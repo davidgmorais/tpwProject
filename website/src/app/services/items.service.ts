@@ -7,6 +7,7 @@ import {Comments} from '../models/Comments';
 import {Profile} from '../models/Profile';
 import {Sell} from '../models/Sell';
 import {Cart} from '../models/Cart';
+import {OrderItem} from '../models/OrderItem';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -119,6 +120,30 @@ export class ItemsService {
     const url = this.apiURL + 'cart';
     const headers = {headers: new HttpHeaders({'Content-Type': 'application/json', Authorization: 'Token ' + token})};
     return this.http.get<Cart[]>(url, headers);
+  }
+
+  orderItem(token: string, cart: Cart, item: Item): Observable<any>{
+    const url = this.apiURL + 'orderitem';
+    const headers = {headers: new HttpHeaders({'Content-Type': 'application/json', Authorization: 'Token ' + token})};
+    const body = {
+      cart,
+      item,
+      qty: 1,
+    };
+    return this.http.post(url, body, headers);
+  }
+
+  sellItem(token: string, profile: Profile, item: Item): Observable<any>{
+    const url = this.apiURL + 'sell';
+    const headers = {headers: new HttpHeaders({'Content-Type': 'application/json', Authorization: 'Token ' + token})};
+    const body = {
+      profile,
+      item,
+      moneyReceived: item.sellMoney,
+      pendingSell: true,
+      accepted: false,
+    };
+    return this.http.post(url, body, headers);
   }
 
   getDiscountStats(token: string): Observable<any>{

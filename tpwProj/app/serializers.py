@@ -108,9 +108,9 @@ class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
         fields = ('id', 'user')
-        extra_kwargs = {
-            'user': {'read_only': True},
-        }
+        # extra_kwargs = {
+        #     'user': {'read_only': True},
+        # }
 
 
 class CommentSerializer(serializers.ModelSerializer):

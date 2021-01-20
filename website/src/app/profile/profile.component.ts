@@ -25,14 +25,13 @@ export class ProfileComponent implements OnInit {
     this.token = localStorage.getItem('username');
     this.getProfile(this.token);
   }
-
   private getProfile(token: string): void {
     this.userService.getAccounts().subscribe(response => {
       this.profile = response.filter(i => i.user.username === token)[0];
-      this.getComments(this.token);
-      this.getPurchases(this.token);
-      this.getSells(this.token);
     });
+    this.getComments(this.token);
+    this.getPurchases(this.token);
+    this.getSells(this.token);
   }
 
   private getComments(token: string): void {

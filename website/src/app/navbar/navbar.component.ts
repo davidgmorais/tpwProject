@@ -13,7 +13,7 @@ import {ItemsService} from '../services/items.service';
 export class NavbarComponent implements OnInit {
   username: string;
   cart: Cart;
-  categories: Category[] = [];
+  categories: Category[];
   searchForm: FormGroup;
 
   constructor(private router: Router, private fb: FormBuilder, private itemService: ItemsService) { }
