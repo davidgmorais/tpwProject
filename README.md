@@ -46,7 +46,8 @@ Conta admin
 https://proj-tpw-g5.herokuapp.com/
 
 ## Notas para correr localmente
-Instalar:`pip install django-rest-authtoken` e `pip install djangorestframework-recursive`
+Instalar (além das da aula):`pip install django-rest-authtoken` e `pip install djangorestframework-recursive`
+
 Além de fazer as migrações normais, fazer também `python3 manage.py migrate authtoken`.
 
 
