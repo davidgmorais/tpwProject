@@ -58,7 +58,7 @@
 
 
                     <span class="input-group-btn">
-                      <button class="btn btn-dark" [ngClass]="{'disabled': (order.item.quantity <= order.qty)}" >
+                      <button class="btn btn-dark" [ngClass]="{'disabled': (order.item.quantity <= order.qty)}" (click)="increaseOrderQty(order.id)">
                         <span class="material-icons" style="font-size: small">add</span>
                       </button>
                     </span>

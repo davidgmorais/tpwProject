@@ -163,8 +163,6 @@ class OrderItemView(generics.ListCreateAPIView):
 class OrderItemDetailView(generics.RetrieveUpdateAPIView):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
 
 class CartView(generics.ListCreateAPIView):
     queryset = Cart.objects.all()
@@ -406,6 +404,7 @@ def api_delete_item(request, id):
 def api_delete_orderitem(request, id):
     try:
         orderItem = OrderItem.objects.get(id=id)
+        print(orderItem);
     except OrderItem.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     orderItem.delete()
