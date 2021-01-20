@@ -146,6 +146,18 @@ export class ItemsService {
     return this.http.get<OrderItem[]>(url, headers);
   }
 
+  updateOrderItem(id: number, orderItem: OrderItem): Observable<any>{
+    const url = this.apiURL + 'orderitem/' + id;
+    const headers = {headers: new HttpHeaders({'Content-Type': 'application/json'})};
+    return this.http.put(url, orderItem, headers);
+  }
+
+  deleteOrderItem(id: number): Observable<any>{
+    const url = this.apiURL + 'orderitem/' + id + '/delete';
+    const headers = {headers: new HttpHeaders({'Content-Type': 'application/json'})};
+    return this.http.delete(url, headers);
+  }
+
   purchaseItem(token: string, purchase: Purchase): Observable<any>{
     const url = this.apiURL + 'purchase';
     const headers = {headers: new HttpHeaders({'Content-Type': 'application/json', Authorization: 'Token ' + token})};
