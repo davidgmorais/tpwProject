@@ -159,6 +159,18 @@ class OrderItemView(generics.ListCreateAPIView):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
 
+    def post(self, request, *args, **kwargs):
+        try:
+            orderItem = OrderItem.objects.get(item__id=request.data['item'])
+            orderItem.qty += 1
+            orderItem.save()
+            return Response(status=status.HTTP_200_OK)
+        except OrderItem.DoesNotExist:
+            serializer = OrderItemSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.create(validated_data=request.data)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class OrderItemDetailView(generics.RetrieveUpdateAPIView):
     queryset = OrderItem.objects.all()
