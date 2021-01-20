@@ -6,6 +6,7 @@ import {ItemsService} from '../services/items.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserService} from '../services/user.service';
 import {Purchase} from '../models/Purchase';
+import {Item} from '../models/Item';
 
 @Component({
   selector: 'app-cart',
@@ -20,6 +21,8 @@ export class CartComponent implements OnInit {
   username: string;
   purchase: Purchase;
   total: number;
+  itemList: Item[] = [];
+  subtotal: number;
 
   constructor(private route: ActivatedRoute, private router: Router, private itemService: ItemsService,
               private userService: UserService) {
@@ -29,44 +32,45 @@ export class CartComponent implements OnInit {
 
   ngOnInit(): void {
     this.getProfile();
-    this.getCart();
-    this.getOrderItems();
-    this.getTotal();
   }
 
   private getProfile(): void {
     this.userService.getAccounts().subscribe(response => {
-      this.profile = response.filter(i => i.user.username === this.username)[0];
+      this.profile = response.find(i => i.user.username === this.username);
+      this.getCart();
     });
   }
 
   private getCart(): void {
     this.itemService.getCart().subscribe(response => {
-      this.cart = response.filter(i => i.user === this.profile.id)[0];
+      this.cart = response.find(i => i.user === this.profile.id);
+      this.getOrderItems();
     });
   }
 
   private getOrderItems(): void {
     this.itemService.getOrderItems().subscribe(response => {
-      this.orderedItems = response.filter(i => i.cart.id === this.cart.id);
+      this.orderedItems = response.filter(i => i.cart === this.cart.id);
+      this.fillItems();
     });
   }
 
-  private removeItem(orderId: number): void {
+  private fillItems(): void {
+    this.itemService.getItems().subscribe(response => {
+      for (const oItem of this.orderedItems ) {
+        oItem.item = response.find(i => i.id === oItem.item);
+      }
+    });
   }
 
-  private decreaseOrderQty(orderId: number): void {
-  }
+  private getTotal(): void {}
 
-  private increaseOrderQty(orderId: number): void {
-  }
+  removeItem(orderId: number): void {}
 
-  private getTotal(): void {
+  decreaseOrderQty(orderId: number): void {}
 
-  }
+  increaseOrderQty(orderId: number): void {}
 
-  private purchaseCart(): void{
-
-}
+  purchaseCart(): void{}
 
 }

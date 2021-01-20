@@ -7,7 +7,7 @@
     </div>
 
     <div class="col-6" style="text-align: right">
-      <!--      <p>{{ cart.items|length }} items</p>-->
+     <p>{{ orderedItems.length }} items</p>
     </div>
   </div>
   <hr>
@@ -36,40 +36,36 @@
           <div class="row">
             <div class="col-lg-8 col-md-7 col-10" style="margin-top: 5%;">
               <div class="row">
+
+
                 <div class="col-lg-1 col-md-2 col-1">
                   <a (click)="removeItem(order.id)">
                     <i class="material-icons">delete</i>
                   </a>
                 </div>
 
+
                 <div class="offset-lg-1 col-lg-8 col-md-8 col-9">
 
                   <div class="input-group">
                     <span class="input-group-btn">
-                      <a *ngIf="order.qty == 1" (click)="decreaseOrderQty(order.id)">
-                        <button type="button" class="btn btn-dark">
+                        <button class="btn btn-dark" [ngClass]="{'disabled': (order.qty<=1)}" (click)="decreaseOrderQty(order.id)">
                           <span class="material-icons" style="font-size: small">remove</span>
                         </button>
-                      </a>
-                      <button type="button" class="btn btn-dark" *ngIf="order.qty > 1" disabled="disabled">
-                        <span class="material-icons" style="font-size: small">remove</span>
-                      </button>
                     </span>
-                    <input type="text" readonly class="form-control input-number" value="{{ order.qty }}" min="1"
-                           max="{{ order.qty }}">
+
+                    <input type="text" readonly class="form-control input-number" value="{{ order.qty }}">
+
+
                     <span class="input-group-btn">
-                      <a *ngIf="order.item.quantity > order.qty" (click)="increaseOrderQty(order.id)" )>
-                        <button type="button" class="btn btn-dark" disabled="disabled">
-                          <span class="material-icons" style="font-size: small">add</span>
-                        </button>
-                      </a>
-                      <button type="button" class="btn btn-dark" *ngIf="order.item.quantity <= order.qty"
-                              disabled="disabled">
+                      <button class="btn btn-dark" [ngClass]="{'disabled': (order.item.quantity <= order.qty)}" >
                         <span class="material-icons" style="font-size: small">add</span>
                       </button>
                     </span>
                   </div>
+
                 </div>
+
               </div>
             </div>
             <div class="col-lg-3 col-md-5 col-2" style="text-align: right; margin-top: 3%">
@@ -81,6 +77,7 @@
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -118,7 +115,7 @@
     </div>
   </div>
 
-  <div class="container" id="cart_list" *ngIf="orderedItems.length == 0">
+  <div class="container" *ngIf="orderedItems.length == 0">
     <p>Your shopping cart is empty at the moment.</p>
   </div>
 
@@ -129,12 +126,10 @@
         <a routerLink="/" class="btn btn-outline-dark">Keep shopping</a>
       </div>
 
-      <div class="col-md-6 col-6" style="text-align: right" *ngIf="orderedItems.length != 0">
-        <input (click)="purchaseCart()" name="done" value="Finalize" class="btn btn-outline-dark">
-      </div>
-
+      <button (click)="purchaseCart()" *ngIf="orderedItems.length != 0" class="btn btn-outline-dark">Pay</button>
     </div>
   </div>
 
 <br>
+
 

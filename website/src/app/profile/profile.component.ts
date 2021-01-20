@@ -25,14 +25,14 @@ export class ProfileComponent implements OnInit {
     this.token = localStorage.getItem('username');
     this.getProfile(this.token);
   }
+
   private getProfile(token: string): void {
     this.userService.getAccounts().subscribe(response => {
       this.profile = response.filter(i => i.user.username === token)[0];
+      this.getComments(this.token);
+      this.getPurchases(this.token);
+      this.getSells(this.token);
     });
-    console.log(this.profile.user.username);
-    this.getComments(this.token);
-    this.getPurchases(this.token);
-    this.getSells(this.token);
   }
 
   private getComments(token: string): void {
@@ -45,7 +45,6 @@ export class ProfileComponent implements OnInit {
  private getPurchases(token: string): void {
     this.profileId = this.profile.id;
     this.userService.getPurchases().subscribe(response => {
-      console.log('hello');
       console.log(response);
       this.purchases = response.filter(i => i.user === this.profile.user);
     });
@@ -53,7 +52,7 @@ export class ProfileComponent implements OnInit {
 
   private getSells(token: string): void {
     this.userService.getSells().subscribe(response => {
-      this.sells = response.filter(i => i.user === this.profile.user);
+      this.sells = response.filter(i => i.user.id === this.profile.user.id);
     });
   }
 

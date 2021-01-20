@@ -3,7 +3,7 @@ import { Item } from './Item';
 
 export class OrderItem {
   id: number;
-  item: Item;
-  cart: Cart;
+  item: Item | number;
+  cart: number;
   qty: number;
 }

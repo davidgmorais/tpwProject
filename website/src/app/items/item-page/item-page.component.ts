@@ -59,15 +59,28 @@ export class ItemPageComponent implements OnInit {
 
   addToCart(id: number): void {
     this.itemService.getCart().subscribe(response => {
-      this.cart = response.filter(i => i.user === +this.profile.user)[0];
+      this.cart = response.find(i => i.user === this.profile.user.id);
+      console.log(this.cart);
+
+      if (!this.cart) {
+        this.createCartAndOrder();
+      } else {
+        this.createOrder();
+      }
     });
+  }
 
-    if (this.cart == null){
-      this.createCart(+id);
-    }
-
+  createOrder(): void {
     this.itemService.orderItem(this.token, this.cart, this.item).subscribe(response => {
+      console.log(response);
       this.router.navigateByUrl('/cart');
+    });
+  }
+
+  createCartAndOrder(): void {
+    this.itemService.addCart(this.token, this.profile.user.id).subscribe(response => {
+      this.cart = response;
+      this.createOrder();
     });
   }
 
@@ -83,9 +96,5 @@ export class ItemPageComponent implements OnInit {
     });
   }
 
-  createCart(id: number): void{
-    this.itemService.addCart(this.token, this.cart).subscribe(response => {
-      this.router.navigateByUrl('/item/' + id);
-    });
-  }
+
 }

@@ -8,7 +8,7 @@ import {Profile} from '../models/Profile';
 import {Sell} from '../models/Sell';
 import {Cart} from '../models/Cart';
 import {OrderItem} from '../models/OrderItem';
-import {Purchase} from "../models/Purchase";
+import {Purchase} from '../models/Purchase';
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -117,32 +117,31 @@ export class ItemsService {
     return this.http.post(url, item, headers);
   }
 
-  addCart(token: string, cart: Cart): Observable<any> {
-    console.log('hereeee');
-    const url = this.apiURL + 'cart';
+  addCart(token: string, user: number): Observable<any> {
+    const url = this.apiURL + 'cart/';
     const headers = {headers: new HttpHeaders({'Content-Type': 'application/json', Authorization: 'Token ' + token})};
-    return this.http.post(url, cart, headers);
+    return this.http.post(url, {user}, headers);
   }
 
   getCart(): Observable<Cart[]>{
-    const url = this.apiURL + 'cart';
+    const url = this.apiURL + 'cart/';
     const headers = {headers: new HttpHeaders({'Content-Type': 'application/json'})};
     return this.http.get<Cart[]>(url, headers);
   }
 
   orderItem(token: string, cart: Cart, item: Item): Observable<any>{
-    const url = this.apiURL + 'orderitem';
+    const url = this.apiURL + 'orderitem/';
     const headers = {headers: new HttpHeaders({'Content-Type': 'application/json', Authorization: 'Token ' + token})};
     const body = {
-      cart,
-      item,
+      cart: cart.id,
+      item: item.id,
       qty: 1,
     };
     return this.http.post(url, body, headers);
   }
 
   getOrderItems(): Observable<OrderItem[]>{
-    const url = this.apiURL + 'orderitem';
+    const url = this.apiURL + 'orderitem/';
     const headers = {headers: new HttpHeaders({'Content-Type': 'application/json'})};
     return this.http.get<OrderItem[]>(url, headers);
   }
