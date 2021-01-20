@@ -3,8 +3,8 @@ import { User } from './User';
 export class Profile {
   id: number;
   birthdate: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   money: number;
   user: User;
 }

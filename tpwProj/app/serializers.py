@@ -149,7 +149,7 @@ class SellSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'password', 'email')
+        fields = ('username', 'password', 'email', 'id')
         extra_kwargs = {'password': {'write_only': True}}
 
 

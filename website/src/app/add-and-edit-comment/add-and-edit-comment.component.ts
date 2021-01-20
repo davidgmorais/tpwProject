@@ -101,22 +101,24 @@ export class AddAndEditCommentComponent implements OnInit {
   }
 
   private getComment(): void {
-    this.userService.getCommentInfo(+this.id).subscribe(response => {
-      this.comment = response;
-      if (this.action === 'add') {
-        this.commentGroup.patchValue({
-          text: this.comment.text,
-          stars: this.comment.stars,
-          user: this.comment.user,
-        });
-      } else {
-        this.commentGroup.patchValue({
-          text: this.comment.text,
-          stars: this.comment.stars,
-        });
-        this.item = this.comment.item;
-      }
-    });
+    if (this.id) {
+      this.userService.getCommentInfo(+this.id).subscribe(response => {
+        this.comment = response;
+        if (this.action === 'add') {
+          this.commentGroup.patchValue({
+            text: this.comment.text,
+            stars: this.comment.stars,
+            user: this.comment.user,
+          });
+        } else {
+          this.commentGroup.patchValue({
+            text: this.comment.text,
+            stars: this.comment.stars,
+          });
+          this.item = this.comment.item;
+        }
+      });
+    }
   }
 
   addComment(): void {
@@ -129,6 +131,8 @@ export class AddAndEditCommentComponent implements OnInit {
     comment.text = this.commentGroup.value.text;
     comment.stars = this.commentGroup.value.stars;
     comment.item = this.commentGroup.value.item;
+    comment.user = this.profile.user.id;
+    console.log(this.profile);
 
     this.userService.addComment(comment).subscribe(response => {
       this.router.navigateByUrl('account');

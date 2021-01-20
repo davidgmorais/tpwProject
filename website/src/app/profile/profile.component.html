@@ -1,6 +1,6 @@
 <app-navbar></app-navbar>
 <section><br>
-  <div class="container col-md-8">
+  <div class="container col-md-8" *ngIf="profile">
     <h2>Profile</h2>
     <div class="row">
       <div class="col-md-2 col-4">
@@ -15,8 +15,8 @@
       <div class="col-md-2 col-4">
         <p>Name:</p>
       </div>
-      <div class="col-md-6 col-8" *ngIf="profile">
-        <p>{{ profile.firstName }} {{ profile.lastName }}</p>
+      <div class="col-md-6 col-8">
+        <p>{{ profile.first_name }} {{ profile.last_name }}</p>
       </div>
     </div>
 
@@ -24,7 +24,7 @@
       <div class="col-md-2 col-4">
         <p>Email:</p>
       </div>
-      <div class="col-md-6 col-8">
+      <div class="col-md-6 col-8" >
         <p>{{ profile.user.email }}</p>
       </div>
     </div>

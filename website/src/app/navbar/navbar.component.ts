@@ -11,9 +11,9 @@ import {ItemsService} from '../services/items.service';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
-  userIsAuthenticated: string;
+  username: string;
   cart: Cart;
-  categories: Category[];
+  categories: Category[] = [];
   searchForm: FormGroup;
 
   constructor(private router: Router, private fb: FormBuilder, private itemService: ItemsService) { }
@@ -23,7 +23,7 @@ export class NavbarComponent implements OnInit {
       query: ['']
     });
     this.getCategories();
-    this.userIsAuthenticated = localStorage.getItem('auth_token');
+    this.username = localStorage.getItem('username');
   }
 
   search(): void {

@@ -39,22 +39,22 @@ export class UserService {
   }
 
   getComments(): Observable<Comments[]> {
-    const url = this.apiURL + 'comments/';
+    const url = this.apiURL + 'comment/';
     return this.http.get<Comments[]>(url);
   }
 
   getPurchases(): Observable<Purchase[]> {
-    const url = this.apiURL + 'purchases/';
+    const url = this.apiURL + 'purchase/';
     return this.http.get<Purchase[]>(url);
   }
 
   getSells(): Observable<Sell[]> {
-    const url = this.apiURL + 'sells/';
+    const url = this.apiURL + 'sell/';
     return this.http.get<Sell[]>(url);
   }
 
   getItems(): Observable<Item[]> {
-    const url = this.apiURL + 'item/';
+    const url = this.apiURL + 'item/all';
     return this.http.get<Item[]>(url);
   }
 

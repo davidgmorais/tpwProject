@@ -88,7 +88,7 @@ export class ItemsService {
 
   // acho q deve ser assim
   getComments(): Observable<Comments[]> {
-    const url = this.apiURL + 'comments/' ;
+    const url = this.apiURL + 'comment/' ;
     return this.http.get<Comments[]>(url);
   }
 

@@ -27,16 +27,16 @@
       <div class="navbar-nav">
         <div class="row">
           <div>
-            <a *ngIf="userIsAuthenticated" class="nav-item nav-link" routerLink="/account"><i class="material-icons">account_circle</i></a>
-            <a *ngIf="!userIsAuthenticated" class="nav-item nav-link" routerLink="/login"><i class="material-icons">account_circle</i></a>
+            <a *ngIf="username" class="nav-item nav-link" routerLink="/account"><i class="material-icons">account_circle</i></a>
+            <a *ngIf="!username" class="nav-item nav-link" routerLink="/login"><i class="material-icons">account_circle</i></a>
           </div>
 
 
-          <div class="d-block d-lg-none" *ngIf="userIsAuthenticated">
+          <div class="d-block d-lg-none" *ngIf="username">
             <a class="nav-item nav-link" routerLink="/cart"><i class="material-icons">shopping_cart</i></a>
           </div>
 
-          <div class="dropdown d-none d-lg-block" *ngIf="userIsAuthenticated">
+          <div class="dropdown d-none d-lg-block" *ngIf="username">
             <a class="nav-item nav-link dropdown" type="button" id="dropdownMenu2"
                data-toggle="dropdown" aria-haspopup="true"><i class="material-icons"
                                                               style="cursor: pointer">shopping_cart</i></a>
@@ -104,7 +104,7 @@
         <a class="nav-item nav-link" routerLink="/items/promo">Promos</a>
         <a class="nav-item nav-link" routerLink="/items/new">New in</a>
         <!--{% if user.username == 'admin' %}-->
-        <a class="nav-item nav-link" *ngIf="userIsAuthenticated" routerLink="/admin">Admin Page</a>
+        <a class="nav-item nav-link" *ngIf="username == 'admin'" routerLink="/admin">Admin Page</a>
       </div>
     </div>
   </div>

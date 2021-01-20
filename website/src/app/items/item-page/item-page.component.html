@@ -13,7 +13,7 @@
 
         <h3 *ngIf="item.discount != 0">Buy for
           <del>{{ item.price }}€</del>
-          <strong>{{ ((item.price - item.discount) * 100 / item.price).toFixed(2)  }}€</strong> ({{item.discount}}% off)
+          <strong>{{ ((100 - item.discount) * item.price / 100).toFixed(2)  }}€</strong> ({{item.discount}}% off)
         </h3>
 
         <h3 *ngIf="item.discount == 0">Buy for {{ item.price }}€</h3>

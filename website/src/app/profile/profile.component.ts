@@ -15,7 +15,7 @@ export class ProfileComponent implements OnInit {
   profile: Profile;
   sells: Sell[];
   purchases: Purchase[];
-  comments: Comments[];
+  comments: Comments[] = [];
   token: string;
   profileId: number;
 
@@ -24,20 +24,21 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     this.token = localStorage.getItem('username');
     this.getProfile(this.token);
-    this.getComments(this.token);
-    this.getPurchases(this.token);
-    this.getSells(this.token);
   }
+
   private getProfile(token: string): void {
     this.userService.getAccounts().subscribe(response => {
       this.profile = response.filter(i => i.user.username === token)[0];
+      this.getComments(this.token);
+      this.getPurchases(this.token);
+      this.getSells(this.token);
     });
   }
 
   private getComments(token: string): void {
     this.profileId = this.profile.id;
     this.userService.getComments().subscribe(response => {
-      this.comments = response.filter(i => i.user.user.username === token);
+      this.comments = response.filter(i => i.user === this.profile.id);
     });
   }
 

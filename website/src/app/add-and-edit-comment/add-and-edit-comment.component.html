@@ -24,9 +24,9 @@
                 <label for="category">Item:</label>
               </div>
               <div class="col-md-6">
-                <select class="form-control" id="category" formControlName="category">
+                <select class="form-control" id="category" formControlName="item">
                   <option [ngValue]='null' disabled>Select Item</option>
-                  <optgroup *ngFor="let item of itemOptions" label="{{item.name}}"></optgroup>
+                  <option *ngFor="let item of itemOptions" value="{{item.id}}">{{item.name}}</option>
                 </select>
               </div>
             </div>

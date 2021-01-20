@@ -12,12 +12,13 @@ import {Comments} from '../../models/Comments';
 export class ItemPageComponent implements OnInit {
 
   item: Item;
-  comments: Comments[];
+  comments: Comments[] = [];
   userIsAuthenticated: string;
 
   constructor(private route: ActivatedRoute, private itemService: ItemsService) { }
 
   ngOnInit(): void {
+    this.userIsAuthenticated = localStorage.getItem('username');
     const id = this.route.snapshot.paramMap.get('id');
     this.getItem(id);
     this.getComments(id);
@@ -31,11 +32,8 @@ export class ItemPageComponent implements OnInit {
 
   private getComments(id: string): void {
     this.itemService.getComments().subscribe(response => {
-      this.comments = response.filter(i => i.item.id === +id);
+      this.comments = response.filter(i => i.item === +id);
     });
-    // this.itemService.getItemComments(+id).subscribe(response => {
-    //   this.comments = response;
-    // });
   }
 
   addToCart(): void {

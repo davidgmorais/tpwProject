@@ -48,8 +48,8 @@ export class RegisterComponent implements OnInit {
 
     const profile = new Profile();
     profile.user = user;
-    profile.firstName = this.registerGroup.value.firstName;
-    profile.lastName = this.registerGroup.value.lastName;
+    profile.first_name = this.registerGroup.value.firstName;
+    profile.last_name = this.registerGroup.value.lastName;
     profile.money = 0;
     profile.birthdate = this.registerGroup.value.birthdate;
 
