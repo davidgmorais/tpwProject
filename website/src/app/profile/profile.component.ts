@@ -38,7 +38,7 @@ export class ProfileComponent implements OnInit {
   private getComments(token: string): void {
     this.profileId = this.profile.id;
     this.userService.getComments().subscribe(response => {
-      this.comments = response.filter(i => i.user === this.profile.id);
+      this.comments = response.filter(i => i.user === this.profile.user.id);
     });
   }
 
@@ -47,14 +47,13 @@ export class ProfileComponent implements OnInit {
     this.userService.getPurchases().subscribe(response => {
       console.log('hello');
       console.log(response);
-      this.purchases = response.filter(i => i.user.username === token);
+      this.purchases = response.filter(i => i.user === this.profile.user);
     });
   }
 
   private getSells(token: string): void {
-    this.profileId = this.profile.id;
     this.userService.getSells().subscribe(response => {
-      this.sells = response.filter(i => i.user.username === token);
+      this.sells = response.filter(i => i.user === this.profile.user);
     });
   }
 }
